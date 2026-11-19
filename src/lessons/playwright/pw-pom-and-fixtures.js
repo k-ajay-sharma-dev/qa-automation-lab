@@ -145,5 +145,5 @@ tests/*.spec.ts   import { test, expect } from './fixtures'
     "Importing test from '@playwright/test' in a spec that needs custom fixtures — they are then unknown.",
   ],
   tryIt: `On \`http://localhost:5180/practice-site/checkout.html\` click *Continue* with all fields empty and read the error. List the locators a \`CheckoutPage\` needs for step one, choosing getByLabel/getByRole for each — which one has no good user-facing option?`,
-  problems: ['pw-006', 'pw-009', 'pw-010'],
+  problems: ['pw-006', 'pw-009', 'pw-010', 'pw-038'],
 }

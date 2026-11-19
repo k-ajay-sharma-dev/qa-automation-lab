@@ -106,5 +106,5 @@ When tests run on several threads, their lines are **interleaved**, and the Sure
     'Opening the Selenium source file named in the top `at` line — it is library code; look for your package.',
   ],
   tryIt: `Take any red build log you have (or the excerpts in this section's problems). Highlight, in three colours: the exception name, the first line in a \`com.\` package of your project, and the last \`Caused by\`. Practise until it takes under a minute.`,
-  problems: ['dbg-015', 'dbg-001', 'dbg-012', 'dbg-027'],
+  problems: ['dbg-015', 'dbg-001', 'dbg-012', 'dbg-027', 'dbg-029'],
 }

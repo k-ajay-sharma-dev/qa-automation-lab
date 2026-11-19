@@ -142,5 +142,5 @@ run in parallel. The clean way is a shared, per-scenario context object injected
   ],
   tryIt: `Write (on paper) the order in which these run for one scenario with two steps: @Before, Background step,
 @BeforeStep, @AfterStep, @After. Where would a screenshot of the failing step best be taken?`,
-  problems: ['cuc-011', 'cuc-024'],
+  problems: ['cuc-011', 'cuc-024', 'cuc-034'],
 }

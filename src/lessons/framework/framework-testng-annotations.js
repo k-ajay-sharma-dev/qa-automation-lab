@@ -136,5 +136,5 @@ The fix is **independence**: every test creates its own preconditions — in \`@
     'Chaining many tests with `dependsOnMethods` — one failure skips the rest; keep tests independent.',
   ],
   tryIt: `Write a tiny class with one method for each of the eight before/after annotations plus two \`@Test\` methods, each printing its own name. Run it and compare the printed order with the table above. Add a second class extending the same parent and predict the new counts before running.`,
-  problems: ['fw-002', 'fw-015', 'fw-019'],
+  problems: ['fw-002', 'fw-015', 'fw-019', 'fw-027', 'fw-029'],
 }

@@ -93,5 +93,5 @@ These failures are **test bugs**, even though they surface as assertion "failure
     'Creating `new BigDecimal(29.99)` from a double — it carries the double\'s error. Use the String constructor.',
   ],
   tryIt: `In jshell (or any Java main), print \`0.1 + 0.2\`, then \`new BigDecimal("0.1").add(new BigDecimal("0.2"))\`, then \`new BigDecimal(0.1)\`. The three results explain why money assertions use String-built BigDecimals.`,
-  problems: ['dbg-007', 'dbg-009', 'dbg-012'],
+  problems: ['dbg-007', 'dbg-009', 'dbg-012', 'dbg-030'],
 }

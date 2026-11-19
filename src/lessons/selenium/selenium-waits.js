@@ -112,5 +112,5 @@ Create the \`WebDriverWait\` once (in the page object or base test) and reuse it
     'Catching a `WebElement` outside a FluentWait lambda and reusing it — it goes stale on re-render.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/waits.html\` reload and watch section 1: a banner is *added* about 4 s after load. Decide which condition you would use for it, and which you would use for section 2's hidden message. Why are they different?`,
-  problems: ['sel-006', 'sel-007', 'sel-008', 'sel-026', 'sel-027'],
+  problems: ['sel-006', 'sel-007', 'sel-008', 'sel-026', 'sel-027', 'sel-035', 'sel-036'],
 }

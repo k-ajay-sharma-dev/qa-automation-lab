@@ -126,5 +126,5 @@ That's one more reason for the "return, don't print" rule: if a helper computes 
     'Nesting double quotes inside the XPath string — use single quotes for XPath values inside the Java string.',
   ],
   tryIt: `On http://localhost:5180/practice-site/inventory.html every "Add to cart" button has an id like \`add-to-cart-pulse-bike-light\`. Write a method \`addToCartId(String slug)\` that returns that id using String.format, and check it gives the right value for \`retro-red-tee\`.`,
-  problems: ['java-004', 'java-016', 'java-027'],
+  problems: ['java-004', 'java-016', 'java-027', 'java-030'],
 }

@@ -97,5 +97,5 @@ Coming from Selenium, you will delete a lot: \`WebDriverWait\`, \`Thread.sleep\`
     'Launching a browser manually in each test instead of using the page fixture.',
   ],
   tryIt: `With Node installed, run \`npm init playwright@latest\` in an empty folder, then \`npx playwright codegen http://localhost:5180/practice-site/cart.html\`. Click around and watch Playwright write \`getByRole\`/\`getByTestId\` code for you — then compare it with the test above.`,
-  problems: ['pw-003', 'pw-004'],
+  problems: ['pw-003', 'pw-004', 'pw-034'],
 }

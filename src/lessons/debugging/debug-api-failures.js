@@ -93,5 +93,5 @@ The server tells you what it got. Usual causes: a shared request specification t
     'Using float/double for prices read from JSON.',
   ],
   tryIt: `Start the API (\`npm run api\`) and call \`GET http://localhost:5181/api/cart\` three ways in Postman or curl: with no Authorization header, with \`Bearer null\`, and with a token from \`POST /api/auth/login\`. Compare the two 401 messages — that difference is how you'll recognise a "null token" bug in a log.`,
-  problems: ['dbg-017', 'dbg-023', 'dbg-024'],
+  problems: ['dbg-017', 'dbg-023', 'dbg-024', 'dbg-032'],
 }

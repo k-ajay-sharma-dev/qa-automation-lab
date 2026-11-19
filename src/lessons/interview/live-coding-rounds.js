@@ -178,5 +178,5 @@ sensitivity, say), and keep going. Silence is the only real failure in a coding 
   ],
   tryIt: `Without looking at any code, write a method that returns the first character that appears only once in a String
 ("shopeasy" -> 'h'). Time yourself to 10 minutes and say each step out loud.`,
-  problems: ['int-012', 'int-013', 'int-014', 'int-015', 'int-016', 'int-019'],
+  problems: ['int-012', 'int-013', 'int-014', 'int-015', 'int-016', 'int-019', 'int-028', 'int-033'],
 }

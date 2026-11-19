@@ -124,5 +124,5 @@ Pages should receive the driver (constructor parameter or a \`getDriver()\` call
     'Calling `quit()` but not `ThreadLocal.remove()` — reused threads leak a dead driver.',
   ],
   tryIt: `Run any test twice: once normally and once with \`--headless=new\` and no window size. Take a screenshot in both runs of \`http://localhost:5180/practice-site/inventory.html\` and compare the layouts.`,
-  problems: ['sel-014', 'sel-019', 'sel-020', 'sel-028'],
+  problems: ['sel-014', 'sel-019', 'sel-020', 'sel-028', 'sel-037'],
 }

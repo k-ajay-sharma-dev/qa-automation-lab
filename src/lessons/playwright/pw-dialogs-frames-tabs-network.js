@@ -123,5 +123,5 @@ The \`request\` fixture uses \`baseURL\` and headers from the config. Typical us
     'Mocking everything — then the suite only proves that the mocks work.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/frames.html\` open DevTools and use the frame dropdown at the top of the Console (top / supportFrame / chatFrame). Type \`document.title\` in each. That is exactly the scoping \`frameLocator\` gives you — without changing any global state.`,
-  problems: ['pw-011', 'pw-012', 'pw-013'],
+  problems: ['pw-011', 'pw-012', 'pw-013', 'pw-037'],
 }

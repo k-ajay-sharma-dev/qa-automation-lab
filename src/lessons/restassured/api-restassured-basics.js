@@ -163,5 +163,5 @@ Use this for debugging; for checks, prefer the \`then()\` assertions — they pr
     'Forgetting the static imports and getting "cannot find symbol: given()".',
   ],
   tryIt: `With \`npm run api\` running, try \`http://localhost:5181/api/products?sort=za&size=2&page=2\` in the browser and write down the names returned. Then sketch the given/when/then chain that would send the same request with three \`queryParam\` calls and assert the \`page\` and \`size\` fields.`,
-  problems: ['api-002', 'api-003', 'api-021'],
+  problems: ['api-002', 'api-003', 'api-021', 'api-033'],
 }

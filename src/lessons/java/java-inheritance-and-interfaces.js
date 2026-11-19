@@ -153,5 +153,5 @@ Browser-specific settings live in options objects: \`ChromeOptions options = new
     'Calling Enum.valueOf("chrome") with lowercase input — call toUpperCase() first.',
   ],
   tryIt: `List the pages on the practice site (login, inventory, cart, checkout). Write down which locators or helpers appear on more than one — those belong in a base class or a shared component (the header with \`shopping-cart-link\` and \`logout-link\` is a good start).`,
-  problems: ['java-009', 'java-010', 'java-024'],
+  problems: ['java-009', 'java-010', 'java-024', 'java-031'],
 }

@@ -113,5 +113,5 @@ A \`static WebDriver driver\` looks convenient — every class can reach it. But
     'Reloading a config file in every get() call — load it once in a static block.',
   ],
   tryIt: `Write a class with \`static int created\` and an instance \`int mine\`, both incremented in the constructor. Create three objects and print \`created\` and the third object's \`mine\` — predict the output first.`,
-  problems: ['java-007', 'java-008'],
+  problems: ['java-007', 'java-008', 'java-029'],
 }

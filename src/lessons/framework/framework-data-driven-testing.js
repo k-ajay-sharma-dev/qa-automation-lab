@@ -116,5 +116,5 @@ Some teams keep data in \`.xlsx\`. Apache POI (\`org.apache.poi:poi-ooxml\`) rea
     'Putting complex if/else trees in a data-driven test — split into separate providers and tests.',
   ],
   tryIt: `Open http://localhost:5180/practice-site/inventory.html, try each sort option and note the first product shown. Write those observations as a decision table with two columns — that table is your DataProvider, ready to paste into \`Object[][]\`.`,
-  problems: ['fw-004', 'fw-007'],
+  problems: ['fw-004', 'fw-007', 'fw-030', 'fw-031'],
 }

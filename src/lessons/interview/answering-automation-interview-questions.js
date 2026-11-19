@@ -109,5 +109,5 @@ reasoning far more than a confident wrong answer.
   ],
   tryIt: `Record yourself answering "Explain your framework" on your phone. Play it back: did you cover all five parts in
 under two minutes, and did you say at least one thing you personally built?`,
-  problems: ['int-001', 'int-005', 'int-007'],
+  problems: ['int-001', 'int-005', 'int-007', 'int-029', 'int-032'],
 }

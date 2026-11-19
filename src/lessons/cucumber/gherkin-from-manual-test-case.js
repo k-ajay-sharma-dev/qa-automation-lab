@@ -95,5 +95,5 @@ one Feature per file and name the file after it, for example \`cart.feature\`.`,
   ],
   tryIt: `Open http://localhost:5180/practice-site/login.html, log in as standard_user / secret_sauce and remove a product
 from the cart by hand. Then write that check as a Scenario on paper: one Given, one When, two Thens.`,
-  problems: ['cuc-001', 'cuc-002', 'cuc-017'],
+  problems: ['cuc-001', 'cuc-002', 'cuc-017', 'cuc-030'],
 }

@@ -93,5 +93,5 @@ Reusing a login with \`storageState\` saves **cookies and localStorage** (option
     'Using `page.waitForTimeout()` as a fix for a missing await.',
   ],
   tryIt: `Run \`npx playwright codegen http://localhost:5180/practice-site/table.html\`, hover over an "Edit" button and look at the locator codegen proposes. Then try \`page.getByRole('button', { name: 'Edit' }).click()\` in a spec and read the strict-mode error it produces — count the matches and read the \`aka\` suggestions.`,
-  problems: ['dbg-018', 'dbg-021', 'dbg-026'],
+  problems: ['dbg-018', 'dbg-021', 'dbg-026', 'dbg-033'],
 }

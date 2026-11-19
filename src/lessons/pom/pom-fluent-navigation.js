@@ -148,5 +148,5 @@ still gets three page objects.
     'Building one giant chain with assertions buried in the middle — break into variables and assert in the test.',
   ],
   tryIt: `On http://localhost:5180/practice-site/cart.html note the two buttons (\`#continue-shopping\`, \`#checkout\`). For each, write the method signature you would put in \`CartPage\` — just the return type, name and parameters. Then do the same for the overview step on \`checkout.html\` (\`#cancel-overview\`, \`#finish\`).`,
-  problems: ['pom-003', 'pom-008', 'pom-013', 'pom-015', 'pom-016', 'pom-021'],
+  problems: ['pom-003', 'pom-008', 'pom-013', 'pom-015', 'pom-016', 'pom-021', 'pom-029'],
 }

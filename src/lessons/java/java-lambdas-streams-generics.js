@@ -128,5 +128,5 @@ This "pass the step in as a lambda" idea is exactly how \`WebDriverWait.until(..
     'Catching every exception inside a generic helper — catch only the ones you mean to handle, let real bugs propagate.',
   ],
   tryIt: `Take the six product names from http://localhost:5180/practice-site/inventory.html as a \`List.of(...)\`. With one stream, produce the names that contain the letter "e" (case-insensitive), sorted A→Z. Then count how many names are longer than 15 characters.`,
-  problems: ['java-015', 'java-016'],
+  problems: ['java-015', 'java-016', 'java-032', 'java-034'],
 }

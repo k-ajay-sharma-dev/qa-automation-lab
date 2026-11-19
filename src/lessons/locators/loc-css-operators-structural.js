@@ -78,5 +78,5 @@ Position is fine for **structure that never changes meaning** — "the 3rd colum
     'Picking "row 3" by position for a specific record — it breaks when the data is sorted or changes.',
   ],
   tryIt: `On http://localhost:5180/practice-site/table.html run \`$$('#employee-table tbody td:nth-of-type(2)')\` (Department). Now click the Department header to sort and run it again — the column locator still works, but the values moved rows. Then try \`$$("[id$='-page']")\`.`,
-  problems: ['loc-007', 'loc-008', 'loc-009', 'loc-012'],
+  problems: ['loc-007', 'loc-008', 'loc-009', 'loc-012', 'loc-033'],
 }

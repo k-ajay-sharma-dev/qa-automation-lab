@@ -97,5 +97,5 @@ CSS is shorter, fast and readable — use it whenever you identify elements by i
     'Expecting CSS to select a parent or an earlier sibling — CSS only goes down and forward.',
   ],
   tryIt: `On http://localhost:5180/practice-site/form.html run \`$$("input[type='checkbox']")\` and \`$$("#category-group input[type='checkbox']")\` in the Console. Then try \`$$('#registration-form select')\` — how many dropdowns does the form have?`,
-  problems: ['loc-002', 'loc-004', 'loc-005', 'loc-006', 'loc-011', 'loc-022'],
+  problems: ['loc-002', 'loc-004', 'loc-005', 'loc-006', 'loc-011', 'loc-022', 'loc-032'],
 }

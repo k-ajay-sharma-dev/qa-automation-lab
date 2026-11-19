@@ -156,5 +156,5 @@ reported as pending/not finished rather than passed, and the remaining steps are
   ],
   tryIt: `Write (on paper) the annotation for: Then the order confirmation says "Thank you for your order!" - which
 parameter type do you need, and what value will the method receive?`,
-  problems: ['cuc-006', 'cuc-015', 'cuc-017', 'cuc-021', 'cuc-022', 'cuc-029'],
+  problems: ['cuc-006', 'cuc-015', 'cuc-017', 'cuc-021', 'cuc-022', 'cuc-029', 'cuc-033'],
 }

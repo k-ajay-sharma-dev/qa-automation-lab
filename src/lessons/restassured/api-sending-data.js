@@ -161,5 +161,5 @@ Creating something returns **201 Created**, not 200, plus a \`Location\` header 
     'Checking only the PATCH response and not that untouched fields kept their values.',
   ],
   tryIt: `In Postman, log in as standard_user, then PATCH http://localhost:5181/api/users/1 with \`{ "phone": "+91-0000" }\` and the Bearer token. Then PUT the same body. Compare the two responses and note which error code and \`details\` the PUT returns. Finish with POST /api/reset.`,
-  problems: ['api-006', 'api-008', 'api-009', 'api-025', 'api-026'],
+  problems: ['api-006', 'api-008', 'api-009', 'api-025', 'api-026', 'api-037'],
 }

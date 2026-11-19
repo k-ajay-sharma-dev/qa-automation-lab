@@ -98,5 +98,5 @@ Two things to remember:
     'Declaring `ChromeDriver driver = ...` everywhere, which ties the whole framework to one browser.',
   ],
   tryIt: `Open Task Manager (or \`ps\`), run a tiny script that opens \`http://localhost:5180/practice-site/index.html\` and ends without \`quit()\`. Watch the \`chromedriver\` process stay alive. Add \`quit()\` in a \`finally\` and run again — it disappears.`,
-  problems: ['sel-001', 'sel-002', 'sel-021'],
+  problems: ['sel-001', 'sel-002', 'sel-021', 'sel-034'],
 }

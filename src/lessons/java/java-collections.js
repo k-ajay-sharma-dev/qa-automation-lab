@@ -126,5 +126,5 @@ Other handy uses:
     'Using HashMap for form data and being surprised by the fill order — use LinkedHashMap.',
   ],
   tryIt: `On http://localhost:5180/practice-site/inventory.html, pick "Name (Z to A)" in the sort dropdown and write the six product names down in page order. In code, put them into a List, make a sorted copy with \`Comparator.reverseOrder()\`, and confirm \`equals\` returns true.`,
-  problems: ['java-011', 'java-012', 'java-023', 'java-027'],
+  problems: ['java-011', 'java-012', 'java-023', 'java-027', 'java-033'],
 }

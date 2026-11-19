@@ -138,5 +138,5 @@ ask. For money use \`BigDecimal\` and compare with \`compareTo\` (negative, zero
   ],
   tryIt: `On http://localhost:5180/practice-site/inventory.html, choose "Name (Z to A)" and write down the six names. Which
 Comparator would you sort the copy with to check this order?`,
-  problems: ['int-011', 'int-013', 'int-014', 'int-017', 'int-018'],
+  problems: ['int-011', 'int-013', 'int-014', 'int-017', 'int-018', 'int-030'],
 }

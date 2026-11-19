@@ -106,5 +106,5 @@ A locator built on test ids, stable attributes, labels and business data survive
     'Encoding only one of two required conditions — the locator matches the wrong record when data changes.',
   ],
   tryIt: `Open http://localhost:5180/practice-site/dynamic.html, inspect the "Apply coupon" button, note its id, reload, and inspect again. Then run \`$$("[id^='btn-']")\` and write a locator that matches only "Apply coupon" without hard-coding the random part.`,
-  problems: ['loc-011', 'loc-012', 'loc-017', 'loc-018', 'loc-027'],
+  problems: ['loc-011', 'loc-012', 'loc-017', 'loc-018', 'loc-027', 'loc-036'],
 }

@@ -129,5 +129,5 @@ WebElement message = root.findElement(By.cssSelector("#coupon-message"));
     'Assuming handle order (`new ArrayList<>(handles).get(1)`) — Sets have no order.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/windows.html\` click "Open terms + privacy". Two tabs open at once. Write (on paper) the loop that would switch to the one whose URL contains \`privacy\`, and what you would do with the original handle afterwards.`,
-  problems: ['sel-009', 'sel-010', 'sel-011', 'sel-029'],
+  problems: ['sel-009', 'sel-010', 'sel-011', 'sel-029', 'sel-038'],
 }

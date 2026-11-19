@@ -123,5 +123,5 @@ Header names are case-sensitive keys, so a renamed column shows up as \`null\` i
     'Keeping a catch-all regex step like `^I (.*)$` "for convenience" — it causes ambiguity everywhere.',
   ],
   tryIt: `Take any feature step you have, and write the annotation for it twice: once correct, once with a one-word difference. Ask yourself which part of the console output (snippet vs undefined count) would reveal the mismatch.`,
-  problems: ['dbg-010', 'dbg-011', 'dbg-019', 'dbg-022'],
+  problems: ['dbg-010', 'dbg-011', 'dbg-019', 'dbg-022', 'dbg-031'],
 }

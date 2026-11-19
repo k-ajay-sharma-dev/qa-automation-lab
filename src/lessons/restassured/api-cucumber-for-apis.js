@@ -152,5 +152,5 @@ The runner is the same \`@CucumberOptions\` + \`AbstractTestNGCucumberTests\` cl
     'Asserting inside When steps, so the same step cannot be reused for negative scenarios.',
   ],
   tryIt: `Take three Postman requests you would run for the practice API's /api/users/{id} (read, PATCH city, PATCH with a bad email) and write them as declarative Gherkin scenarios. Underline every word that is HTTP detail — none should be left except, at most, a status code in a Then step.`,
-  problems: ['api-005', 'api-014', 'api-017', 'api-018', 'api-024'],
+  problems: ['api-005', 'api-014', 'api-017', 'api-018', 'api-024', 'api-038'],
 }

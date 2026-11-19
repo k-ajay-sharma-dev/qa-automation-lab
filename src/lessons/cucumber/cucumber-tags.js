@@ -124,5 +124,5 @@ selects without opening a browser. Do this before wiring a new expression into C
   ],
   tryIt: `For a feature tagged @cart with scenarios tagged @smoke, @regression and @regression @wip, write down which
 scenarios each expression selects: "@cart", "@smoke or @wip", "@regression and not @wip".`,
-  problems: ['cuc-009', 'cuc-010', 'cuc-025'],
+  problems: ['cuc-009', 'cuc-010', 'cuc-025', 'cuc-035'],
 }
