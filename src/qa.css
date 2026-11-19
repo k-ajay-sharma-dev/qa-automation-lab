@@ -22,6 +22,10 @@
   border-color: color-mix(in srgb, #f0883e 55%, transparent);
   color: var(--lvl-advanced);
 }
+.mode-chip.kind-ts {
+  border-color: color-mix(in srgb, #3178c6 60%, transparent);
+  color: #4b9be8;
+}
 .mode-chip.kind-gherkin {
   border-color: color-mix(in srgb, #3fb950 55%, transparent);
   color: var(--success);
@@ -554,6 +558,33 @@
 }
 .problem-row.lesson-row {
   grid-template-columns: 44px minmax(0, 1fr) 70px 110px;
+}
+
+/* firebase guide */
+.guide summary {
+  cursor: pointer;
+  color: var(--accent);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.guide-steps {
+  margin: 12px 0;
+  padding-left: 20px;
+  font-size: 0.9rem;
+}
+.guide-steps li {
+  margin: 6px 0;
+}
+.guide-rules-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 8px 0 6px;
+}
+.guide-rules {
+  max-height: 340px;
+  overflow: auto;
+  font-size: 0.76rem;
 }
 
 /* settings */

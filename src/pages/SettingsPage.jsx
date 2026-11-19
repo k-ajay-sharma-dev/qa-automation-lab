@@ -1,4 +1,5 @@
 import { AccountCard, BackupCard } from '../components/AccountCard.jsx'
+import FirebaseGuide from '../components/FirebaseGuide.jsx'
 import { MODES } from '../data/mock.js'
 import { resetProgress } from '../store/progress.js'
 import { setSetting, useSettings } from '../store/settings.js'
@@ -25,6 +26,7 @@ export default function SettingsPage() {
       <h1>Settings</h1>
 
       <AccountCard />
+      <FirebaseGuide />
 
       <section className="settings-card">
         <h2>Practice</h2>
