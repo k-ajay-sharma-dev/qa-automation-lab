@@ -78,6 +78,15 @@ An assertion failure reads \`expected [X] but found [Y]\`. Compare the two **typ
 - **Archived artifacts** — screenshots, HTML/Cucumber reports, logs.
 - **Changes** — which commits went into this build. A failure that started right after a change to \`CheckoutPage.java\` is a strong hint.
 
+## Long, parallel logs: find the first failure in time
+
+When tests run on several threads, their lines are **interleaved**, and the Surefire *Results* list at the end is grouped by class — not by time. With 40 red tests, don't start at the top of that list. Instead:
+
+- Read **chronologically** (Jenkins' Timestamper plugin, or a log pattern with time and thread name).
+- Look at what happened **before** the first failure — setup hooks, data resets, logins. A root cause is sometimes only a \`WARN\` line ("reset returned 405 — continuing").
+- Know your **noise**: lines like \`SLF4J(W): No SLF4J providers were found\` or Selenium's CDP-version warning appear in green builds too. Compare with the last green build.
+- **Group** failures by exception + message. Forty failures usually collapse into two or three groups; then check whether each group is explained by the earliest problem.
+
 ## The 60-second routine
 
 1. Summary numbers → is this one failure, many, or a setup failure causing skips?
@@ -97,5 +106,5 @@ An assertion failure reads \`expected [X] but found [Y]\`. Compare the two **typ
     'Opening the Selenium source file named in the top `at` line — it is library code; look for your package.',
   ],
   tryIt: `Take any red build log you have (or the excerpts in this section's problems). Highlight, in three colours: the exception name, the first line in a \`com.\` package of your project, and the last \`Caused by\`. Practise until it takes under a minute.`,
-  problems: ['dbg-015', 'dbg-001', 'dbg-012'],
+  problems: ['dbg-015', 'dbg-001', 'dbg-012', 'dbg-027'],
 }

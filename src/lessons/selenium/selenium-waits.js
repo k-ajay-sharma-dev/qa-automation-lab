@@ -3,7 +3,7 @@ export default {
   category: 'selenium',
   order: 5,
   title: 'Explicit and fluent waits (and why not Thread.sleep)',
-  minutes: 9,
+  minutes: 10,
   summary: 'Synchronise tests with the application using WebDriverWait, the right ExpectedCondition and FluentWait with a custom condition — no sleeps, no mixed waits.',
   manualAnalogy: `When you test by hand you naturally wait: you click "Load", watch the spinner, and only when the data appears do you check it. You don't count to five — you wait *for something*. Automation must do the same, because a script is much faster than a person and will happily click a button that hasn't appeared yet.`,
   body: `## The problem: the script is faster than the page
@@ -51,6 +51,27 @@ Assert.assertTrue(msg.getText().contains("WAIT4IT"));
 
 A typical "load then read" flow is two waits: first for the spinner to go away, then for the result to be visible. Waiting only for the result is often fine; waiting only for the spinner is not (the result might render a moment later).
 
+### The "false before, true after" test
+
+Before you write a wait, ask: *is this condition already true before the event?* If yes, the wait returns instantly and the test is flaky. "Claim reward" is **visible** from the first second (it is only disabled), so \`visibilityOf\` proves nothing — \`elementToBeClickable\` does. The order status is visible the whole time — wait for the **new text** instead.
+
+### Counts, attributes and things that go away
+
+\`\`\`java
+By rows = By.cssSelector("#employee-table tbody tr");                          // table.html
+driver.findElement(By.id("table-search")).sendKeys("Sales");
+wait.until(ExpectedConditions.numberOfElementsToBe(rows, 2));                   // exact count
+By nameHeader = By.cssSelector("th[data-sort='name']");
+driver.findElement(nameHeader).click();                                          // sort by name
+wait.until(ExpectedConditions.attributeToBe(nameHeader, "aria-sort", "ascending"));
+wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("loading-spinner")));
+\`\`\`
+
+- \`numberOfElementsToBe\` waits for an exact count; \`numberOfElementsToBeMoreThan\` for "the list grew".
+- \`attributeToBe\` / \`attributeContains\` wait for a value or a CSS class (\`class\` contains \`hidden\`, \`aria-expanded\` is \`true\`).
+- \`invisibilityOfElementLocated\` is true when the element is hidden **or missing** — great for spinners, but it also passes *before* a spinner has appeared.
+- \`stalenessOf(oldElement)\` is true once an element you hold has been removed — proof that a list was rebuilt.
+
 ## FluentWait: full control
 
 \`WebDriverWait\` is actually a pre-configured \`FluentWait\`. Use \`FluentWait\` directly when you need a different polling interval, specific exceptions to ignore, or a condition that no \`ExpectedConditions\` method covers.
@@ -78,7 +99,8 @@ Integer count = fluent.until(d -> {
 Create the \`WebDriverWait\` once (in the page object or base test) and reuse it; creating a new one per line adds noise, not reliability.`,
   keyPoints: [
     'Explicit waits poll a condition and return as soon as it is true — fast and reliable.',
-    'Choose the condition that matches the user\'s wait: visible, invisible, clickable, text, count.',
+    'Choose the condition that matches the user\'s wait: visible, invisible, clickable, text, count, attribute.',
+    'A good condition is false before the event and true only after it.',
     '`until()` returns the element/value — use it directly.',
     'Never mix implicit and explicit waits; set implicit to zero.',
     'FluentWait = custom timeout, polling, ignored exceptions and a lambda condition; re-find elements inside the lambda.',
@@ -90,5 +112,5 @@ Create the \`WebDriverWait\` once (in the page object or base test) and reuse it
     'Catching a `WebElement` outside a FluentWait lambda and reusing it — it goes stale on re-render.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/waits.html\` reload and watch section 1: a banner is *added* about 4 s after load. Decide which condition you would use for it, and which you would use for section 2's hidden message. Why are they different?`,
-  problems: ['sel-006', 'sel-007', 'sel-008'],
+  problems: ['sel-006', 'sel-007', 'sel-008', 'sel-026', 'sel-027'],
 }

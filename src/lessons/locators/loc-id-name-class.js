@@ -61,6 +61,8 @@ List<WebElement> cartRows = driver.findElements(By.className("cart-item")); // o
 
 - \`By.className\` takes **one** class. \`By.className("btn btn-primary")\` fails — use CSS \`.btn.btn-primary\` instead.
 - In CSS a class is written with a dot: \`.cart-item\`.
+- Hidden is not gone: pages that show one step or tab at a time often keep the others in the HTML, hidden by CSS. A class-only locator
+  finds the hidden copies too, so \`findElement\` may return one the user cannot even see.
 
 ## data-testid: the contract with developers
 
@@ -93,5 +95,5 @@ Ask two questions of every locator: *Does it match exactly what I mean?* (check 
     'Trusting an id that contains a random-looking suffix — reload the page and see if it changes.',
   ],
   tryIt: `On http://localhost:5180/practice-site/checkout.html, find three different locators for the Last Name field (id, name, data-testid). Test each in DevTools with \`$$()\` and confirm each matches 1 element.`,
-  problems: ['loc-001', 'loc-002', 'loc-003', 'loc-004', 'loc-017'],
+  problems: ['loc-001', 'loc-002', 'loc-003', 'loc-004', 'loc-017', 'loc-020'],
 }

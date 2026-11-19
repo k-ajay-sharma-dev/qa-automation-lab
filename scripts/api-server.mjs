@@ -40,6 +40,17 @@
 //                                       200 user · 400 VALIDATION_FAILED · 403 FORBIDDEN · 422 INVALID_EMAIL
 //   PATCH  /api/users/{id}              auth (own user) · partial update (address fields are merged)
 //                                       200 user · 403 FORBIDDEN · 422 INVALID_EMAIL | READ_ONLY_FIELD
+//   POST   /api/users                   register a customer (no auth) · body { username, password, firstName, lastName, email,
+//                                       phone?, address? } · username 3–40 of [a-z0-9_.-], password ≥ 8 chars
+//                                       201 user (+ Location: /api/users/{id}) · 400 VALIDATION_FAILED · 409 USERNAME_TAKEN
+//                                       · 422 INVALID_EMAIL. Registered users log in with their own password; reset removes them.
+//   POST   /api/users/{id}/avatar       auth (own user) · multipart/form-data with a part "file" (image/png or image/jpeg,
+//                                       1 byte–100 KB) and an optional text part "altText" (≤ 120 chars)
+//                                       201 { userId, fileName, contentType, sizeBytes, altText, uploadedAt, url } (+ Location)
+//                                       400 VALIDATION_FAILED | INVALID_MULTIPART · 403 FORBIDDEN · 413 PAYLOAD_TOO_LARGE
+//                                       · 415 UNSUPPORTED_MEDIA_TYPE (body not multipart, or file part not png/jpeg)
+//   GET    /api/users/{id}/avatar       200 avatar metadata · 404 USER_NOT_FOUND | AVATAR_NOT_FOUND
+//   DELETE /api/users/{id}/avatar       auth (own user) · 204 · 404 AVATAR_NOT_FOUND
 //   GET    /api/slow?ms=2000            waits ms (0–10000) then 200 { delayedMs } — for response-time / timeout practice
 //   Anything else                       404 ROUTE_NOT_FOUND · wrong method 405 METHOD_NOT_ALLOWED · bad JSON 400 INVALID_JSON
 import { createServer } from 'node:http'
@@ -94,6 +105,7 @@ function reset() {
     carts: new Map(), // userId -> [{ productId, quantity }]
     orders: new Map(), // id -> order
     orderSeq: 1000,
+    avatars: new Map(), // userId -> avatar metadata
   }
 }
 reset()
@@ -294,6 +306,122 @@ function updateUser(req, rawId, body, full) {
   return userView(target)
 }
 
+function registerUser(body) {
+  const details = []
+  if (typeof body.username !== 'string' || !/^[a-z0-9_.-]{3,40}$/.test(body.username)) {
+    details.push({ field: 'username', message: 'username must be 3-40 characters of a-z, 0-9, _ . -' })
+  }
+  if (typeof body.password !== 'string' || body.password.length < 8) details.push({ field: 'password', message: 'password must be at least 8 characters' })
+  for (const f of ['firstName', 'lastName', 'email']) {
+    if (typeof body[f] !== 'string' || !body[f].trim()) details.push({ field: f, message: `${f} is required` })
+  }
+  if ('phone' in body && typeof body.phone !== 'string') details.push({ field: 'phone', message: 'phone must be a string' })
+  if ('address' in body && (typeof body.address !== 'object' || body.address === null || Array.isArray(body.address))) details.push({ field: 'address', message: 'address must be an object' })
+  if (details.length) throw err(400, 'VALIDATION_FAILED', 'Registration request is invalid', details)
+  if (!EMAIL_RE.test(body.email)) throw err(422, 'INVALID_EMAIL', `"${body.email}" is not a valid email address`, [{ field: 'email', message: 'must be a valid email address' }])
+  if (db.users.some((u) => u.username === body.username)) throw err(409, 'USERNAME_TAKEN', `Username "${body.username}" is already registered`)
+  const address = {}
+  for (const f of ADDRESS_FIELDS) address[f] = body.address && body.address[f] !== undefined ? String(body.address[f]) : ''
+  const user = {
+    id: Math.max(...db.users.map((u) => u.id)) + 1,
+    username: body.username,
+    password: body.password,
+    locked: false,
+    firstName: body.firstName.trim(),
+    lastName: body.lastName.trim(),
+    email: body.email,
+    phone: body.phone || '',
+    roles: ['CUSTOMER'],
+    address,
+  }
+  db.users.push(user)
+  return userView(user)
+}
+
+const MAX_AVATAR_BYTES = 100 * 1024
+const MAX_UPLOAD_REQUEST = 2 * 1024 * 1024
+const AVATAR_TYPES = ['image/png', 'image/jpeg']
+
+async function readRaw(req, limit) {
+  const chunks = []
+  let size = 0
+  for await (const c of req) {
+    size += c.length
+    if (size <= limit) chunks.push(c)
+  }
+  if (size > limit) throw err(413, 'PAYLOAD_TOO_LARGE', `Request body must not exceed ${limit} bytes`)
+  return Buffer.concat(chunks)
+}
+
+// Minimal multipart/form-data parser (enough for RestAssured, curl and Postman uploads).
+function parseMultipart(buf, boundary) {
+  const delim = Buffer.from(`--${boundary}`)
+  const parts = []
+  let pos = buf.indexOf(delim)
+  if (pos === -1) return null
+  for (;;) {
+    pos += delim.length
+    if (buf[pos] === 45 && buf[pos + 1] === 45) return parts // closing "--"
+    if (buf[pos] === 13 && buf[pos + 1] === 10) pos += 2
+    const next = buf.indexOf(delim, pos)
+    if (next === -1) return null
+    let part = buf.subarray(pos, next)
+    if (part.length >= 2 && part[part.length - 2] === 13 && part[part.length - 1] === 10) part = part.subarray(0, part.length - 2)
+    const sep = part.indexOf('\r\n\r\n')
+    if (sep === -1) return null
+    const headers = {}
+    for (const line of part.subarray(0, sep).toString('utf8').split('\r\n')) {
+      const i = line.indexOf(':')
+      if (i > 0) headers[line.slice(0, i).trim().toLowerCase()] = line.slice(i + 1).trim()
+    }
+    const cd = headers['content-disposition'] || ''
+    const name = /\bname="([^"]*)"/i.exec(cd)?.[1]
+    const filename = /\bfilename="([^"]*)"/i.exec(cd)?.[1]
+    const contentType = (headers['content-type'] || (filename !== undefined ? 'application/octet-stream' : 'text/plain')).split(';')[0].trim().toLowerCase()
+    parts.push({ name, filename, contentType, data: part.subarray(sep + 4) })
+    pos = next
+  }
+}
+
+async function uploadAvatar(req, rawId) {
+  const me = auth(req)
+  const target = targetUser(req, rawId)
+  if (me.id !== target.id) throw err(403, 'FORBIDDEN', 'You can only change your own avatar')
+  const ct = req.headers['content-type'] || ''
+  if (!/^multipart\/form-data/i.test(ct)) {
+    throw err(415, 'UNSUPPORTED_MEDIA_TYPE', `Avatar upload must be multipart/form-data, got "${ct || 'no Content-Type'}"`)
+  }
+  const bm = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(ct)
+  if (!bm) throw err(400, 'INVALID_MULTIPART', 'multipart/form-data request has no boundary')
+  const parts = parseMultipart(await readRaw(req, MAX_UPLOAD_REQUEST), (bm[1] || bm[2]).trim())
+  if (!parts) throw err(400, 'INVALID_MULTIPART', 'Could not parse the multipart body')
+  const file = parts.find((p) => p.name === 'file')
+  const alt = parts.find((p) => p.name === 'altText')
+  const details = []
+  if (!file || file.filename === undefined) details.push({ field: 'file', message: 'a file part named "file" is required' })
+  else if (!file.data.length) details.push({ field: 'file', message: 'file must not be empty' })
+  const altText = alt ? alt.data.toString('utf8') : null
+  if (altText !== null && altText.length > 120) details.push({ field: 'altText', message: 'altText must be at most 120 characters' })
+  if (details.length) throw err(400, 'VALIDATION_FAILED', 'Avatar upload is invalid', details)
+  if (!AVATAR_TYPES.includes(file.contentType)) {
+    throw err(415, 'UNSUPPORTED_MEDIA_TYPE', `Avatar must be image/png or image/jpeg, got ${file.contentType}`, [{ field: 'file', message: `unsupported type ${file.contentType}` }])
+  }
+  if (file.data.length > MAX_AVATAR_BYTES) {
+    throw err(413, 'PAYLOAD_TOO_LARGE', `Avatar must be at most ${MAX_AVATAR_BYTES} bytes, got ${file.data.length}`, [{ field: 'file', message: 'at most 100 KB' }])
+  }
+  const avatar = {
+    userId: target.id,
+    fileName: file.filename,
+    contentType: file.contentType,
+    sizeBytes: file.data.length,
+    altText,
+    uploadedAt: new Date().toISOString(),
+    url: `/api/users/${target.id}/avatar`,
+  }
+  db.avatars.set(target.id, avatar)
+  return avatar
+}
+
 async function route(req, res, url) {
   const { pathname } = url
   const m = req.method
@@ -322,7 +450,7 @@ async function route(req, res, url) {
         const details = ['username', 'password'].filter((f) => typeof body[f] !== 'string' || !body[f]).map((f) => ({ field: f, message: `${f} is required` }))
         if (details.length) throw err(400, 'VALIDATION_FAILED', 'username and password are required', details)
         const user = db.users.find((u) => u.username === body.username)
-        if (!user || body.password !== PASSWORD) throw err(401, 'INVALID_CREDENTIALS', 'Username and password do not match any user in this service')
+        if (!user || body.password !== (user.password ?? PASSWORD)) throw err(401, 'INVALID_CREDENTIALS', 'Username and password do not match any user in this service')
         if (user.locked) throw err(403, 'USER_LOCKED', 'Sorry, this user has been locked out.')
         const token = `se_${user.id}_${(++db.tokenSeq).toString().padStart(4, '0')}_${Buffer.from(user.username).toString('hex').slice(0, 12)}`
         db.tokens.set(token, user.id)
@@ -397,6 +525,31 @@ async function route(req, res, url) {
       break
 
     case 'users':
+      if (parts.length === 2 && m === 'POST') {
+        const created = registerUser(await readJson(req))
+        return send(res, 201, created, { Location: `/api/users/${created.id}` })
+      }
+      if (parts.length === 4 && b === 'avatar') {
+        if (m === 'GET') {
+          const target = targetUser(req, a)
+          const avatar = db.avatars.get(target.id)
+          if (!avatar) throw err(404, 'AVATAR_NOT_FOUND', `User ${target.id} has no avatar`)
+          return send(res, 200, avatar)
+        }
+        if (m === 'POST') {
+          const avatar = await uploadAvatar(req, a)
+          return send(res, 201, avatar, { Location: avatar.url })
+        }
+        if (m === 'DELETE') {
+          const me = auth(req)
+          const target = targetUser(req, a)
+          if (me.id !== target.id) throw err(403, 'FORBIDDEN', 'You can only change your own avatar')
+          if (!db.avatars.has(target.id)) throw err(404, 'AVATAR_NOT_FOUND', `User ${target.id} has no avatar`)
+          db.avatars.delete(target.id)
+          return send(res, 204)
+        }
+        throw methodNotAllowed('GET, POST, DELETE')
+      }
       if (parts.length !== 3) break
       if (m === 'GET') return send(res, 200, userView(targetUser(req, a)))
       if (m === 'PUT' || m === 'PATCH') return send(res, 200, updateUser(req, a, await readJson(req), m === 'PUT'))

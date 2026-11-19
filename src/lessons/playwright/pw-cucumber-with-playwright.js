@@ -39,6 +39,14 @@ Feature: Checkout
 
 Write **what** the shopper does, never **how** (no clicks, selectors or URLs) — then UI changes touch only page objects. Use \`Background\` for shared visible preconditions, \`Scenario Outline\` + \`Examples\` for the same behaviour with several data rows, a **data table** under a step for structured input, and \`Rule:\` to group scenarios by business rule. Tags (\`@smoke\`, \`@regression\`, \`@wip\`) on a Feature are inherited by its scenarios.
 
+Turning manual test cases or an email of acceptance criteria into a feature:
+
+- **One behaviour per scenario.** Cases that differ only in data become one outline; a different flow (cancel instead of confirm) is its own scenario.
+- **One \`Rule:\` per business rule** in the criteria, so the reader can tick them off.
+- **Pick examples on purpose**: one row per field or path that matters, plus the empty / no-result case.
+- **Random values** (order numbers, dates) are stated as a rule — "starts with SE-" — and checked with a pattern in the step definition.
+- **Verify the expected data** against the real system before handing the feature over; a wrong count in an Examples row is a test bug.
+
 ## The World: per-scenario state
 
 \`\`\`ts
@@ -138,5 +146,5 @@ Run: \`npx cucumber-js\` (default profile), \`npx cucumber-js --profile nightly\
     'Feature files full of clicks and selectors (often pasted from codegen) — unreadable and brittle.',
   ],
   tryIt: `Write (on paper or in an editor) the Gherkin for: "a shopper with Junior Onesie in the cart checks out and sees the order confirmation". Keep it to 3–4 declarative steps, then list which page-object methods the step definitions would call.`,
-  problems: ['pw-015', 'pw-016', 'pw-017', 'pw-018', 'pw-019', 'pw-020'],
+  problems: ['pw-015', 'pw-016', 'pw-017', 'pw-018', 'pw-019', 'pw-020', 'pw-024', 'pw-028'],
 }

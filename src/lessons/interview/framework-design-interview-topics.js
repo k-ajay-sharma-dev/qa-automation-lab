@@ -3,7 +3,7 @@ export default {
   category: 'interview',
   order: 2,
   title: 'Framework design questions: POM, PageFactory, Cucumber vs TestNG, OOP',
-  minutes: 9,
+  minutes: 10,
   summary: 'Explain the design choices inside a Selenium framework and point to where each OOP concept lives in your own code.',
   manualAnalogy: `When someone asks why your regression pack is organised by module with shared preconditions, you can explain
 the reasoning, not just the layout. Framework questions are the same: interviewers want the "why" behind each
@@ -52,6 +52,33 @@ Hooks pair up like this: Cucumber \`@Before\`/\`@After\` run around **each scena
 When is **plain TestNG** (no Cucumber) the better choice? When nobody outside QA reads the tests - for example
 technical API checks or component-level suites. Gherkin then only adds a translation layer to maintain.
 
+## BDD is a practice; Cucumber is a tool
+
+"What is BDD?" is a trap question. BDD (behaviour-driven development) is a way of **working together**: before a
+story is built, a business person, a developer and a tester (the *three amigos*) talk it through with concrete
+examples. Those agreed examples are written as Gherkin scenarios, and only then automated with Cucumber. The
+conversation is where most bugs are prevented - "what happens if the user is locked out?" asked in refinement costs
+nothing; found in production it costs a hotfix.
+
+Two things interviewers listen for:
+
+- **Who writes the feature files, and when?** Ideally drafted during refinement - often by the tester or BA - and
+  reviewed by the others *before* development. If in your team QA wrote them alone afterwards, say so honestly and
+  say what you would improve.
+- **Declarative, not imperative.** A step should say what the user achieves, not which buttons are clicked:
+
+\`\`\`gherkin
+# imperative - a script in disguise
+When I type "locked_out_user" into "#user-name" and click "#login-button"
+# declarative - business language
+When a locked-out customer tries to log in
+Then they are told their account is locked
+\`\`\`
+
+The selectors and clicks belong in step definitions and page objects. If a step contains a CSS selector, a URL or
+the word "click", it is usually too low-level. And remember: **Background** holds shared *business* context visible
+to readers; **hooks** hold technical setup such as starting the browser.
+
 ## OOP: point to where it lives
 
 "Explain OOP" is boring. "Show me OOP in your framework" is what senior interviewers ask. Have one example for each:
@@ -83,6 +110,7 @@ That pattern turns any "X vs Y" question into a short, senior-sounding answer.`,
     'By locators plug directly into explicit waits; keep assertions out of page objects.',
     'Cucumber = BDD layer (Gherkin, glue, hooks, tags); TestNG = runner (assertions, parallel, listeners, suites).',
     'Map each OOP pillar to a concrete class in your framework, not a textbook definition.',
+    'BDD = three-amigos conversation with examples before development; Cucumber only automates them. Write declarative steps.',
     'For any "X vs Y" question: choice, reason, rejected alternative.',
   ],
   mistakes: [
@@ -93,5 +121,5 @@ That pattern turns any "X vs Y" question into a short, senior-sounding answer.`,
   ],
   tryIt: `Open your own framework (or sketch one) and write the class name next to each OOP concept in the table. If a row
 is empty, that is the follow-up question you are not ready for yet.`,
-  problems: ['int-001', 'int-002', 'int-004', 'int-010'],
+  problems: ['int-001', 'int-002', 'int-004', 'int-010', 'int-025'],
 }

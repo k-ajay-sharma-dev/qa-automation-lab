@@ -51,6 +51,12 @@ export default function LocatorWorkspace({ p, entry, onResult, exam = false, onL
   const frame = useRef(null)
 
   const doc = () => frame.current?.contentDocument
+  // Highlight classes must be gone before evaluating, or an exact @class='x' XPath stops matching.
+  const clearHits = (d) =>
+    d?.querySelectorAll(`.${HIT}`).forEach((n) => {
+      n.classList.remove(HIT)
+      if (!n.classList.length) n.removeAttribute('class')
+    })
 
   const highlight = useCallback((nodes) => {
     const d = doc()
@@ -70,6 +76,7 @@ export default function LocatorWorkspace({ p, entry, onResult, exam = false, onL
     if (!ready) return
     const t = setTimeout(() => {
       const d = doc()
+      clearHits(d)
       const r = evaluate(d, strategy, text)
       setLive(r)
       highlight(r.nodes)
@@ -85,8 +92,10 @@ export default function LocatorWorkspace({ p, entry, onResult, exam = false, onL
   function check() {
     const d = doc()
     if (!d) return
+    clearHits(d)
     const expected = [...d.querySelectorAll(p.expected)]
     const r = evaluate(d, strategy, text)
+    highlight(r.nodes)
     const same = r.nodes.length === expected.length && expected.every((e) => r.nodes.includes(e)) && expected.length > 0
     const extra = r.nodes.filter((n) => !expected.includes(n)).length
     const missing = expected.filter((e) => !r.nodes.includes(e)).length

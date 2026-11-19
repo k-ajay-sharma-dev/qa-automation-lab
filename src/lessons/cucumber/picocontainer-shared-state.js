@@ -100,6 +100,20 @@ The \`Hooks\` class also takes \`TestContext\` in its constructor. \`@Before\` c
 \`context.setDriver(...)\`; \`@After\` quits \`context.getDriver()\`. Because it is the same instance, the steps see
 the driver the hook created (see the *Hooks* lesson).
 
+## Several small world objects
+
+One big \`TestContext\` with twenty fields becomes a junk drawer. Larger suites split scenario state into small, typed
+"world" objects and inject only what each class needs - PicoContainer happily passes several:
+
+\`\`\`java
+public class ProfileSteps {
+    public ProfileSteps(TestContext context, UserState user) { ... }
+}
+\`\`\`
+
+Typical examples: \`UserState\` (who is logged in), an \`ApiContext\` (auth token and last HTTP response for API
+steps), a cart or order state. Each one is created once per scenario and shared by every class that asks for it.
+
 ## Going further
 
 - Large projects inject several objects (a \`TestContext\` plus a \`PageObjectManager\` that creates pages lazily).
@@ -123,5 +137,5 @@ the driver the hook created (see the *Hooks* lesson).
   ],
   tryIt: `Log in on http://localhost:5180/practice-site/login.html and look at the #logged-in-user text on the inventory
 page. Which step would store the value, and which step in which class would read it?`,
-  problems: ['cuc-012', 'cuc-017'],
+  problems: ['cuc-012', 'cuc-017', 'cuc-023', 'cuc-029'],
 }

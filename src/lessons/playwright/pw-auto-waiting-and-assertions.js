@@ -3,7 +3,7 @@ export default {
   category: 'playwright',
   order: 4,
   title: 'Auto-waiting and web-first assertions (goodbye sleeps)',
-  minutes: 9,
+  minutes: 10,
   summary: 'Understand actionability checks and retrying assertions, choose the right matcher and timeout, and replace every fixed wait with a condition.',
   manualAnalogy: `As a manual tester you never set a stopwatch for "5 seconds, then check". You click *Load more*, watch the spinner, and check the list as soon as it has updated. Playwright works the same way: actions wait until the element is ready, and assertions keep looking until the expected result shows up — or until it is clearly not going to.`,
   body: `## Two built-in kinds of waiting
@@ -54,10 +54,13 @@ await expect(page.locator('#review-feed .feed-item')).toHaveCount(10);
 | \`toHaveCount(n)\` | number of matched elements |
 | \`toBeEnabled()\` / \`toBeDisabled()\` / \`toBeChecked()\` | state |
 | \`toHaveValue(v)\` | input value |
-| \`toHaveAttribute(name, v)\` / \`toHaveClass(c)\` | attributes |
+| \`toHaveAttribute(name, v)\` / \`toHaveClass(c)\` | attributes — \`toHaveClass(/selected/)\` with a RegExp checks one class among several |
+| \`toBeFocused()\` | the element has keyboard focus (e.g. the first invalid field after a failed submit) |
 | \`toHaveURL(u)\` / \`toHaveTitle(t)\` | page-level |
 
-Negate with \`.not\`: \`await expect(locator).not.toBeVisible()\`. Soft assertions that do not stop the test: \`await expect.soft(locator).toHaveText(...)\`.
+Negate with \`.not\`: \`await expect(locator).not.toBeVisible()\`. Assert the **state the user experiences**, not only a message: after a failed form submit, the banner text, the highlighted field and where the cursor is are three separate facts, and each has a matcher.
+
+One more detail: \`toHaveText\` compares the **whole** text of the element, children included. A banner that contains a message *and* a close button with "×" will not equal the message alone — use \`toContainText\` there, or point the locator at the message element.
 
 ## Timeouts: change them locally
 
@@ -86,6 +89,39 @@ Auto-waiting covers elements. For other things there are dedicated waits — all
 - \`page.waitForEvent('download' | 'popup' | ...)\`
 - \`expect.poll(async () => fetchSomething()).toBe(...)\` and \`expect(async () => {...}).toPass()\` — retry any custom check
 
+## Retrying anything: expect.poll, toPass and soft assertions
+
+Web-first matchers need a locator or a page. When the thing you check is a **value** — something in browser storage, a field from an API,
+a file size — wrap the code that produces it in \`expect.poll\`:
+
+\`\`\`ts
+// login.html with "Remember me" ticked stores the username in localStorage
+await expect
+  .poll(() => page.evaluate(() => localStorage.getItem('shopeasy.rememberedUser')))
+  .toBe('standard_user');
+\`\`\`
+
+The function is called again and again until the matcher passes or the timeout runs out. The value must be produced **inside** the
+function — \`expect.poll(async () => x)\` with an \`x\` read earlier never changes.
+
+When several steps must succeed **together**, retry the whole block with \`toPass\`:
+
+\`\`\`ts
+await expect(async () => {
+  const res = await request.get('http://localhost:5181/api/products/1');
+  expect(res.status()).toBe(200);
+  expect(((await res.json()) as { stock: number }).stock).toBeGreaterThan(0);
+}).toPass({ intervals: [500, 1_000], timeout: 10_000 });
+\`\`\`
+
+\`toPass\` has **no timeout by default** (it retries until the test times out), so always pass one.
+
+**Soft assertions** do not stop the test: \`await expect.soft(locator).toHaveText(...)\` records a failure and carries on, and the test is
+reported as failed at the end with every soft failure listed. Use them for independent facts on one screen (all the fields of a summary),
+never for preconditions — if the page did not even load, continuing only produces noise.
+
+## The one wait you never use
+
 What you will **not** find in a good Playwright suite: \`page.waitForTimeout(…)\`. It exists for debugging; in a test it is a guess that is too long when the app is fast and too short when CI is slow.
 
 ## Reading a waiting failure
@@ -99,6 +135,7 @@ Received *Processing* tells you the app was still working — the wait was too s
     'Pick matchers that describe the user-visible outcome: toBeVisible, toHaveText, toHaveCount, toBeEnabled.',
     'Increase timeouts per assertion, not globally.',
     'Use waitForResponse / waitForURL / waitForEvent / expect.poll for non-element waits — never waitForTimeout.',
+    'expect.poll retries a value, toPass retries a block (give it a timeout), expect.soft reports all failures of one screen.',
   ],
   mistakes: [
     'expect(await locator.isVisible()).toBe(true) — isVisible never waits; use await expect(locator).toBeVisible().',
@@ -107,5 +144,5 @@ Received *Processing* tells you the app was still working — the wait was too s
     'Waiting for a spinner to appear before waiting for it to disappear — if it was quick you wait for nothing.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/waits.html\`, open DevTools → Console, click *Refresh prices* and watch the list being replaced by a spinner and re-rendered. Which matcher would you use to wait for the new list, and why would a Selenium WebElement captured before the click go stale while a Playwright locator does not?`,
-  problems: ['pw-007', 'pw-008'],
+  problems: ['pw-007', 'pw-008', 'pw-021', 'pw-026'],
 }

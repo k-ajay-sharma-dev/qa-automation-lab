@@ -55,6 +55,32 @@ Make one for errors too (\`expectBody("error.code", notNullValue())\`) so every 
 
 Never log real passwords or production tokens into CI output; use \`LogConfig.logConfig().blacklistHeader("Authorization")\` to mask the header.
 
+## Filters: code that runs around every request
+
+The \`RequestLoggingFilter\` above is one example of a **filter**. You can write your own by implementing \`io.restassured.filter.Filter\`:
+
+\`\`\`java
+public class CorrelationIdFilter implements Filter {
+    @Override
+    public Response filter(FilterableRequestSpecification req,
+                           FilterableResponseSpecification res,
+                           FilterContext ctx) {
+        req.header("X-Correlation-Id", "test-" + UUID.randomUUID());   // before sending
+        Response response = ctx.next(req, res);                          // send it
+        if (response.statusCode() >= 500) {                              // after: look at the answer
+            System.out.println("Server error for " + req.getURI());
+        }
+        return response;
+    }
+}
+\`\`\`
+
+- Everything **before** \`ctx.next(...)\` changes the request; everything **after** it sees the response. Always return the response.
+- Register it once: \`new RequestSpecBuilder().addFilter(new CorrelationIdFilter())\` — every test using the spec gets it for free.
+- Common uses: adding or refreshing a token, correlation ids, masked logging, recording traffic for the report (\`AllureRestAssured\` is a ready-made filter).
+- A filter that adds a header should leave alone a header the test set on purpose (check \`req.getHeaders().hasHeaderWithName(...)\` first) — otherwise negative tests with a bad token become impossible.
+- Filters prepare and record; they should not decide pass or fail. Assertions stay in the tests.
+
 ## Response-time assertions
 
 Non-functional checks fit naturally:
@@ -76,6 +102,12 @@ RestAssured.config = RestAssured.config().httpClient(HttpClientConfig.httpClient
 \`\`\`
 
 The practice API has \`GET /api/slow?ms=1500\` so you can see both: a time assertion that fails, and a socket timeout that throws.
+
+Why timing checks go flaky, and what to do about it:
+- \`time()\` includes everything the client sees — connection setup, a busy CI agent, the network — not just server work.
+- The **first** call of a run is slower (connections, caches, JIT). Warm up with an unmeasured call, e.g. the health check that runs first anyway.
+- A time assertion only runs *after* the response arrives; it cannot stop a hang. That is the timeout's job.
+- Retrying failed timing checks hides real slowdowns. If you want trends, record \`response.timeIn(TimeUnit.MILLISECONDS)\` into the report and keep the assertion a coarse ceiling.
 
 ## The layers of an API framework
 
@@ -121,6 +153,7 @@ Return the \`Response\` (not just a POJO) so tests can assert status codes for n
     'Use log().ifValidationFails() in CI and mask Authorization headers.',
     'then().time(lessThan(ms), MILLISECONDS) is a performance smoke; client timeouts stop hung tests.',
     'Layers: config → specs → auth → clients (one per resource) → POJOs → tests/steps, plus reporting.',
+    'A custom Filter (implements Filter, ends with ctx.next) adds cross-cutting behaviour like tokens or correlation ids to every request.',
   ],
   mistakes: [
     'Copy-pasting base URI and headers into every test instead of a spec.',
@@ -129,5 +162,5 @@ Return the \`Response\` (not just a POJO) so tests can assert status codes for n
     'Tight response-time limits copied from production SLAs, making CI flaky on slower agents.',
   ],
   tryIt: `Open http://localhost:5181/api/slow?ms=1200 in the browser and watch it wait. Then write down which parts of the request specification you would put in a "base" spec and which only in an "authed" spec for the cart and orders endpoints.`,
-  problems: ['api-011', 'api-019', 'api-020'],
+  problems: ['api-011', 'api-019', 'api-020', 'api-027', 'api-028'],
 }

@@ -48,6 +48,10 @@ Debugging steps:
 2. Log \`driver.getWindowHandle()\` and \`driver.getTitle()\` around window switches.
 3. Make sure the code saves the original handle up front and switches back to it explicitly after closing a child window. Wait for the expected number of windows before switching.
 
+### More than two windows: pick by what the user sees
+
+With one child window, "the handle that isn't the original" is unambiguous. With **two or more** it becomes a coin toss — the classic *intermittent* window bug: \`expected [Privacy Policy] but found [Terms of Service]\` on one run in three. Identify the window the way a tester would: by its **title** or **URL**. Loop over the handles, switch, check \`getTitle()\`, and do it inside a wait, because a new tab's title is often set by JavaScript a moment after it opens. Then close every child (switching to each before \`close()\`) and switch back — in a \`finally\`, so one failure doesn't leave extra windows for the next test.
+
 ## 3. Green locally, red on Jenkins: headless layout
 
 \`\`\`text
@@ -90,5 +94,5 @@ Fix: give the browser an explicit, realistic size through options (\`--window-si
     'Debugging a headless-only failure locally with a maximised browser and concluding "can\'t reproduce".',
   ],
   tryIt: `Open \`http://localhost:5180/practice-site/frames.html\`, open DevTools Console and switch the context drop-down from "top" to the support frame. Run \`document.getElementById('support-email')\` in both contexts and compare — that is exactly what the driver experiences.`,
-  problems: ['dbg-004', 'dbg-005', 'dbg-006'],
+  problems: ['dbg-004', 'dbg-005', 'dbg-006', 'dbg-020'],
 }

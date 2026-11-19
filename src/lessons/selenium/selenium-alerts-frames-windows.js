@@ -2,8 +2,8 @@ export default {
   slug: 'selenium-alerts-frames-windows',
   category: 'selenium',
   order: 6,
-  title: 'Switching context: alerts, iframes and windows',
-  minutes: 9,
+  title: 'Switching context: alerts, iframes, windows and shadow DOM',
+  minutes: 10,
   summary: 'Know where the driver is "standing" and move it with switchTo(): into browser alerts, into and out of nested iframes, and between tabs and windows.',
   manualAnalogy: `As a manual tester you always know where your attention is: on a pop-up that blocks the page, inside an embedded payment widget, or in the new tab that just opened. The driver has exactly one place it is "looking" at any moment, and — unlike you — it never moves its attention on its own. You must tell it with \`driver.switchTo()\`.`,
   body: `## The one rule
@@ -91,19 +91,36 @@ driver.get("http://localhost:5180/practice-site/table.html");
 
 \`newWindow\` opens **and** switches in one call — useful to compare two pages side by side, or to check an admin page without losing the user session.
 
+## 4. Shadow DOM: a private document inside an element
+
+Web components (\`<coupon-widget>\` on \`dynamic.html\`) can hide their inner HTML in a **shadow root**. DevTools shows it under \`#shadow-root (open)\`, but \`driver.findElement\` stops at the component's tag — a classic "it's right there but NoSuchElement" moment. Unlike frames there is nothing to switch: you search *from* the shadow root.
+
+\`\`\`java
+WebElement host = driver.findElement(By.cssSelector("coupon-widget"));
+SearchContext root = host.getShadowRoot();                      // Selenium 4
+WebElement message = root.findElement(By.cssSelector("#coupon-message"));
+\`\`\`
+
+- \`getShadowRoot()\` returns a \`SearchContext\` — it has \`findElement\`/\`findElements\` like the driver.
+- Inside a shadow root use **CSS selectors**; Chromium does not support XPath there.
+- \`ExpectedConditions\` methods that take a \`By\` search the main document, so wait on the shadow *element* instead (\`visibilityOf(element)\`, \`textToBePresentInElement(element, text)\`).
+- A component inside a component: call \`getShadowRoot()\` again on the inner host. Closed shadow roots cannot be reached at all.
+
 ## Summary table
 
 | You see | Context switch | Back out |
 |---|---|---|
 | Browser dialog | \`alertIsPresent()\` / \`switchTo().alert()\` | \`accept()\` / \`dismiss()\` |
 | Embedded widget | \`frameToBeAvailableAndSwitchToIt(...)\` | \`parentFrame()\` / \`defaultContent()\` |
-| New tab / pop-up | \`switchTo().window(handle)\` | \`switchTo().window(original)\` |`,
+| New tab / pop-up | \`switchTo().window(handle)\` | \`switchTo().window(original)\` |
+| Web component | \`host.getShadowRoot()\` (no switch needed) | use the driver again |`,
   keyPoints: [
     'The driver has one current context and never switches by itself.',
     'JS alerts are browser dialogs: wait with `alertIsPresent()`, then accept/dismiss/getText/sendKeys. HTML modals are normal elements.',
     'Iframes nest like folders: enter one level at a time; `parentFrame()` = up one, `defaultContent()` = top.',
     'Save the original window handle, wait for the window count, switch by comparing handles.',
     'After `close()`, switch back explicitly. Selenium 4 `newWindow(WindowType.TAB)` opens and switches.',
+    'Shadow DOM: `host.getShadowRoot()` gives a SearchContext; search inside it with CSS only.',
   ],
   mistakes: [
     'Trying to `findElement` the OK button of a JS alert — it is not in the DOM. Use the `Alert` API.',
@@ -112,5 +129,5 @@ driver.get("http://localhost:5180/practice-site/table.html");
     'Assuming handle order (`new ArrayList<>(handles).get(1)`) — Sets have no order.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/windows.html\` click "Open terms + privacy". Two tabs open at once. Write (on paper) the loop that would switch to the one whose URL contains \`privacy\`, and what you would do with the original handle afterwards.`,
-  problems: ['sel-009', 'sel-010', 'sel-011'],
+  problems: ['sel-009', 'sel-010', 'sel-011', 'sel-029'],
 }

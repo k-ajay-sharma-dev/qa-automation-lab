@@ -59,6 +59,10 @@ Fix pattern:
 
 Don't wrap it in \`catch (Exception e) { sleep; retry }\`.
 
+### Tables that sort, filter and page
+
+Data tables are the most common stale trap. On many sites (including the ShopEasy waits.html price list) a sort click, each letter typed into a search box, or a pager click **rebuilds the rows from scratch**. A test that does *find rows → click "sort" → read rows* reads rows that no longer exist. Turn the order around: *act → wait for proof (the header's \`aria-sort\` changed, an old row is stale, the "Showing … of …" counter changed) → find the rows → read them*. Keep a helper that always finds the cells fresh rather than a field holding them.
+
 ## Signature 4 — "the wait took longer than its timeout": mixed waits
 
 \`\`\`text
@@ -93,5 +97,5 @@ Timing failures **pass sometimes** and the screenshot shows a page that is *not 
     'Keeping an implicit wait "as a safety net" alongside explicit waits.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/waits.html\` open DevTools → Performance, record, click "Load orders" and stop. Find the moment the spinner disappears and the result appears — that gap is exactly what an unsynchronised script falls into.`,
-  problems: ['dbg-001', 'dbg-002', 'dbg-003', 'dbg-008'],
+  problems: ['dbg-001', 'dbg-002', 'dbg-003', 'dbg-008', 'dbg-016'],
 }

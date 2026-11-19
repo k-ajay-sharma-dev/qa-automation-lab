@@ -3,7 +3,7 @@ export default {
   category: 'interview',
   order: 5,
   title: 'Java collections for automation: List, Set, Map',
-  minutes: 8,
+  minutes: 10,
   summary: 'Choose between List, Set and Map (and their ordered variants) for real Selenium tasks like reading products, checking duplicates and verifying sort order.',
   manualAnalogy: `When you verify a product page by hand you make little lists: "names I saw, in order", "have I seen this one
 already?", "product -> price". Java collections are exactly those notes. Picking the right one makes the check a
@@ -95,13 +95,40 @@ int n = clicksPerButton.getOrDefault("cancel", 0);              // 0 if never se
 
 Why the copy? \`Collections.sort(actual)\` sorts *in place*; comparing the list with itself always passes - a test
 that can never fail. For example, after choosing "Name (A to Z)" in \`#product-sort\`, you would compare the page's
-names with a sorted copy of themselves.`,
+names with a sorted copy of themselves.
+
+## Sorting a Map by its values
+
+A \`Map\` has no \`sort()\` method, and \`TreeMap\` sorts by **key** only. To order by **value** - for example
+product -> stock from \`GET /api/products\` (Storm Fleece Jacket 12, Trailblazer Backpack 25, Junior Onesie 30...) -
+use the three-step recipe:
+
+\`\`\`java
+List<Map.Entry<String, Integer>> entries = new ArrayList<>(stock.entrySet());   // 1. copy entries to a List
+entries.sort(Map.Entry.comparingByValue());                                       // 2. sort by value
+Map<String, Integer> byStock = new LinkedHashMap<>();                              // 3. keep that order
+for (Map.Entry<String, Integer> e : entries) byStock.put(e.getKey(), e.getValue());
+\`\`\`
+
+- A \`Map.Entry\` is one key-value pair; \`getKey()\` and \`getValue()\` read it.
+- Add \`.reversed()\` to the comparator for descending order, and \`thenComparing(Map.Entry.comparingByKey())\` as a
+  **tie-breaker** - two products with the same value must always come out in the same order, or your expected
+  output is flaky.
+- Step 3 matters: putting sorted entries into a \`HashMap\` throws the order away again.
+
+## Highest, second highest, top N
+
+"Find the maximum" needs no sorting: keep one variable and replace it whenever you see something bigger. "Second
+highest" keeps **two** variables - when a new maximum arrives, the old maximum moves down to second place. Decide out
+loud what duplicates mean: in the stock list above, is the second highest the second *distinct* value? Usually yes -
+ask. For money use \`BigDecimal\` and compare with \`compareTo\` (negative, zero or positive), never \`==\`.`,
   keyPoints: [
     'List = ordered with duplicates, Set = unique, Map = key -> value.',
     'Hash* = no order, LinkedHash* = insertion order, Tree* = sorted.',
     'findElements returns an empty List when nothing matches; getWindowHandles returns a Set.',
     'Set.add returns false for a duplicate - no nested loops needed.',
     'To verify sorting: copy the actual list, sort the copy, compare - never sort the original.',
+    'Sort a Map by value: entries -> List -> sort with comparingByValue (+ tie-breaker) -> LinkedHashMap.',
   ],
   mistakes: [
     'Using HashMap/HashSet when order matters in the output. Fix: LinkedHashMap/LinkedHashSet.',
@@ -111,5 +138,5 @@ names with a sorted copy of themselves.`,
   ],
   tryIt: `On http://localhost:5180/practice-site/inventory.html, choose "Name (Z to A)" and write down the six names. Which
 Comparator would you sort the copy with to check this order?`,
-  problems: ['int-011', 'int-013', 'int-014'],
+  problems: ['int-011', 'int-013', 'int-014', 'int-017', 'int-018'],
 }

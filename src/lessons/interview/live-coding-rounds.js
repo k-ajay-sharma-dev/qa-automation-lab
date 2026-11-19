@@ -29,6 +29,21 @@ solution you cannot finish. Narrate as you type.
 character, all duplicates, special characters. Say what you would add next if you had time. This step is where QA
 candidates shine - most developers skip it.
 
+## Pattern 0: words instead of characters
+
+Many tasks work on **words**: reverse the word order, count words, capitalise each word. The first step is always
+the same - turn the sentence into an array of words safely:
+
+\`\`\`java
+String[] words = label.trim().split("\\\\s+");   // "  Item   total  " -> ["Item", "total"]
+\`\`\`
+
+- \`trim()\` removes spaces at both ends; without it the array starts with an empty string \`""\`.
+- \`split\` takes a **regular expression**. \`"\\\\s+"\` means "one or more whitespace characters", so double spaces or
+  a tab count as one separator. \`split(" ")\` would create empty words between two spaces.
+- To glue words back together use \`String.join(" ", listOfWords)\` or a \`StringBuilder\` that adds a space only
+  *between* words - interviewers notice a trailing space in your output.
+
 ## Pattern 1: looping over a String
 
 A \`String\` is a sequence of characters. \`charAt(i)\` gives the character at position \`i\` (starting at 0) and
@@ -116,6 +131,33 @@ Live rounds often mix Java with Selenium: select a dropdown option with the \`Se
 elements, convert, sort a copy, assert. Use explicit waits, scope locators to the right container, and include the
 actual values in your assertion message - it shows you think about the person reading the failure.
 
+### The "complete test in 15 minutes" task
+
+Some interviewers hand you the practice site and an empty class: *"Write a full test for this flow."* The danger is
+running out of time with nothing runnable. Work in this order:
+
+1. **Skeleton first** (2 minutes): \`@BeforeMethod\` creates the driver, a \`WebDriverWait\` and opens the start
+   page; an empty \`@Test\`; \`@AfterMethod(alwaysRun = true)\` quits the driver. \`alwaysRun\` makes TestNG clean up
+   even after a failed assertion.
+2. **Locators as constants** at the top - \`private static final By LOGIN_ERROR = By.id("login-error-message");\` -
+   so you can say "in my framework these live in page objects".
+3. **Steps with a wait at every state change**: after a navigation, before a click on something that appears later,
+   before reading text that JavaScript writes.
+4. **Real assertions with messages** on the values that matter (counts, money, messages), not just "page is
+   displayed". Work out the expected numbers out loud first.
+5. **Last two minutes**: list the improvements you would make - page objects, config for the base URL, API setup
+   for preconditions.
+
+A tiny example of steps 3-4 on a different flow, the locked-out user:
+
+\`\`\`java
+driver.findElement(USERNAME).sendKeys("locked_out_user");
+driver.findElement(PASSWORD).sendKeys("secret_sauce");
+driver.findElement(LOGIN_BUTTON).click();
+String error = wait.until(ExpectedConditions.visibilityOfElementLocated(LOGIN_ERROR)).getText();
+Assert.assertEquals(error, "Error: Sorry, this user has been locked out.", "Locked-out user message");
+\`\`\`
+
 ## If you get stuck
 
 Say what you are thinking, write the method signature and a test call, solve a simpler version first (ignore case
@@ -126,6 +168,7 @@ sensitivity, say), and keep going. Silence is the only real failure in a coding 
     'Counting pattern: LinkedHashMap + merge or getOrDefault.',
     'Duplicates: a Set whose add() returns false - one pass instead of nested loops.',
     'Money is BigDecimal; regex via a static final Pattern, find() in a loop, group() to read captures.',
+    'Words: trim() then split("\\\\s+"). Full Selenium task: skeleton first, waits at state changes, real assertions, alwaysRun teardown.',
   ],
   mistakes: [
     'Starting to type immediately. Fix: spend a minute on questions and a plan.',
@@ -135,5 +178,5 @@ sensitivity, say), and keep going. Silence is the only real failure in a coding 
   ],
   tryIt: `Without looking at any code, write a method that returns the first character that appears only once in a String
 ("shopeasy" -> 'h'). Time yourself to 10 minutes and say each step out loud.`,
-  problems: ['int-012', 'int-013', 'int-014', 'int-015'],
+  problems: ['int-012', 'int-013', 'int-014', 'int-015', 'int-016', 'int-019'],
 }

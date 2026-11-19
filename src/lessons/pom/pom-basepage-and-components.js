@@ -3,7 +3,7 @@ export default {
   category: 'pom',
   order: 5,
   title: 'BasePage and components: reuse without copy-paste',
-  minutes: 9,
+  minutes: 10,
   summary: 'Move shared waits and helpers into an abstract BasePage that every page extends, and model repeated page parts (header, pagination) as components that pages contain.',
   manualAnalogy: `Every manual test case in your suite shares some rules: "wait for the spinner before clicking", "clear the field before typing". You do not rewrite them in each case; they live in the test plan's general section. BasePage is that general section. And when the same header with the cart icon appears on five screens, you describe it once and say "use the header" — that is a component.`,
   body: `## Part 1 — BasePage: inheritance
@@ -109,6 +109,46 @@ The test reads: \`tablePage.pagination().nextPage().pageInfo()\`. If pagination 
 
 Component methods can also return pages — a header's "open cart" returns a \`CartPage\`, its "log out" returns a \`LoginPage\`, following the *Fluent page objects* lesson.
 
+### Components for repeated items: a root element
+
+The header appears once per page. A product card or a table row appears **many** times. For those, build the
+component around a **root** \`WebElement\` — the container of one item — and search only inside it:
+
+\`\`\`java
+public class EmployeeRow {                         // one <tr> on table.html
+    private final WebElement root;
+    private final By cells = By.tagName("td");
+
+    public EmployeeRow(WebElement root) { this.root = root; }
+
+    public String name()   { return root.findElements(cells).get(0).getText().trim(); }
+    public String status() { return root.findElement(By.cssSelector(".status-pill")).getText(); }
+    public void edit()     { root.findElement(By.cssSelector(".btn-edit")).click(); }
+}
+\`\`\`
+
+- \`root.findElement(...)\` searches **only inside this row**, so \`status()\` can never read another employee's status.
+- With XPath inside a root, start with \`.//\` — a plain \`//\` searches the whole page again.
+- The page turns each container into a component:
+  \`driver.findElements(rowsLocator).stream().map(EmployeeRow::new).toList()\`, and usually offers a finder by a
+  business key (\`row("Priya Sharma")\`) that throws a clear error when nothing matches.
+- A root is a real element, so it can go **stale** when the list re-renders. Fetch components *after* the action that
+  changes the list; do not keep them in fields.
+
+Locating the root is a locator exercise of its own: "the card that contains this product name" —
+\`//div[@data-testid='inventory-item'][.//a[normalize-space()='...']]\`.
+
+### Dialogs are components too
+
+An HTML modal ("Delete address?", "Are you sure?") is ordinary page content drawn on top of the page — you can
+inspect it in DevTools, so normal locators work and \`switchTo().alert()\` does **not** (that is only for native
+JavaScript \`alert/confirm/prompt\`). Model it as a component with a clear lifecycle:
+
+1. The method that opens it returns the dialog object (its constructor can wait until it is visible).
+2. Its buttons (\`confirm()\`, \`cancel()\`) **wait until it is gone**, then return the page underneath.
+
+Waiting for the overlay to disappear prevents \`ElementClickInterceptedException\` on the very next click.
+
 ## Inheritance vs composition — when to use which
 
 | Question | Answer → |
@@ -131,5 +171,5 @@ A deep chain like \`CheckoutPage extends CartPage extends InventoryPage\` is a s
     'Chaining pages through inheritance (Checkout extends Cart) — keep one level and compose.',
   ],
   tryIt: `Open http://localhost:5180/practice-site/inventory.html and cart.html side by side. List every element both pages share (look at the header). Those shared ids are the private locators of your future component; the rest stay in each page.`,
-  problems: ['pom-005', 'pom-007', 'pom-013'],
+  problems: ['pom-005', 'pom-007', 'pom-013', 'pom-017', 'pom-018', 'pom-019'],
 }

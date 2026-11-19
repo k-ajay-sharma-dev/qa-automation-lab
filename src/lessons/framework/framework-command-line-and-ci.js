@@ -3,7 +3,7 @@ export default {
   category: 'framework',
   order: 8,
   title: 'Running from the command line and in CI (Jenkins, GitHub Actions)',
-  minutes: 9,
+  minutes: 10,
   summary: 'Run the suite with Maven commands and -D options, make it work headless on a build server, and write Jenkins and GitHub Actions pipelines that always publish results.',
   manualAnalogy: `Your manual regression happens when someone schedules it. Automation earns its keep when it runs **without you**: every night, on every merge, on a machine with no screen. The command line is how a machine "presses Run", and a CI pipeline is the scheduled test cycle that always files its evidence, pass or fail.`,
   body: `## Maven commands you will use daily
@@ -102,6 +102,34 @@ jobs:
 
 The \`run:\` step is what actually executes the suite. \`if: always()\` is GitHub's version of Jenkins' \`post { always }\`. Secrets come from repository settings as \`\${{ secrets.NAME }}\` and are passed in as \`-D\` values.
 
+## Schedules and matrices
+
+Two GitHub Actions features turn a push-only job into a proper test cycle:
+
+\`\`\`yaml
+on:
+  schedule:
+    - cron: '30 22 * * *'        # every day 22:30 UTC
+  workflow_dispatch:              # "Run workflow" button
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        env: [qa, uat]
+    runs-on: ubuntu-latest
+    steps:
+      # ... checkout, setup-java ...
+      - run: mvn -B clean test -Denv=\${{ matrix.env }} -Dheadless=true
+\`\`\`
+
+- **cron** fields are *minute hour day-of-month month day-of-week*, always in UTC. \`1-5\` in the last field means Monday to Friday. Jenkins has the same idea: \`triggers { cron('H 2 * * 1-5') }\`.
+- A **matrix** copies the job once per value (here one job for \`qa\`, one for \`uat\`) and runs them in parallel; inside the job the value is \`\${{ matrix.env }}\`. The same works for browsers.
+- \`fail-fast: false\` stops one failing matrix job from cancelling the others — for tests you want every result.
+- Each matrix job uploading an artifact needs a **unique artifact name** — put the matrix value in it.
+- Secrets reach the job as environment variables: \`env: { SHOPEASY_API_TOKEN: \${{ secrets.SHOPEASY_API_TOKEN }} }\`.
+
 ## A healthy CI habit
 
 - Smoke on every push (fast), full regression nightly (slow).
@@ -121,5 +149,5 @@ The \`run:\` step is what actually executes the suite. \`if: always()\` is GitHu
     'Hard-coding secrets in the Jenkinsfile or workflow — use the CI credential store.',
   ],
   tryIt: `From a terminal in your project folder, run \`mvn -B clean test -Dtest=<one of your test classes>\` and then the same with \`-Dheadless=true\`. Open \`target/surefire-reports\` and find the XML file Jenkins' \`junit\` step would read.`,
-  problems: ['fw-012', 'fw-013'],
+  problems: ['fw-012', 'fw-013', 'fw-022'],
 }

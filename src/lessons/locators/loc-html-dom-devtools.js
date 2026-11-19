@@ -78,6 +78,23 @@ List<WebElement> rows = driver.findElements(By.cssSelector(".cart-item"));  // z
 
 \`findElement\` returns the **first** match (and throws \`NoSuchElementException\` if there are none), so a locator that accidentally matches three elements "works" — while silently using the wrong one. That is why the match count you checked in DevTools matters.
 
+## Groups in the tree: dropdowns and lists
+
+Many checks are about a **group** of elements — "the sort menu offers four choices", "the cart shows two lines". In the DOM a group is
+usually one parent with several children of the same kind:
+
+\`\`\`html
+<select id="product-sort">          <!-- parent: the dropdown -->
+  <option value="az">Name (A to Z)</option>
+  <option value="za">Name (Z to A)</option>
+  …
+</select>
+\`\`\`
+
+Locate the **parent** by something unique, then go down to its children: \`#product-sort option\`. Starting from the parent matters
+because pages often have several groups of the same kind (two dropdowns, a nav menu and a card grid full of links) — a bare \`option\` or
+\`a\` collects all of them. Pass the result to \`findElements\` and assert the list size, because an empty list never throws.
+
 ## The Locator Lab
 
 In this app's locator problems the page loads in the Lab, your locator is run against the real DOM, and every matched element is highlighted with the count. Treat the count like a test result: wrong count = locator bug.`,
@@ -94,5 +111,5 @@ In this app's locator problems the page loads in the Lab, your locator is run ag
     'Writing the locator in Java first and debugging by re-running the test — check it in DevTools first, it takes seconds.',
   ],
   tryIt: `Open http://localhost:5180/practice-site/cart.html, press F12 and Inspect the Checkout button. In the Console run \`$$('.btn')\` and \`$$('#checkout')\` — compare the counts and hover over the results to see which elements light up.`,
-  problems: ['loc-001', 'loc-003', 'loc-017'],
+  problems: ['loc-001', 'loc-003', 'loc-017', 'loc-019', 'loc-021'],
 }

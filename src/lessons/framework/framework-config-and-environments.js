@@ -97,7 +97,15 @@ A typo in a key is now a compile error in one method instead of a runtime \`null
 
 ## Secrets
 
-Passwords and API keys should not be committed in plain text. Keep a placeholder in the file and supply the real value from CI as \`-Dpassword=...\` from a Jenkins credential or a GitHub Actions secret, or from an environment variable read with \`System.getenv("SHOPEASY_PASSWORD")\`.
+Passwords and API keys must never be committed — not in a properties file, not as a "fallback" in Java. Anything that reached git stays in its history even after you delete the line, so a leaked secret has to be **rotated**.
+
+The usual design is a small lookup for each secret:
+
+1. A **system property** for a quick local run (\`-Dapi.token=...\`).
+2. Otherwise an **environment variable**, read with \`System.getenv("SHOPEASY_API_TOKEN")\` — \`getenv\` returns \`null\` when it is not set.
+3. Otherwise **stop** with a message that names the variable and how to set it. No default value.
+
+On CI, the secret store (Jenkins credentials, GitHub repository secrets) injects the environment variable and masks it in the build log — safer than putting the value on the \`mvn\` command line, which may be printed. On your laptop, set the variable in your shell or IntelliJ run configuration, or keep a git-ignored local file. And when you log configuration, mask secrets (\`token=*****\`).
 
 ## How the pieces connect
 
@@ -116,5 +124,5 @@ Passwords and API keys should not be committed in plain text. Keep a placeholder
     'Forgetting values are text — `"10"` must be parsed before use as a number.',
   ],
   tryIt: `Write two tiny files, \`local.properties\` and \`qa.properties\`, with different \`baseUrl\` values. In a scratch \`main\` method print \`System.getProperty("env", "local")\`, then run it with and without \`-Denv=qa\` (in IntelliJ: Run configuration → VM options). Watch the value change without touching code.`,
-  problems: ['fw-006', 'fw-012'],
+  problems: ['fw-006', 'fw-012', 'fw-021'],
 }

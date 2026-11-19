@@ -86,6 +86,25 @@ public void setUp(@Optional("chrome") String browser) {
 
 Data providers have their own setting: \`data-provider-thread-count\` on the suite, used by \`@DataProvider(parallel = true)\`. The reference framework uses this to run Cucumber scenarios in parallel.
 
+## Cross-browser: one \`<test>\` block per browser
+
+A \`<parameter>\` placed **inside** a \`<test>\` applies only to that block and overrides a suite-level one with the same name. That gives a cross-browser plan without copying any test class:
+
+\`\`\`xml
+<suite name="Checkout on two browsers" parallel="tests" thread-count="2">
+  <test name="Checkout - Edge">
+    <parameter name="browser" value="edge"/>
+    <classes><class name="com.shopeasy.tests.CheckoutTest"/></classes>
+  </test>
+  <test name="Checkout - Chrome">
+    <parameter name="browser" value="chrome"/>
+    <classes><class name="com.shopeasy.tests.CheckoutTest"/></classes>
+  </test>
+</suite>
+\`\`\`
+
+\`parallel="tests"\` runs the two blocks side by side, and the report keeps them apart under their \`<test>\` names. The set-up method reads the value with \`@Parameters\` (plus \`@Optional\` for IDE runs) and hands it to the driver factory — the test classes never mention a browser. On CI a pipeline matrix that passes \`-Dbrowser\` is the alternative (see the *Command line and CI* lesson).
+
 ## Parallel safety checklist
 
 Parallel runs expose shared state. Before turning it on:
@@ -112,5 +131,5 @@ Teams often keep \`smoke.xml\` and \`regression.xml\`. Choose one at run time: \
     'Typos in class or package names — TestNG may silently run zero tests; check the run count.',
   ],
   tryIt: `Take three tests you know and decide for each: which groups would you give it? Then write, on paper, the \`<run>\` block that runs "everything in checkout except work in progress". Compare with the anatomy above.`,
-  problems: ['fw-005', 'fw-002'],
+  problems: ['fw-005', 'fw-002', 'fw-017'],
 }

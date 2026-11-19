@@ -90,6 +90,39 @@ await page.getByLabel('Outdoor gear').check();
 await page.getByLabel('Sales channels').selectOption(['web', 'marketplace']);
 \`\`\`
 
+## Mouse and keyboard without an Actions class
+
+Selenium needs \`new Actions(driver)\` for hovering, dragging and key presses. In Playwright these are methods on the locator, so they
+auto-wait and scroll into view like every other action:
+
+\`\`\`ts
+// dynamic.html — the submenu only exists for the user while the mouse is over "My account"
+await page.getByRole('button', { name: 'My account' }).hover();
+await expect(page.getByRole('menuitem', { name: 'Wishlist' })).toBeVisible();
+
+await page.locator('#draggable').dragTo(page.locator('#droppable'));   // press, move, release
+
+await page.getByLabel('Zip/Postal Code').press('Enter');              // checkout.html: submits the form
+\`\`\`
+
+\`page.mouse\` and \`page.keyboard\` exist for raw input (a canvas, a slider moved by pixels), but coordinates depend on screen size —
+prefer the locator methods.
+
+## Harder pages: generated ids, exact matches and shadow DOM
+
+- **Generated ids** (\`btn-8f3a2\` today, \`btn-c71d0\` tomorrow): ignore them. Role + name, label or text are stable.
+- **Substring traps**: text matching is a substring by default, and *Inactive* contains *Active*. When a condition must be the whole
+  text, put an exact locator inside \`has\`:
+
+\`\`\`ts
+const viewers = page.locator('.user-card').filter({ has: page.getByText('Viewer', { exact: true }) });
+\`\`\`
+
+  The locator inside \`has\` is searched **inside each card**. Chain several \`filter\` calls to combine conditions (AND).
+- **Shadow DOM**: web components hide their inner elements in a *shadow root*. Selenium needs \`getShadowRoot()\`; Playwright's CSS, role,
+  label and text locators **pierce open shadow roots automatically** — write the locator as if the shadow DOM were not there. Only XPath
+  does not pierce, and closed shadow roots cannot be automated at all.
+
 ## Finding a good locator fast
 
 Run \`npx playwright codegen <url>\` or open UI mode and use **Pick locator**: hover an element and Playwright shows the locator it recommends.`,
@@ -99,6 +132,7 @@ Run \`npx playwright codegen <url>\` or open UI mode and use **Pick locator**: h
     'Locators are strict: 2+ matches on an action is an error — refine instead of using .first().',
     'Chain locators to search inside a container; filter({ hasText / has }) to pick an item from a list by business data.',
     'Use the right action: fill, check, selectOption, setInputFiles — not click-and-type tricks.',
+    'hover(), dragTo() and press() replace Selenium Actions; locators pierce open shadow roots without extra code.',
   ],
   mistakes: [
     'getByText for buttons and links — it also matches labels and paragraphs; getByRole is precise.',
@@ -107,5 +141,5 @@ Run \`npx playwright codegen <url>\` or open UI mode and use **Pick locator**: h
     'Copying absolute XPaths from DevTools into tests.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/dynamic.html\` open DevTools → Elements → Accessibility pane and select the *Place order* button: note its role and name. Which getByRole call would match it uniquely? Then try the three "Save…" buttons — how do you match only *Save*?`,
-  problems: ['pw-005', 'pw-006', 'pw-012'],
+  problems: ['pw-005', 'pw-006', 'pw-012', 'pw-023', 'pw-025'],
 }

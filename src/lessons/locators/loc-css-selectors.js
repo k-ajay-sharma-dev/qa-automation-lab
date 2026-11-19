@@ -16,6 +16,9 @@ export default {
 | \`[attr]\` | elements that have the attribute at all | \`[data-testid]\` |
 | \`[attr='value']\` | attribute equals value exactly | \`[name='postalCode']\` |
 
+Attributes do not have to be identifiers. Some describe **behaviour** — \`type='email'\`, \`href\`, \`target\`, \`aria-label\`. Locating by
+them lets one selector find "every element that behaves like this" on any page, e.g. \`input[type='email']\` for every email field.
+
 Quotes inside the brackets can be single or double. In Java the whole selector is a Java string, so use single quotes inside: \`By.cssSelector("[name='postalCode']")\`.
 
 ## Combining conditions on ONE element (no spaces!)
@@ -94,5 +97,5 @@ CSS is shorter, fast and readable — use it whenever you identify elements by i
     'Expecting CSS to select a parent or an earlier sibling — CSS only goes down and forward.',
   ],
   tryIt: `On http://localhost:5180/practice-site/form.html run \`$$("input[type='checkbox']")\` and \`$$("#category-group input[type='checkbox']")\` in the Console. Then try \`$$('#registration-form select')\` — how many dropdowns does the form have?`,
-  problems: ['loc-002', 'loc-004', 'loc-005', 'loc-006', 'loc-011'],
+  problems: ['loc-002', 'loc-004', 'loc-005', 'loc-006', 'loc-011', 'loc-022'],
 }

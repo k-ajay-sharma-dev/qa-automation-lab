@@ -28,6 +28,19 @@ List<WebElement> all = country.getOptions();
 
 **Multi-select** lists (\`<select multiple>\`) allow several choices. \`Select\` supports them too: call \`select…\` more than once, then \`getAllSelectedOptions()\`; \`deselectAll()\` resets. \`isMultiple()\` tells you which kind you have.
 
+\`\`\`java
+Select channels = new Select(driver.findElement(By.id("channels")));   // form.html
+channels.deselectAll();                       // start from a known state
+channels.selectByValue("social");
+channels.selectByVisibleText("Physical store");
+channels.deselectByVisibleText("Social media");    // the user changed their mind
+List<String> chosen = channels.getAllSelectedOptions().stream().map(WebElement::getText).toList();
+\`\`\`
+
+- On a multi-select every \`select…\` call **adds** a choice; on a normal dropdown it **replaces** the choice.
+- \`deselect…\` methods only exist for multi-selects — on a normal dropdown they throw \`UnsupportedOperationException\`.
+- The page *submits* option values (\`social\`, \`retail\`) but the user *reads* the texts. When you verify what the application received (a summary page, an API call), compare values; when you verify the screen, compare texts.
+
 > \`Select\` only works on a real \`<select>\`. Many modern UIs draw "dropdowns" with \`<div>\`s — for those you click the box, then click the option like any other element.
 
 ## Reading many values and checking an order
@@ -79,7 +92,7 @@ driver.findElement(By.cssSelector("input[type='file']")).sendKeys(file.toString(
 Afterwards the input's \`value\` attribute contains the file name (browsers show \`C:\\fakepath\\...\`), which is enough to assert the browser accepted it.`,
   keyPoints: [
     '`new Select(element)` works on real `<select>` tags: `selectByVisibleText`, `selectByValue`, `getFirstSelectedOption`.',
-    'Multi-selects: select several, then check `getAllSelectedOptions()`.',
+    'Multi-selects: `deselectAll()` first, select several, deselect what changed, then check `getAllSelectedOptions()`.',
     'Never click a checkbox blindly — guard with `isSelected()`.',
     'Sorting check: collect values, convert to numbers if needed, compare with a sorted copy.',
     'File upload = `sendKeys(absolutePath)` on `<input type="file">`; never click it.',
@@ -91,5 +104,5 @@ Afterwards the input's \`value\` attribute contains the file name (browsers show
     'Passing a relative path to the file input — the browser cannot resolve it. Use `toAbsolutePath()`.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/form.html\` open DevTools and look at \`#country\`. Write down the visible text and value of each option, then decide which \`select…\` call you would use if the site were also available in German.`,
-  problems: ['sel-004', 'sel-005'],
+  problems: ['sel-004', 'sel-005', 'sel-024'],
 }

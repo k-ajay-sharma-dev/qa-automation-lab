@@ -67,6 +67,20 @@ List<String> departments = driver.findElements(deptCells).stream()
 
 When the table shows 5 rows per page, "find row X" becomes a loop: look on the current page with \`findElements\` (an empty list means "not here", no exception), and if not found, click **Next ›** (\`#next-page\`) and look again. Stop when the Next button is disabled (\`!isEnabled()\`) and fail with a clear message naming what you searched for. After clicking Next, wait for the table to change (for example the page info text in \`#page-info\`) before reading — otherwise you may read the old page.
 
+### Reading the whole table into data
+
+When the check is about the *data* ("15 employees, no duplicates, 2 in Finance"), read every page into a list of maps keyed by header text, then assert with ordinary Java:
+
+\`\`\`java
+Map<String, String> row = new LinkedHashMap<>();
+List<WebElement> cells = tr.findElements(By.tagName("td"));
+for (int i = 0; i < headers.size(); i++) {
+    row.put(headers.get(i), cells.get(i).getText().trim());   // "Department" -> "Finance"
+}
+\`\`\`
+
+Keying by header means a new column does not break anything. Collect the maps page by page (waiting for the page to change after each **Next ›**), then compare the total with the app's own counter in \`#row-count\` and use a \`Set\` of names to catch rows that appear twice at a page boundary.
+
 ## Selenium 4 relative locators
 
 Sometimes the best description is spatial: "the button to the right of *Save draft*". Selenium 4 adds \`RelativeLocator.with\`:
@@ -108,5 +122,5 @@ So treat relative locators as a sensible *temporary* choice when the app gives y
     'Using a relative locator and then running headless at a small window size where the layout wraps.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/dynamic.html\` paste \`//ul[@id='order-list']/li[span[normalize-space()='ORD-1042']]//button\` into DevTools' Ctrl+F. Confirm it says 1 of 1, then remove the \`li[...]\` filter and see how many it matches.`,
-  problems: ['sel-015', 'sel-017', 'sel-004'],
+  problems: ['sel-015', 'sel-017', 'sel-004', 'sel-030'],
 }

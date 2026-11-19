@@ -3,7 +3,7 @@ export default {
   category: 'cucumber',
   order: 7,
   title: 'Hooks: setup, teardown and screenshots on failure',
-  minutes: 7,
+  minutes: 9,
   summary: 'Use Cucumber @Before/@After hooks to open and close the browser for every scenario and attach evidence when a scenario fails.',
   manualAnalogy: `Before each manual test you open a fresh browser and clear the session; after it you close everything and, if
 the test failed, you attach a screenshot to the defect. Hooks are those "before every test / after every test"
@@ -93,6 +93,33 @@ higher number - you cannot screenshot a browser that has already quit.
 A hook can be limited with a tag expression: \`@Before("@cart")\` runs only for scenarios tagged \`@cart\` - handy for
 seeding a cart or clearing \`localStorage\` before cart tests only (see the *Tags* lesson).
 
+## Tagged hooks for fast setup
+
+Tagged hooks are a clean way to give some scenarios a head start without touching the others. ShopEasy keeps its cart
+in the browser's \`sessionStorage\` (key \`shopeasy.cart\`, see \`shop.js\`). A hook can empty it for scenarios that must
+start with an empty cart:
+
+\`\`\`java
+@Before(value = "@empty-cart", order = 20)
+public void emptyCart() {
+    ((JavascriptExecutor) context.getDriver())
+        .executeScript("sessionStorage.removeItem('shopeasy.cart');");
+}
+\`\`\`
+
+- \`value\` is a tag expression; \`order\` places it after the browser-starting hook (lower runs first).
+- \`JavascriptExecutor\` runs a line of JavaScript inside the page. Storage belongs to the site's origin, so a shop
+  page must already be open.
+- Only scenarios tagged \`@empty-cart\` pay for this; scenarios that test the cart UI itself stay untouched.
+
+## The @After ordering trap and @AfterStep
+
+Because \`@After\` hooks run from the **highest** order down, a cleanup hook with a high number (say it navigates to
+the login page) runs *before* a screenshot hook with order 0 - and every failure screenshot shows the login page.
+Two fixes: give evidence collection the higher order, or collect evidence in an \`@AfterStep\` hook. \`@AfterStep\`
+runs straight after each step, while the browser still shows the page where the failure happened; check
+\`scenario.isFailed()\` there so you only attach images for the failing step.
+
 ## Where does the driver go?
 
 The hook creates the browser, but the step classes need to use it. Storing it in a \`static\` field "works" until you
@@ -104,6 +131,8 @@ run in parallel. The clean way is a shared, per-scenario context object injected
     'scenario.isFailed() + TakesScreenshot (OutputType.BYTES) + scenario.attach(..., "image/png", name) puts evidence in the report.',
     'Use try/finally so driver.quit() always runs.',
     '@Before: lower order first; @After: higher order first.',
+    'Tagged hooks (@Before(value = "@tag", order = n)) give only matching scenarios extra setup.',
+    '@AfterStep with scenario.isFailed() captures evidence at the exact failing step.',
   ],
   mistakes: [
     'Importing org.junit.Before or TestNG\'s @BeforeMethod in the hooks class. Fix: io.cucumber.java.Before / After.',
@@ -113,5 +142,5 @@ run in parallel. The clean way is a shared, per-scenario context object injected
   ],
   tryIt: `Write (on paper) the order in which these run for one scenario with two steps: @Before, Background step,
 @BeforeStep, @AfterStep, @After. Where would a screenshot of the failing step best be taken?`,
-  problems: ['cuc-011'],
+  problems: ['cuc-011', 'cuc-024'],
 }

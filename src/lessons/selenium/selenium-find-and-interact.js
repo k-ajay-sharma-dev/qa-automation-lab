@@ -3,7 +3,7 @@ export default {
   category: 'selenium',
   order: 2,
   title: 'Finding elements and interacting with them',
-  minutes: 8,
+  minutes: 10,
   summary: 'Locate elements with By, type, click, read text and attributes, and turn what you see into TestNG assertions with helpful messages.',
   manualAnalogy: `When you test a login screen by hand you look for the username box, clear whatever autofill put there, type, press Login, then *read* the result and compare it with the expected result in your test case. Automation is the same four moves — find, act, read, compare — written down precisely enough that a machine never "looks at the wrong box".`,
   body: `## Step 1 — describe *where* the element is: \`By\`
@@ -51,6 +51,25 @@ user.sendKeys("locked_out_user");
 \`\`\`
 
 Why \`clear()\` first? The ShopEasy login page remembers the last user when "Remember me" was ticked. \`sendKeys\` **appends**, so without \`clear()\` you would type \`standard_userlocked_out_user\`.
+
+### Special keys: Enter, Tab, shortcuts
+
+\`sendKeys\` also presses keys from the \`Keys\` enum, and accepts several arguments in one call:
+
+\`\`\`java
+import org.openqa.selenium.Keys;
+
+WebElement zip = driver.findElement(By.id("postal-code"));      // checkout.html
+zip.sendKeys("10115", Keys.ENTER);                               // type, then press Enter
+driver.findElement(By.id("first-name")).sendKeys("Jane", Keys.TAB);
+WebElement focused = driver.switchTo().activeElement();          // who has focus now?
+zip.sendKeys(Keys.chord(Keys.CONTROL, "a"), Keys.BACK_SPACE);    // select all + delete
+\`\`\`
+
+- \`Keys.ENTER\` in a form field submits the form, exactly like a keyboard user.
+- \`switchTo().activeElement()\` returns the focused element — the way to test tab order.
+- \`Keys.chord(...)\` holds the modifiers while pressing the key. On macOS select-all is \`Keys.COMMAND\`.
+- Pages that react to every key press (live search) may not notice \`clear()\`, which empties the value without real key events. Select-all + Backspace behaves like a person.
 
 ## Step 4 — read what the page shows
 
@@ -108,13 +127,27 @@ public class LoginErrorTest {
 
 ## Visible text vs attribute — a quick rule
 
-If a user can *read* it on screen → \`getText()\`. If it is a property of the element (masked field, link target, current value of an input) → an attribute. Input boxes are the classic trap: what you typed into an \`<input>\` is **not** its text; read it with \`getDomProperty("value")\` or \`getAttribute("value")\`.`,
+If a user can *read* it on screen → \`getText()\`. If it is a property of the element (masked field, link target, current value of an input) → an attribute. Input boxes are the classic trap: what you typed into an \`<input>\` is **not** its text; read it with \`getDomProperty("value")\` or \`getAttribute("value")\`.
+
+## Attribute, property or CSS?
+
+| Method | Reads | Example on ShopEasy |
+|---|---|---|
+| \`getDomAttribute("x")\` | the HTML source as written | \`"password"\` for the \`type\` of \`#password\` |
+| \`getDomProperty("x")\` | the live value in the browser now | what was typed into \`#user-name\`; the absolute URL of a link's \`href\` |
+| \`getCssValue("x")\` | the computed style | \`"rgba(15, 118, 110, 1)"\` for the active nav link colour |
+
+An attribute is the *starting* state from the HTML; a property is the *current* state. Colours always come back as \`rgba(...)\`, so convert with \`Color.fromString(value).asHex()\` before comparing with a design spec.
+
+And the yes/no questions mean different things: **present** (in the DOM — \`findElement\` succeeds) is not **displayed** (\`isDisplayed()\`, the user can see it) is not **enabled** (\`isEnabled()\`, the user can use it). A disabled button is displayed; a \`display:none\` banner is present.`,
   keyPoints: [
     'Locator preference: id, then CSS, then XPath. Keep locators as `By` constants.',
     '`clear()` before `sendKeys()` — sendKeys appends to existing text.',
     '`getText()` = visible text; attributes (`type`, `value`, `href`) need `getAttribute`/`getDomAttribute`.',
     'Fail with `Assert`, not `println`, and put the actual value in the assertion message.',
     '`@BeforeMethod` / `@AfterMethod(alwaysRun = true)` give every test its own fresh browser.',
+    '`Keys.ENTER`, `Keys.TAB` and `Keys.chord(...)` press real keys; `switchTo().activeElement()` tells you who has focus.',
+    'Attribute = HTML source, property = live value, `getCssValue` = computed style; present ≠ displayed ≠ enabled.',
   ],
   mistakes: [
     'Reading an input\'s typed value with `getText()` — it returns an empty string. Use the `value` attribute/property.',
@@ -122,5 +155,5 @@ If a user can *read* it on screen → \`getText()\`. If it is a property of the 
     'Copying a long absolute XPath from DevTools (`/html/body/div[2]/...`). It breaks when anything moves; write a short id or CSS locator.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/login.html\` click Login with both fields empty. In DevTools find the banner text element and note its id, then write the one-line \`getText()\` + \`assertEquals\` that would check "Username is required".`,
-  problems: ['sel-002', 'sel-003'],
+  problems: ['sel-002', 'sel-003', 'sel-022', 'sel-023'],
 }

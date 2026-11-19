@@ -2,9 +2,9 @@ export default {
   slug: 'debug-cucumber-glue-errors',
   category: 'debugging',
   order: 6,
-  title: 'Cucumber glue errors: undefined and ambiguous steps',
-  minutes: 7,
-  summary: 'Fix the two classic Cucumber wiring failures — "Undefined step" and AmbiguousStepDefinitionsException — by checking the glue path and how step text matches Cucumber expressions.',
+  title: 'Cucumber glue errors: undefined, ambiguous and unconvertible steps',
+  minutes: 9,
+  summary: 'Fix the classic Cucumber wiring failures — "Undefined step", AmbiguousStepDefinitionsException and "Could not convert arguments" — by checking the glue path, how step text matches Cucumber expressions, and how tables become objects.',
   manualAnalogy: `A Gherkin step is like a line in a manual test case, and a step definition is the tester who knows how to perform it. "Undefined" means Cucumber couldn't find anyone who knows that line. "Ambiguous" means two people both put their hands up and Cucumber refuses to choose. Neither is a product problem — it is about how sentences are matched to code.`,
   body: `## How Cucumber matches a step
 
@@ -79,6 +79,31 @@ Fixes, best first:
 
 Never "fix" ambiguity by renaming the feature line into odd wording just to dodge the regex — the feature file is documentation for humans.
 
+## The step matched, but the argument didn't convert
+
+\`\`\`text
+CucumberException: Could not convert arguments for step [I have these items in my cart:] ...
+Caused by: io.cucumber.datatable.UndefinedDataTableTypeException: Can't convert DataTable to List<com.shopeasy.model.Item>.
+ - There was no table entry or table row transformer registered for com.shopeasy.model.Item.
+\`\`\`
+
+This is a third, different failure: matching worked (so it is not *undefined*), but Cucumber could not turn the step's argument into the Java type the method asks for. Out of the box a data table converts to \`DataTable\`, \`List<String>\`, \`List<List<String>>\` and \`List<Map<String, String>>\` (header row = keys). For your own class you register a converter once, in a glue class, with \`@DataTableType\`:
+
+\`\`\`java
+@DataTableType
+public Item item(Map<String, String> row) {          // one data row, keyed by the header
+    return new Item(row.get("name"), Integer.parseInt(row.get("qty")));
+}
+\`\`\`
+
+Header names are case-sensitive keys, so a renamed column shows up as \`null\` inside the converter.
+
+## Feature-file mistakes that look like code bugs
+
+- **Unreplaced placeholder.** A Scenario Outline step receives the literal text \`<Product>\` when the Examples header is \`product\` — placeholders must match the header exactly.
+- **0 Scenarios.** A tag filter such as \`"@smoke and @checkout"\` selects only scenarios carrying *both* tags; use \`or\` for "either".
+- **\`InvalidMethodException: You're not allowed to extend classes that define Step Definitions or hooks\`** — share the driver through an injected context object (PicoContainer), not a base step class.
+
 ## Related errors you'll meet in the same place
 
 - **\`CucumberException: Failed to instantiate class ...Steps\`** — the step class's constructor (or something injected into it, e.g. a shared context with PicoContainer) threw. Scroll to the deepest \`Caused by:\` — it's often configuration, not Cucumber.
@@ -90,6 +115,7 @@ Never "fix" ambiguity by renaming the feature line into odd wording just to dodg
     '`glue` is a Java package name (dots), and must include hooks packages too.',
     'Cucumber expressions match literally except `{string}`, `{int}`, `{double}`, `{word}`.',
     'Ambiguous = two definitions match; replace greedy regex `(.*)` and keep one definition per meaning.',
+    '"Could not convert arguments" = matched, but a table or parameter has no converter — register a `@DataTableType`.',
   ],
   mistakes: [
     'Writing a folder path (`src/test/java/com/shopeasy/steps`) in `glue`.',
@@ -97,5 +123,5 @@ Never "fix" ambiguity by renaming the feature line into odd wording just to dodg
     'Keeping a catch-all regex step like `^I (.*)$` "for convenience" — it causes ambiguity everywhere.',
   ],
   tryIt: `Take any feature step you have, and write the annotation for it twice: once correct, once with a one-word difference. Ask yourself which part of the console output (snippet vs undefined count) would reveal the mismatch.`,
-  problems: ['dbg-010', 'dbg-011'],
+  problems: ['dbg-010', 'dbg-011', 'dbg-019', 'dbg-022'],
 }

@@ -109,6 +109,33 @@ public void cartShows(List<Product> expected) {
 The conversion logic lives in one place, every step using that table gets typed objects, and a misspelled column
 fails in one spot instead of quietly everywhere.
 
+## Single-column tables and cell transformers
+
+Sometimes a table is just a list, with no header:
+
+\`\`\`gherkin
+Given these users exist
+  | standard_user   |
+  | locked_out_user |
+\`\`\`
+
+A \`List<String>\` parameter receives the cells as text. To receive objects instead, register a **cell** transformer -
+a \`@DataTableType\` method that takes a single \`String\` (one cell) rather than a \`Map\` (one row):
+
+\`\`\`java
+@DataTableType
+public ShopUser userCell(String username) {
+    return ShopUser.fromUsername(username);
+}
+
+@Given("these users exist")
+public void usersExist(List<ShopUser> users) { ... }
+\`\`\`
+
+Cucumber looks at the parameter type (\`List<ShopUser>\`), sees a one-column table without a header, and converts each
+cell with your method. Register **either** a cell or an entry transformer for a given type, not both - otherwise
+Cucumber cannot tell which one you meant.
+
 ## Vertical tables
 
 For a single record (one product, one customer) some teams write the table sideways:
@@ -125,6 +152,7 @@ That reads as a \`Map<String, String>\` (first column = keys). It is handy, but 
     'Declare List<Map<String, String>> as the parameter, or take DataTable and call asMaps().',
     '@DataTableType converts each row Map into your own class so steps receive List<YourType>.',
     'Transformer classes must be in a glue package to be discovered.',
+    'A @DataTableType taking a String converts single cells, so a one-column table becomes List<YourType>.',
   ],
   mistakes: [
     'Reading cells by index (row 0, column 2). Fix: read by header name so column order does not matter.',
@@ -134,5 +162,5 @@ That reads as a \`Map<String, String>\` (first column = keys). It is handy, but 
   ],
   tryIt: `Add two products on http://localhost:5180/practice-site/inventory.html, open the cart and write a DataTable
 under "Then the cart shows these products" listing exactly what you see.`,
-  problems: ['cuc-007', 'cuc-008', 'cuc-017'],
+  problems: ['cuc-007', 'cuc-008', 'cuc-017', 'cuc-029'],
 }

@@ -3,7 +3,7 @@ export default {
   category: 'pom',
   order: 6,
   title: 'PageFactory and @FindBy vs plain By locators',
-  minutes: 7,
+  minutes: 9,
   summary: 'Understand how PageFactory creates lazy proxy elements, what @CacheLookup risks, and why many teams prefer private By fields with explicit waits.',
   manualAnalogy: `Imagine two ways of preparing a test run: you either note *how to find* each element ("the Sort dropdown, top right") and look for it fresh each time, or someone hands you a pre-filled form of "elements" that quietly looks things up when you touch them. The second is convenient until the page changes under you and you don't know whether your note is still current. That is the \`By\` vs PageFactory debate.`,
   body: `## Two styles of the same page
@@ -73,6 +73,41 @@ The \`By\` versions re-locate the element on every poll, which is what you want 
 
 \`@FindBy\` values must be **compile-time constants**. You cannot write \`@FindBy(xpath = "//div[text()='" + name + "']")\`. Locators that depend on data (a product name, an employee row) need \`By\` built at runtime — see the *Dynamic locators and web tables* lesson.
 
+## More annotations you will meet in older suites
+
+**\`@FindAll\` — OR.** Every element matched by *any* of the inner locators:
+
+\`\`\`java
+@FindAll({
+    @FindBy(id = "home-phone"),     // form.html
+    @FindBy(id = "mobile-phone")
+})
+private List<WebElement> phoneFields;   // 2 elements: home + mobile
+\`\`\`
+
+It is a union, **not** a fallback ("try the first, else the second").
+
+**\`@FindBys\` — a chain.** Each locator searches *inside* the result of the previous one:
+
+\`\`\`java
+@FindBys({
+    @FindBy(id = "employee-table"),     // table.html
+    @FindBy(className = "btn-edit")
+})
+private List<WebElement> editButtons;   // only Edit buttons inside the table
+\`\`\`
+
+That is the annotation form of \`driver.findElement(By.id("employee-table")).findElements(By.className("btn-edit"))\`.
+
+**\`AjaxElementLocatorFactory\`** — \`PageFactory.initElements(new AjaxElementLocatorFactory(driver, 10), this)\`
+makes each proxy keep retrying for up to 10 seconds until the element is **present**. It is like an implicit wait
+for annotated fields: it does not wait for *visible* or *clickable*, and combined with a global implicit wait the
+timeouts add up.
+
+**Staleness with proxies.** A plain \`@FindBy\` proxy re-finds on every call, so it rarely goes stale. Staleness
+comes back when you (a) add \`@CacheLookup\`, or (b) take elements out of a \`List<WebElement>\` field, keep them in a
+local variable or loop, and the list re-renders while you still use them.
+
 ## Side-by-side
 
 | | \`By\` fields | PageFactory |
@@ -93,6 +128,7 @@ Neither is "wrong". Many existing frameworks use PageFactory and you should be a
     'Forgetting `initElements` leaves fields null → NullPointerException on first use.',
     '`@CacheLookup` remembers the element and causes StaleElementReferenceException on re-rendered pages.',
     'Waits like `presenceOfElementLocated` and dynamic locators need a `By`, not a `WebElement`.',
+    '`@FindAll` is an OR of locators; `@FindBys` is a chain (search inside the previous result).',
     'Be able to read PageFactory code, but prefer `By` fields for new frameworks.',
   ],
   mistakes: [
@@ -102,5 +138,5 @@ Neither is "wrong". Many existing frameworks use PageFactory and you should be a
     'Wrapping every proxy in try/catch for staleness instead of fixing the cause (caching or keeping stale references).',
   ],
   tryIt: `On http://localhost:5180/practice-site/table.html open the DevTools console and run \`row = document.querySelector('#employee-table tbody tr')\`. Click **Next ›** in the pagination, then run \`row.isConnected\`. \`false\` means the table rebuilt its rows and your saved node is gone — exactly what a \`@CacheLookup\` element would still point to.`,
-  problems: ['pom-006', 'pom-014'],
+  problems: ['pom-006', 'pom-014', 'pom-025'],
 }

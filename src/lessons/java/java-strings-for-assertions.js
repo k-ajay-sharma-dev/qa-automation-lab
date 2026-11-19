@@ -3,7 +3,7 @@ export default {
   category: 'java',
   order: 1,
   title: 'Variables and Strings: turning UI text into something you can assert',
-  minutes: 8,
+  minutes: 10,
   summary: 'Store values in typed variables, clean up text from getText() with trim/toLowerCase/replace, compare it safely with equals, and convert "$12.50" into a number.',
   manualAnalogy: `When you test by hand you read a label and decide "yes, that says *Order Confirmed*" — your eyes ignore extra spaces, CSS uppercase and the currency sign without you noticing. Code is not that forgiving. Selenium hands you the raw characters, and you must clean them up and compare them deliberately, exactly as a strict tester would compare expected vs actual in a test case.`,
   body: `## Variables: labelled boxes with a type
@@ -70,6 +70,44 @@ int items = Integer.parseInt("3");                              // 3
 
 \`Double.parseDouble\` throws \`NumberFormatException\` if anything non-numeric is left over, which is actually useful: a garbled price fails loudly. Calls can be **chained** because each one returns a new String.
 
+## int vs Integer: wrapper classes
+
+Every primitive has an object twin, called a **wrapper class**: \`int\`/\`Integer\`, \`double\`/\`Double\`, \`boolean\`/\`Boolean\`. Lists and maps can only hold objects, so \`List<Integer>\` uses the wrapper, and Java converts back and forth for you (**autoboxing**). Three things to remember:
+
+- Wrappers are objects, so \`==\` compares references again. Compare them with \`equals\`, or convert to \`int\` first.
+- A wrapper can be \`null\`. Turning a \`null\` \`Integer\` into an \`int\` throws \`NullPointerException\`. This happens with \`map.get(missingKey)\`.
+- \`Integer.parseInt\` is strict: \`" 3 "\` fails. Call \`trim()\` first.
+
+## Taking text apart: split, indexOf, substring, join
+
+Labels often hold several values, e.g. the cart line \`"Pulse Bike Light - $9.99"\`. Cut at **separators and markers**, never at fixed positions:
+
+\`\`\`java
+String line = "Pulse Bike Light - $9.99";
+String[] parts = line.split(" - ");                  // ["Pulse Bike Light", "$9.99"]
+String name = parts[0];
+String firstWord = name.substring(0, name.indexOf(' '));   // "Pulse"
+String names = String.join(" | ", List.of("Pulse Bike Light", "Junior Onesie"));
+\`\`\`
+
+- \`split\` returns a \`String[]\` (an array, see the *if and loops* lesson). It takes a regular expression, so \`.\` and \`|\` need escaping.
+- \`indexOf\` returns the **position** of a character, or \`-1\` if it isn't there. \`substring(start, end)\` keeps the characters from \`start\` up to, but not including, \`end\`.
+- \`String.join\` puts a separator between list items.
+
+## StringBuilder: building long text
+
+Because Strings never change, \`text = text + more\` inside a loop copies the whole text on every pass. A \`StringBuilder\` is a text buffer you *can* change:
+
+\`\`\`java
+StringBuilder log = new StringBuilder();
+for (String product : List.of("Junior Onesie", "Retro Red Tee")) {
+    log.append("checked ").append(product).append('\\n');
+}
+String result = log.toString();
+\`\`\`
+
+\`append\` returns the same builder, so calls chain. Call \`toString()\` once at the end.
+
 ## Joining text with +
 
 \`+\` joins Strings, but it works left to right. \`"Total: " + 10 + 5\` gives \`"Total: 105"\` (text first, so both numbers are glued on as text), while \`10 + 5 + " items"\` gives \`"15 items"\` (the numbers are added before any text appears). Use brackets when you mean maths: \`"Total: " + (10 + 5)\`.`,
@@ -79,6 +117,8 @@ int items = Integer.parseInt("3");                              // 3
     'Compare text with equals / equalsIgnoreCase, never ==.',
     'Remove $ and , then use Double.parseDouble to compare prices as numbers.',
     'String + number is evaluated left to right; add brackets for arithmetic.',
+    'Cut text with split / indexOf + substring, not fixed positions; build long text with StringBuilder.',
+    'Integer and Double are objects: compare with equals and watch out for null.',
   ],
   mistakes: [
     'Writing text.trim(); and expecting text to change — assign it: text = text.trim();',
@@ -87,5 +127,5 @@ int items = Integer.parseInt("3");                              // 3
     'Calling .equals on a value that may be null — put the literal first: "Expected".equals(actual).',
   ],
   tryIt: `In any online Java playground (or jshell), run \`String s = "  Add to Cart ";\`, then \`s.trim();\` and print \`"[" + s + "]"\`. Now run \`s = s.trim();\` and print again — see the difference immutability makes.`,
-  problems: ['java-001', 'java-002'],
+  problems: ['java-001', 'java-002', 'java-017', 'java-020'],
 }

@@ -3,7 +3,7 @@ export default {
   category: 'cucumber',
   order: 9,
   title: 'The runner: @CucumberOptions, parallel runs, reports and rerun',
-  minutes: 9,
+  minutes: 10,
   summary: 'Configure a TestNG Cucumber runner that finds features and glue, runs scenarios in parallel, writes reports and re-runs only failures.',
   manualAnalogy: `Before a manual test cycle you decide which test cases are in scope, who runs them, how many testers work in
 parallel, and where results are recorded. The runner class is that test-run plan for Cucumber: scope, workers and
@@ -87,6 +87,31 @@ Rules of thumb for a rerun setup:
 Keep reports under \`target/\` (Maven cleans it each build) and archive them in Jenkins. The HTML report shows each
 scenario with steps, timings and any \`scenario.attach\` screenshots from your hooks.
 
+## The JUnit 5 Platform alternative
+
+Cucumber 7's recommended runner is the **JUnit Platform engine** (\`cucumber-junit-platform-engine\` plus
+\`junit-platform-suite\`). Instead of \`@CucumberOptions\`, a near-empty class says *which engine* and *which
+resources*, and every option is a configuration parameter:
+
+\`\`\`java
+@Suite
+@IncludeEngines("cucumber")
+@SelectClasspathResource("features/cart")
+@ConfigurationParameter(key = GLUE_PROPERTY_NAME, value = "com.shopeasy")
+@ConfigurationParameter(key = FILTER_TAGS_PROPERTY_NAME, value = "@smoke")
+public class CartSmokeTest { }
+\`\`\`
+
+- \`@SelectClasspathResource\` points at a folder under \`src/test/resources\`.
+- The constants (\`GLUE_PROPERTY_NAME\` = \`cucumber.glue\`, \`PLUGIN_PROPERTY_NAME\` = \`cucumber.plugin\`,
+  \`FILTER_TAGS_PROPERTY_NAME\` = \`cucumber.filter.tags\`) come from \`io.cucumber.junit.platform.engine.Constants\`.
+- The plugin value is one comma-separated string.
+
+Parallel execution is switched on in \`src/test/resources/junit-platform.properties\` with the keys
+\`cucumber.execution.parallel.enabled\` and \`cucumber.execution.parallel.config.strategy\` (\`dynamic\` scales with CPU
+cores, \`fixed\` uses a number you choose). The same rule applies as with TestNG: nothing may be shared between
+scenarios. Do not mix the old JUnit 4 \`@RunWith(Cucumber.class)\` runner with the platform engine in one project.
+
 ## Several runners
 
 It is normal to have a few runners: \`SmokeRunner\`, \`RegressionRunner\`, \`FailedRerunRunner\`. They differ mostly in
@@ -98,6 +123,7 @@ the command line often covers most needs.`,
     'plugin adds outputs: pretty, html:, json:, rerun:; monochrome cleans console output.',
     'Parallel scenarios: override scenarios() with @DataProvider(parallel = true); thread count comes from TestNG.',
     'rerun: writes failed file:line entries; features = "@path" runs only those - give it its own report.',
+    'JUnit Platform: @Suite + @IncludeEngines("cucumber") + @ConfigurationParameter; parallelism in junit-platform.properties.',
   ],
   mistakes: [
     'Writing glue as a folder path (src/test/java/...). Fix: use package names with dots.',
@@ -107,5 +133,5 @@ the command line often covers most needs.`,
   ],
   tryIt: `Look at a features folder structure and write down the features, glue and tags values you would need for a
 runner that only runs checkout smoke tests.`,
-  problems: ['cuc-013', 'cuc-014'],
+  problems: ['cuc-013', 'cuc-014', 'cuc-026'],
 }

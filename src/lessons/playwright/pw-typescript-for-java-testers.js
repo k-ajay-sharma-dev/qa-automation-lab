@@ -93,6 +93,32 @@ const heading = await page.getByTestId('title').textContent(); // string | null,
 - Locators themselves (\`page.getByRole(...)\`) are **not** awaited — they are only descriptions. Await the **action** or **assertion** on them.
 - Prefer \`await\` over \`.then(...)\` chains — it reads top to bottom like Java.
 
+## Loops and events: where Promises get lost
+
+Two patterns compile fine and still race:
+
+\`\`\`ts
+const fields = ['First Name', 'Last Name'];
+
+// BAD: forEach throws away the Promise each async callback returns
+fields.forEach(async (label) => { await page.getByLabel(label).fill('x'); });
+
+// GOOD: for...of waits for each iteration
+for (const label of fields) {
+  await page.getByLabel(label).fill('x');
+}
+\`\`\`
+
+And for anything that *happens* (a pop-up, a download, a network response), start waiting **before** you trigger it, and await afterwards:
+
+\`\`\`ts
+const tabPromise = page.context().waitForEvent('page');            // 1. listen
+await page.getByRole('link', { name: 'Open size guide in new tab' }).click(); // 2. act
+const sizeGuide = await tabPromise;                                // 3. collect
+\`\`\`
+
+A Promise that nobody awaits is called a **floating promise** — the lint rule \`@typescript-eslint/no-floating-promises\` points at every one.
+
 ## A tsconfig in one sentence
 
 \`tsconfig.json\` tells the compiler how strict to be. Keep \`"strict": true\` — it is what turns on the useful checks (no implicit \`any\`, null checks).`,
@@ -112,5 +138,5 @@ const heading = await page.getByTestId('title').textContent(); // string | null,
   tryIt: `Open the browser console on \`http://localhost:5180/practice-site/inventory.html\` (F12 → Console) and run:
 \`[...document.querySelectorAll('.item-price')].map((e) => Number(e.textContent.replace('$', ''))).filter((p) => p < 10)\`
 That is an arrow-function pipeline — the same style you will use on \`allTextContents()\` results.`,
-  problems: ['pw-001', 'pw-002'],
+  problems: ['pw-001', 'pw-002', 'pw-022'],
 }

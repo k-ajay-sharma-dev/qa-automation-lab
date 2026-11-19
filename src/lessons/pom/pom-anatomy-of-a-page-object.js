@@ -110,5 +110,5 @@ Use clear, honest names: \`getXxx()\` / \`isXxx()\` for reading, a verb (\`submi
     'Hard-coding a user name inside the page — pass it in as a parameter.',
   ],
   tryIt: `Open http://localhost:5180/practice-site/login.html, right-click the error banner area after a failed login and Inspect it. Write down the id you would use for an \`errorMessage\` locator and the name of the method that would return its text. Then do the same for the "Demo credentials" box.`,
-  problems: ['pom-002', 'pom-001', 'pom-008'],
+  problems: ['pom-002', 'pom-001', 'pom-008', 'pom-015'],
 }

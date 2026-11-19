@@ -97,6 +97,39 @@ A null would fail later with a confusing \`NullPointerException\` far away from 
 
 The headers here contain a sort-indicator \`<span>\`, so \`getText()\` may return "Name ▲" after sorting. Compare with \`trim()\` and \`startsWith\`, or read only the cell's own text, so sorting does not break your column lookup.
 
+## Search, sort and pages: wait for the real signal
+
+On \`table.html\` searching, sorting and paging all **re-render** the table body: the old \`<tr>\` elements are thrown
+away and new ones are created. Two consequences:
+
+1. Reading rows right after the click can return the *old* rows, or throw \`StaleElementReferenceException\` halfway
+   through your loop.
+2. A fixed \`Thread.sleep\` is either too short on CI or wastes time locally.
+
+Instead, wait for a signal the page gives you:
+
+| Action | "Done" signal on table.html | Wait |
+|---|---|---|
+| Go to the next page | \`#page-info\` changes to "Page 2 of 3" | \`textToBe(pageInfo, "Page 2 of 3")\` |
+| Any re-render | the old rows are detached | \`stalenessOf(oldRow)\` |
+| Sort | the header's \`aria-sort\` becomes \`ascending\` / \`descending\` | \`attributeToBe(header, "aria-sort", ...)\` |
+| Last page reached | \`#next-page\` is disabled | check \`isEnabled()\` |
+
+\`stalenessOf\` deserves a closer look:
+
+\`\`\`java
+WebElement before = driver.findElement(firstRow);   // remember something that WILL be replaced
+click(someControlThatReRenders);
+wait.until(ExpectedConditions.stalenessOf(before)); // returns as soon as it is gone from the DOM
+\`\`\`
+
+It is precise ("the old content is gone") and fast (no fixed delay).
+
+**Pagination and completeness.** With 5 rows per page, "the table is sorted" means *all* 15 employees, not the
+five on screen. A table page object can offer a method that walks the pager (read → Next → wait → read … until Next
+is disabled). The **test** then converts the values (\`"$85,000"\` → 85000) and compares them with a sorted copy —
+deciding what "correctly sorted" means is a business expectation, so it stays in the test.
+
 ## Keep the template private
 
 Tests should never build XPath strings. They call \`addToCart("Junior Onesie")\` or \`getCellValue("Emily Carter", "Status")\`. If the markup changes, only the template changes.`,
@@ -114,5 +147,5 @@ Tests should never build XPath strings. They call \`addToCart("Junior Onesie")\`
     'Returning `null` when a row is missing — throw with the name you searched for.',
   ],
   tryIt: `On http://localhost:5180/practice-site/table.html open DevTools and run \`$x("//table[@id='employee-table']//tr[td[normalize-space()='James Wilson']]")\`. Now type "Finance" in the search box and run it again — it still finds James, although his row moved. Then run \`$x("//table[@id='employee-table']/tbody/tr[3]")\` before and after searching and compare who (if anyone) is returned.`,
-  problems: ['pom-010', 'pom-009'],
+  problems: ['pom-010', 'pom-009', 'pom-023'],
 }

@@ -117,5 +117,5 @@ Always start with \`//\`. An XPath beginning with \`/html/body/…\` describes a
     'Wrapping the XPath in double quotes inside a Java double-quoted string — use single quotes inside.',
   ],
   tryIt: `On http://localhost:5180/practice-site/dynamic.html run \`$x("//button[contains(text(),'Save')]")\` and count the matches. Then run \`$x("//button[text()='Cancel']")\`. Finally try \`$x("//div[@class='plan']")\` vs \`$x("//div[contains(@class,'plan')]")\` — why do the counts differ (hint: plan-price)?`,
-  problems: ['loc-010', 'loc-011', 'loc-012', 'loc-016'],
+  problems: ['loc-010', 'loc-011', 'loc-012', 'loc-016', 'loc-025'],
 }

@@ -24,6 +24,25 @@ WebDriver driver = new ChromeDriver(options);
 - In Linux containers you often also need \`--no-sandbox\` and \`--disable-dev-shm-usage\`.
 - \`Boolean.getBoolean("headless")\` reads a JVM **system property** (\`mvn test -Dheadless=true\`). Settings come from the command line, so the same code runs locally (headed, to watch) and on CI (headless).
 
+### Window size, position and responsive checks
+
+You can also size the window from code, at any time during a test:
+
+\`\`\`java
+driver.manage().window().setPosition(new Point(0, 0));
+driver.manage().window().setSize(new Dimension(1024, 768));
+int width = driver.manage().window().getSize().getWidth();
+Rectangle box = driver.findElement(By.id("employee-table")).getRect();   // x, y, width, height
+\`\`\`
+
+- \`setSize\` sets the *outer* window; CSS breakpoints react to the smaller viewport (\`window.innerWidth\`).
+- To check a responsive layout, resize and compare elements **to each other** with \`getRect()\` (same Y = same row) instead of exact pixel values. Wait for the reflow with a lambda condition.
+- Desktop Chrome will not shrink below roughly 500px wide; for phone sizes use mobile emulation (\`options.setExperimentalOption("mobileEmulation", Map.of("deviceName", "Pixel 7"))\`).
+
+### Page load strategy
+
+\`options.setPageLoadStrategy(PageLoadStrategy.EAGER)\` changes when \`get()\` returns: \`NORMAL\` (default) waits for the full load event, \`EAGER\` returns when the HTML is parsed (images may still be loading), \`NONE\` returns at once. \`EAGER\` can speed up pages with slow third-party assets — your explicit waits then carry more of the synchronisation.
+
 ## 2. Screenshots: evidence on failure
 
 \`\`\`java
@@ -93,6 +112,7 @@ Pages should receive the driver (constructor parameter or a \`getDriver()\` call
   keyPoints: [
     'Options configure the launch: headless (`--headless=new`), explicit window size, container flags.',
     'Make settings switchable with system properties (`-Dheadless=true`, `-Dbrowser=firefox`, `-Dgrid.url=...`).',
+    'Fixed window sizes (`setSize(new Dimension(...))`) make layouts reproducible; check responsiveness with `getRect()` comparisons.',
     'Screenshot on failure in `@AfterMethod(alwaysRun = true)` with `ITestResult`; quit in `finally`.',
     '`new RemoteWebDriver(gridUrl, options)` — the options pick the browser; use `LocalFileDetector` for uploads.',
     'Parallel + static driver = chaos. Use `ThreadLocal<WebDriver>`, and `quit()` + `remove()` in teardown.',
@@ -104,5 +124,5 @@ Pages should receive the driver (constructor parameter or a \`getDriver()\` call
     'Calling `quit()` but not `ThreadLocal.remove()` — reused threads leak a dead driver.',
   ],
   tryIt: `Run any test twice: once normally and once with \`--headless=new\` and no window size. Take a screenshot in both runs of \`http://localhost:5180/practice-site/inventory.html\` and compare the layouts.`,
-  problems: ['sel-014', 'sel-019', 'sel-020'],
+  problems: ['sel-014', 'sel-019', 'sel-020', 'sel-028'],
 }

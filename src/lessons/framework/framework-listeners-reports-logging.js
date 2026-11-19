@@ -62,7 +62,27 @@ TestNG's default report is basic. ExtentReports builds a readable HTML page, dri
 
 The \`ExtentTest\` for "the current test" must be per thread: store it in a \`ThreadLocal<ExtentTest>\` (same idea as the driver). A single static field makes parallel tests log into each other's entries.
 
-**Allure** is the common alternative: annotations (\`@Step\`, \`@Attachment\`) plus a CLI that generates the site from result files. The listener idea is the same.
+## Allure: steps, labels, attachments
+
+**Allure** is the common alternative. Instead of you writing report code in a listener, the \`allure-testng\` adapter records results into \`target/allure-results\`, and \`allure serve\` (or a CI plugin) builds the site. You enrich it with annotations:
+
+\`\`\`java
+@Step("Sort products by {option}")                 // on a page object method
+public InventoryPage sortBy(String option) { ... }
+
+@Feature("Inventory") @Severity(SeverityLevel.NORMAL)   // on the test
+\`\`\`
+
+- **\`@Step\`** on page methods makes every test read like business steps, with \`{parameter}\` values filled in.
+- **Labels** (\`@Epic\`, \`@Feature\`, \`@Story\`, \`@Severity\`) group results for people who do not read Java.
+- **\`@Attachment\`** on a method that returns \`byte[]\` (an image) or \`String\` (text) attaches the return value to the current test — call it from \`onTestFailure\` for a screenshot.
+- Copying the previous report's \`history\` folder into the new results gives trend graphs.
+
+Gotcha: \`@Step\` and \`@Attachment\` only work when the AspectJ weaver is added as a \`-javaagent\` in Surefire's \`<argLine>\`; without it they are silently ignored.
+
+## Retries and flaky tests: the bigger picture
+
+A retry tells you *that* a test is unstable, not *why*. Typical causes: shared test data in parallel runs, missing waits after the page re-renders, an unstable environment, browser crashes — and sometimes a **real intermittent product bug** (a wrong total once in twenty runs is the application's fault, not the test's). Log every retry, classify failures, quarantine known-flaky tests in their own group with an owner and a ticket, and fix the cause.
 
 ## Logging with Log4j2
 
@@ -96,5 +116,5 @@ Logs are best placed in BasePage helpers (every click/type logs once) and in lis
     'Logging `"Typing " + password` — secrets leak into CI logs. Mask them.',
   ],
   tryIt: `Make a deliberately failing test (assert that the cart badge on http://localhost:5180/practice-site/inventory.html shows 5 when the cart is empty). Before writing any listener, write down what evidence you would want in the defect: screenshot, URL, method name, browser, time. Each item maps to one line in \`onTestFailure\` or the report's system info.`,
-  problems: ['fw-008', 'fw-009', 'fw-010', 'fw-011'],
+  problems: ['fw-008', 'fw-009', 'fw-010', 'fw-011', 'fw-024', 'fw-026'],
 }

@@ -61,6 +61,19 @@ Check: can the **agent** (not your laptop) reach the URL? Is the base URL coming
 
 A properties file that exists on your laptop but is git-ignored, an environment variable that isn't set on the agent, a test user that was deleted in the nightly DB refresh. These usually surface as a \`NullPointerException\` or \`FileNotFoundException\` at the **bottom** of a \`Caused by:\` chain inside setup — and then every test is skipped. Read the chain to the end (see *Reading a stack trace*).
 
+## 4. The agent's clock and language: time zone and locale
+
+Not every environment failure is loud. Some tests fail only **on one agent, or only at night**, with a perfectly normal assertion:
+
+\`\`\`text
+java.lang.AssertionError: order date expected [2026-11-19] but found [2026-11-18]
+java.lang.AssertionError: receipt total expected [$43.18] but found [$43,18]
+\`\`\`
+
+Every JVM has a default **time zone** and **locale**, taken from the machine. They silently change \`LocalDate.now()\`, \`String.format\`, \`NumberFormat\`, month names and more. An API usually returns timestamps in UTC (\`...Z\`), so "today" on an agent in Europe just after midnight is still "yesterday" in UTC; a German locale formats \`43.18\` as \`43,18\`.
+
+Check \`java -XshowSettings:properties -version\` on the agent (look at \`user.timezone\`, \`user.language\`, \`user.country\`). Then fix the **test**, not the schedule: compare \`Instant\`s with a tolerance instead of local dates, and pass \`Locale.US\` (or whatever the UI uses) whenever you format for comparison. Pinning \`-Duser.timezone=UTC\` in the Surefire \`argLine\` adds reproducibility, but the test should pass without it.
+
 ## Classifying and reporting
 
 Environment failures get the verdict **environment / no product verdict yet** — not "product bug", not "flaky test". Fix or escalate the environment, rerun, and only then judge the product. In the release call: "the run didn't test anything; rerun scheduled after X is fixed".
@@ -78,6 +91,7 @@ Environment failures get the verdict **environment / no product verdict yet** �
     'Chrome in Docker needs headless, often `--no-sandbox` and `--disable-dev-shm-usage` — or a Selenium image.',
     '`net::ERR_...` errors come from the network: check URL, DNS, deployment and the agent\'s access.',
     'A smoke stage and start-up version logging turn hour-long red runs into a 5-second clear failure.',
+    'Fails only on one agent or only at night: check the JVM time zone and locale before the code.',
   ],
   mistakes: [
     'Downloading a new chromedriver into the repo every time Chrome updates instead of removing the pinned path.',
@@ -86,5 +100,5 @@ Environment failures get the verdict **environment / no product verdict yet** �
     'Testing the URL from your laptop instead of from the CI agent that failed.',
   ],
   tryIt: `In any Selenium project, print \`((HasCapabilities) driver).getCapabilities()\` right after creating the driver. Find the browser version and the driver version in the output — that is the first thing to compare when "session not created" appears.`,
-  problems: ['dbg-013', 'dbg-006'],
+  problems: ['dbg-013', 'dbg-006', 'dbg-024'],
 }

@@ -3,7 +3,7 @@ export default {
   category: 'framework',
   order: 2,
   title: 'TestNG annotations and the test lifecycle',
-  minutes: 8,
+  minutes: 10,
   summary: 'Know exactly when each @Before/@After annotation runs, how many times, and which one to use for browsers, config and reports.',
   manualAnalogy: `A manual regression cycle has layers of preparation: once per release you set up the environment, once per test suite you prepare data, before each test case you reset to the home page, after each one you log out. TestNG annotations are those layers. You label a method with the layer it belongs to and TestNG calls it at the right moment.`,
   body: `## Annotations are labels
@@ -93,13 +93,41 @@ If a \`@BeforeMethod\` throws an exception, TestNG does **not** run the related 
 
 ## Inheritance
 
-Annotated methods in a parent class (like \`BaseTest\`) run for every subclass. That is how one \`@BeforeMethod\` in \`BaseTest\` gives every test class a browser.`,
+Annotated methods in a parent class (like \`BaseTest\`) run for every subclass. That is how one \`@BeforeMethod\` in \`BaseTest\` gives every test class a browser.
+
+When both parent and child have a \`@BeforeMethod\`, TestNG runs the **parent's first**, then the child's; the \`@After...\` methods run the other way round, child first. Think of nested brackets: the parent opens the browser before the child logs in, and the child logs out before the parent quits the browser. An inherited \`@BeforeSuite\` still runs only once per run, however many classes inherit it.
+
+## Which test runs first?
+
+Not the one at the top of the file. Without \`priority\` or dependencies, TestNG sorts the \`@Test\` methods of a class **by name**:
+
+\`\`\`java
+@Test public void sortZa()       { ... }   // runs 3rd
+@Test public void filterByName() { ... }   // runs 1st
+@Test public void sortAz()       { ... }   // runs 2nd
+\`\`\`
+
+- \`priority\` reorders: lower first, default \`0\`, negatives allowed. It never skips anything.
+- \`dependsOnMethods\` reorders **and** skips the dependent test when the dependency fails.
+
+## Why tests should not need an order
+
+If test B only passes because test A ran first (A logged in, A added the product, A stored a page in a \`static\` field), you get:
+
+| Problem | What you see |
+|---|---|
+| one bug, many red tests | A fails → B and C fail or are skipped |
+| no reruns | you cannot run B alone to debug it |
+| no parallel runs | with \`parallel="methods"\` B starts before A finishes |
+
+The fix is **independence**: every test creates its own preconditions — in \`@BeforeMethod\`, through a helper, or with a fast shortcut below the UI such as an API call or writing the cart into the browser's storage — and keeps its state in local variables. Use the UI only for the behaviour the test is about. (The *Test data and independence* lesson goes deeper.)`,
   keyPoints: [
     'Order: Suite → Test → Class → Method, and the after-methods mirror it.',
     '`@BeforeTest` runs per `<test>` tag in testng.xml, not per `@Test` method.',
     '`@BeforeMethod` runs before every test method — the usual place for a fresh browser.',
     'A failing `@Before...` method makes the related tests SKIPPED, not FAILED.',
     'Suite-level hooks suit once-per-run work: loading config, creating and flushing reports.',
+    'Parent @Before methods run before the child\'s; without priority, test methods run in name order — so write tests that need no order.',
   ],
   mistakes: [
     'Using `@BeforeTest` thinking it runs before each test method — use `@BeforeMethod`.',
@@ -108,5 +136,5 @@ Annotated methods in a parent class (like \`BaseTest\`) run for every subclass. 
     'Chaining many tests with `dependsOnMethods` — one failure skips the rest; keep tests independent.',
   ],
   tryIt: `Write a tiny class with one method for each of the eight before/after annotations plus two \`@Test\` methods, each printing its own name. Run it and compare the printed order with the table above. Add a second class extending the same parent and predict the new counts before running.`,
-  problems: ['fw-002'],
+  problems: ['fw-002', 'fw-015', 'fw-019'],
 }

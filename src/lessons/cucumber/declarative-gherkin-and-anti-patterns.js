@@ -71,6 +71,18 @@ TC-11, you cannot run TC-12 on its own. Automation makes this worse, because Cuc
 different order, in parallel, or rerun only the failed ones. A scenario must **arrange its own world** - log in, put
 the right product in the cart - every time.
 
+## Anti-patterns in the step code
+
+The Java side has its own classics:
+
+- **Steps calling steps** - a \`@Given\` that does \`new LoginSteps().loggedInAs(...)\`. Creating step classes with
+  \`new\` bypasses dependency injection (no shared driver) and ties step classes together. Put reusable actions in
+  page objects or a small helper class that is injected into every step class that needs it.
+- **Conjunctive steps** - "When the shopper logs in and adds a product and checks out". One idea per step, so steps
+  can be reused and a failure points at one thing.
+- **Hidden skips** - a tag like \`@ignore\` means nothing to Cucumber JVM by itself. A scenario is only skipped if the
+  tag expression excludes it (\`not @ignore\`).
+
 ## Reviewing a scenario, step by step
 
 1. Read only the scenario name. Do you know what is being tested? If not, rename it.
@@ -85,6 +97,7 @@ the right product in the cart - every time.
     'One behaviour per scenario, so normally exactly one When.',
     'Every scenario must be able to run alone, in any order, and in parallel.',
     'Name scenarios after the behaviour and outcome, never "TC1" or "test".',
+    'Steps never call other steps; shared actions live in page objects or injected helpers.',
   ],
   mistakes: [
     'Copying every click from the manual steps into Gherkin. Fix: group clicks into one business-level step.',
@@ -94,5 +107,5 @@ the right product in the cart - every time.
   ],
   tryIt: `Take any 10-step manual test case you wrote recently. Underline the single action that is really being tested;
 everything before it becomes one or two Givens, everything after it becomes Thens. How many steps are left?`,
-  problems: ['cuc-002', 'cuc-003', 'cuc-016'],
+  problems: ['cuc-002', 'cuc-003', 'cuc-016', 'cuc-025'],
 }

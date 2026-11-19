@@ -93,6 +93,20 @@ rowXpath("Chen Wei");   // //tr[td[normalize-space()='Chen Wei']]
 
 Wrap the result in a locator when you use it: \`By.xpath(rowXpath("Chen Wei"))\`.
 
+## What a method really receives: a copy
+
+Java is **pass-by-value**: a method gets a *copy* of each argument.
+
+\`\`\`java
+static void addTax(double total) { total = total * 1.08; }       // changes the copy only
+static void addItem(List<String> cart) { cart.add("Junior Onesie"); }   // changes the shared list
+\`\`\`
+
+- For a primitive (\`double total\`), the copy is the number. The caller's variable never changes.
+- For an object (\`List<String> cart\`), the copy is a **reference** to the same object. Calling methods on it (\`add\`) changes what the caller sees, but assigning a new object to the parameter (\`cart = new ArrayList<>()\`) only redirects the local copy.
+
+That's one more reason for the "return, don't print" rule: if a helper computes a new value, **return** it and let the caller store it.
+
 ## Naming and size
 
 - Name methods by what they do: \`parsePrice\`, \`cartTotal\`, \`isErrorShown\`. Methods returning \`boolean\` read well with \`is\`/\`has\`.
@@ -103,6 +117,7 @@ Wrap the result in a locator when you use it: \`By.xpath(rowXpath("Chen Wei"))\`
     'Methods can call other methods — fix logic in one place.',
     'Overloading: same name, different parameters; let the short version delegate to the full one.',
     'String.format("...%s...", value) builds readable dynamic locators.',
+    'Java passes copies: reassigning a parameter never changes the caller\'s variable.',
   ],
   mistakes: [
     'Printing inside a helper instead of returning — the caller cannot use the value.',
@@ -111,5 +126,5 @@ Wrap the result in a locator when you use it: \`By.xpath(rowXpath("Chen Wei"))\`
     'Nesting double quotes inside the XPath string — use single quotes for XPath values inside the Java string.',
   ],
   tryIt: `On http://localhost:5180/practice-site/inventory.html every "Add to cart" button has an id like \`add-to-cart-pulse-bike-light\`. Write a method \`addToCartId(String slug)\` that returns that id using String.format, and check it gives the right value for \`retro-red-tee\`.`,
-  problems: ['java-004', 'java-016'],
+  problems: ['java-004', 'java-016', 'java-027'],
 }

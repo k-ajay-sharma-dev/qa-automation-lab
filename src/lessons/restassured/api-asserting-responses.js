@@ -3,7 +3,7 @@ export default {
   category: 'restassured',
   order: 3,
   title: 'Asserting responses: Hamcrest matchers, JsonPath and error bodies',
-  minutes: 9,
+  minutes: 10,
   summary: 'Check lists, nested fields, numbers and error bodies with Hamcrest matchers and GPath expressions, and pull values out with jsonPath() when you need Java logic.',
   manualAnalogy: `When you check a response by eye you scan the list ("six products, all have a price, the cheapest is the onesie") and read the error text ("it says Product 99 not found, good"). Hamcrest matchers are those observations written as precise rules, and JsonPath is how you point at the exact field you are looking at.`,
   body: `## Pointing at a field: GPath paths
@@ -34,6 +34,23 @@ For a list such as \`{ "data": [ {...}, {...} ] }\`:
 | \`data.price.max()\` | highest price |
 
 \`it\` means "the current item" while GPath loops over the array.
+
+### Building bigger questions
+
+Most "how many / how much / which one" questions combine four moves: **collect** a field, **filter**, **pick one**, **aggregate**.
+
+| Question | GPath |
+|---|---|
+| total units of kids' products | \`data.findAll { it.category == 'kids' }.stock.sum()\` |
+| the cheapest product (the whole item) | \`data.min { it.price }\` |
+| ...and just its slug | \`data.min { it.price }.slug\` |
+| how many are out of stock | \`data.findAll { !it.inStock }.size()\` |
+
+Two details trip people up:
+- \`find\` returns the **first** match only; \`findAll\` returns every match as a list. Use \`find\` for unique keys (id, slug).
+- \`data.min { it.price }\` returns the *item*; \`data.price.min()\` returns only the *number*.
+
+Inside a Java string the GPath itself is in double quotes, so string values inside it use **single quotes**: \`"data.find { it.slug == 'pulse-bike-light' }.stock"\`.
 
 ## Hamcrest matchers: the rule part
 
@@ -132,13 +149,27 @@ Assert the stable **code**, and use \`containsString\` on the human message — 
 .header("X-Request-Id", notNullValue())
 \`\`\`
 
-A 401 from ShopEasy also sends \`WWW-Authenticate: Bearer ...\` — that is part of the contract, so it is worth one assertion.`,
+A 401 from ShopEasy also sends \`WWW-Authenticate: Bearer ...\` — that is part of the contract, so it is worth one assertion.
+
+Headers that matter to a tester, and how to check values that change on every call:
+
+| Header | When | Typical check |
+|---|---|---|
+| \`Content-Type\` | every JSON response | \`containsString("application/json")\`, and the charset |
+| \`Location\` | after a 201 | equals the new resource's path |
+| \`WWW-Authenticate\` | on a 401 | \`startsWith("Bearer")\` |
+| \`Allow\` | on a 405 (wrong method) | lists the methods the URL supports |
+| \`Access-Control-Allow-Origin\` | APIs called from a browser | present — without it the browser blocks the call (CORS), even though Postman works |
+| a correlation id such as \`X-Request-Id\` | every response | its **format** with \`matchesPattern(regex)\`, and that two calls get different ids |
+
+For a generated value you cannot use \`equalTo\` — check its shape with \`matchesPattern\`, or extract it with \`.extract().header("Location")\` and compare it with something else in Java. In a Java string, regex backslashes are doubled: \`"\\\\d+"\`.`,
   keyPoints: [
     'GPath walks JSON: a.b, list[0], list.size(), list.field (all values), find/findAll { it... }.',
     'Hamcrest gives readable rules: equalTo, hasItems, hasSize, everyItem, containsString, notNullValue.',
     'JSON decimals arrive as Float by default — use 9.99f or configure BigDecimal for money.',
     'jsonPath().getList / getInt / getString extract values when you need Java logic like sorting checks.',
     'Negative tests assert the error code and the field in details, not only the status.',
+    'Headers are contract too: Location, WWW-Authenticate, Allow, CORS and correlation ids — use matchesPattern for generated values.',
   ],
   mistakes: [
     'equalTo(29.99) on a price — fails with Double vs Float; use 29.99f or BigDecimal config.',
@@ -147,5 +178,5 @@ A 401 from ShopEasy also sends \`WWW-Authenticate: Bearer ...\` — that is part
     'Extracting everything into Java and using if/else instead of a one-line matcher.',
   ],
   tryIt: `Open http://localhost:5181/api/products?sort=price_asc and write the GPath for: the number of products, the cheapest product's name, all prices, and the name of the product whose stock is 0. Then call http://localhost:5181/api/products?size=0 and write the path to the field name inside error.details.`,
-  problems: ['api-004', 'api-007', 'api-013'],
+  problems: ['api-004', 'api-007', 'api-013', 'api-022', 'api-023'],
 }

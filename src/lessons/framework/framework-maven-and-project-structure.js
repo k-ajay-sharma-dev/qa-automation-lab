@@ -3,7 +3,7 @@ export default {
   category: 'framework',
   order: 1,
   title: 'Maven, pom.xml and the framework folder structure',
-  minutes: 9,
+  minutes: 10,
   summary: 'Read and write a pom.xml (properties, dependencies, scopes, Surefire) and lay out a test framework so every file has an obvious home.',
   manualAnalogy: `Before a manual test cycle you prepare the environment: which browser versions, which tools, which test data folder, where evidence goes. Maven is that preparation written down. \`pom.xml\` lists every tool (library) and version the project needs, and a standard folder layout means any new team member knows where the test cases, data and reports live — like a well-organised shared drive.`,
   body: `## What Maven does for you
@@ -65,6 +65,38 @@ A typical UI framework needs: \`selenium-java\`, \`testng\`, \`cucumber-java\`, 
 
 \`mvn test\` hands control to Surefire. By default it runs classes named \`*Test\`; pointing it at a TestNG suite file via \`<suiteXmlFiles>\` lets \`testng.xml\` decide what runs (see the *testng.xml* lesson). Surefire also writes result XML into \`target/surefire-reports\`, which CI tools read.
 
+## Profiles: named sets of settings
+
+Typing \`-Denv=qa -Dheadless=true -DsuiteXmlFile=...\` by hand invites typos. A **profile** bundles values under a name you switch on with \`-P\`:
+
+\`\`\`xml
+<profiles>
+  <profile>
+    <id>uat</id>
+    <properties>
+      <env>uat</env>
+    </properties>
+  </profile>
+</profiles>
+\`\`\`
+
+\`mvn test -Puat\` activates it; several at once are comma-separated (\`-Puat,smoke\`). \`<activation><activeByDefault>true</activeByDefault></activation>\` marks a default — but it switches off whenever another profile is named, so keep defaults in the top-level \`<properties>\` too.
+
+One catch: these are **Maven** properties. Your tests run in a separate JVM started by Surefire and read **system properties**, so Surefire's \`<systemPropertyVariables>\` must copy them across (\`<env>\${env}</env>\`). \`mvn help:active-profiles\` shows which profiles are on.
+
+## When dependencies fight: dependency:tree
+
+Libraries bring their own libraries (*transitive dependencies*). If two of them want different versions of the same thing, Maven keeps one — the "nearest" in the graph, not necessarily the newest — and you get runtime errors such as \`NoSuchMethodError\` or \`ClassNotFoundException\`.
+
+\`\`\`
+mvn dependency:tree                                       # who brings what
+mvn dependency:tree -Dincludes=com.fasterxml.jackson.core   # only Jackson
+\`\`\`
+
+Fix it with an \`<exclusions>\` block on the dependency that drags in the wrong version, or force one version in \`<dependencyManagement>\`, then run the tree again to confirm.
+
+Other everyday surprises: a test class not named \`*Test\`/\`*Tests\`/\`Test*\` is silently not run when no suite XML is configured; a test-scoped library cannot be used from \`src/main/java\`; \`-U\` makes Maven re-check remote repositories after a failed download.
+
 ## The standard folder layout
 
 Maven expects this structure — follow it and nothing needs configuring:
@@ -113,5 +145,5 @@ The guiding principle: **separate things that change for different reasons.** Lo
     'Writing locators inside step definitions — they belong in page objects.',
   ],
   tryIt: `Open the app's Framework Blueprint page and read its \`pom.xml\`. For each dependency write one sentence: what would break if you removed it? Then compare its folder tree with the one above and note what extra packages a bigger project adds.`,
-  problems: ['fw-001', 'fw-014'],
+  problems: ['fw-001', 'fw-014', 'fw-018', 'fw-020'],
 }

@@ -3,7 +3,7 @@ export default {
   category: 'pom',
   order: 3,
   title: 'Fluent page objects: returning the next page',
-  minutes: 7,
+  minutes: 9,
   summary: 'Make action methods return the page object the user lands on (or `this`), so tests chain naturally and the compiler guides the flow.',
   manualAnalogy: `In a manual end-to-end case every step has an expected landing screen: "Click Checkout → the Your Information page opens". Fluent page objects write that expectation into the code. The method that clicks Checkout *returns* a \`CheckoutPage\`, so the next line of the test can only call things that exist on that page — exactly like a tester who knows which screen they are on.`,
   body: `## Methods can return objects
@@ -97,6 +97,37 @@ public RegistrationPage withEmail(String email) {
 }
 \`\`\`
 
+### Many fields? Pass one data object
+
+When a form has four, eight or twelve fields, a method with twelve \`String\` parameters is unreadable, and each
+negative test changes only one value. Group the values into a small **data object**. Java 16+ has \`record\` for exactly this:
+
+\`\`\`java
+public record Applicant(String firstName, String lastName, String email) {
+    public static Applicant valid() { return new Applicant("Asha", "Rao", "asha@example.com"); }
+    public Applicant withEmail(String email) { return new Applicant(firstName, lastName, email); }
+}
+
+public RegistrationPage fillWith(Applicant a) {    // on form.html
+    type(firstNameInput, a.firstName());           // record accessors have no "get"
+    type(lastNameInput, a.lastName());
+    type(emailInput, a.email());
+    return this;
+}
+\`\`\`
+
+- A **record** is immutable: one test cannot change the "valid" applicant for everyone else.
+- \`valid()\` is the known-good starting point; \`withEmail("not-an-email")\` changes **only** the field the case is
+  about, so the reviewer sees the intent at a glance.
+- Decide one convention for "leave this field empty" (for example \`null\` = do not type) and handle it in the page.
+
+## Draw the map before you code
+
+Before writing a single class, list each action and *where the user is afterwards* — the same flow diagram you
+sketch for exploratory testing. Every arrow to another screen becomes a return type; every loop back to the same
+screen becomes \`return this\`. A "page" is **what the user sees**, not an HTML file: one URL with three wizard steps
+still gets three page objects.
+
 ## Rules of thumb
 
 - The return type must be **true**. If the click opens a product details page, do not return \`CartPage\` because it was convenient.
@@ -117,5 +148,5 @@ public RegistrationPage withEmail(String email) {
     'Building one giant chain with assertions buried in the middle — break into variables and assert in the test.',
   ],
   tryIt: `On http://localhost:5180/practice-site/cart.html note the two buttons (\`#continue-shopping\`, \`#checkout\`). For each, write the method signature you would put in \`CartPage\` — just the return type, name and parameters. Then do the same for the overview step on \`checkout.html\` (\`#cancel-overview\`, \`#finish\`).`,
-  problems: ['pom-003', 'pom-008', 'pom-013'],
+  problems: ['pom-003', 'pom-008', 'pom-013', 'pom-015', 'pom-016', 'pom-021'],
 }

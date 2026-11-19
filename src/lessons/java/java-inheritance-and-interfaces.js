@@ -65,6 +65,23 @@ public String describe() { return "Dog: " + name; }
 
 \`@Override\` asks the compiler to check you really are replacing a parent method — a typo in the name becomes a compile error instead of a silent new method.
 
+## Overriding vs overloading: who decides?
+
+The two words sound alike but are decided at different moments:
+
+\`\`\`java
+Animal pet = new Dog("Rex");
+pet.describe();          // OVERRIDE: runs Dog's describe(). The real object decides, at run time.
+
+static String vet(Animal a) { return "general vet"; }
+static String vet(Dog d)    { return "dog vet"; }
+vet(pet);                // OVERLOAD: "general vet". The declared type (Animal) decides, at compile time.
+\`\`\`
+
+- **Overriding**: same name *and* same parameters in a subclass. Java looks at the actual object when the line runs.
+- **Overloading**: same name, *different* parameters (\`click(By)\` / \`click(WebElement)\`). The compiler picks one from the declared types of the arguments. A different return type alone is not an overload, and it won't compile.
+- The parent constructor always runs first: \`new Dog(...)\` runs \`Animal\`'s constructor via \`super(...)\`. This also holds for an abstract parent like \`BaseComponent\` above, which is why abstract classes can have constructors.
+
 ## Interfaces: a contract, not code
 
 \`\`\`java
@@ -127,6 +144,7 @@ Browser-specific settings live in options objects: \`ChromeOptions options = new
     'Shared page plumbing (driver, waits, helpers) belongs in one base class.',
     'Declare variables by the interface (WebDriver), not the class (ChromeDriver).',
     'enum + switch replace error-prone magic strings; valueOf fails fast on typos.',
+    'Overrides are chosen at run time from the real object; overloads at compile time from declared types.',
   ],
   mistakes: [
     'Forgetting super(driver) in a child page constructor — compile error when the parent has no empty constructor.',
@@ -135,5 +153,5 @@ Browser-specific settings live in options objects: \`ChromeOptions options = new
     'Calling Enum.valueOf("chrome") with lowercase input — call toUpperCase() first.',
   ],
   tryIt: `List the pages on the practice site (login, inventory, cart, checkout). Write down which locators or helpers appear on more than one — those belong in a base class or a shared component (the header with \`shopping-cart-link\` and \`logout-link\` is a good start).`,
-  problems: ['java-009', 'java-010'],
+  problems: ['java-009', 'java-010', 'java-024'],
 }

@@ -84,6 +84,25 @@ public class UserPatch { ... }
 
 For a list response use \`jsonPath().getList("data", Product.class)\`. Java 17 **records** (\`public record Address(String street, String city, String postalCode, String country) {}\`) also work with modern Jackson and remove the getter boilerplate.
 
+### Generic types: TypeRef
+
+Many APIs wrap lists in the same envelope — ShopEasy's \`{ data, page, size, total, totalPages }\` for products, \`{ data }\` for orders. It is tempting to write one generic class for it:
+
+\`\`\`java
+public record Listing<T>(List<T> data) {}
+\`\`\`
+
+But \`.as(Listing.class)\` cannot know *what* \`T\` is: Java erases generic types at runtime, so Jackson fills \`data\` with \`LinkedHashMap\`s and you get a \`ClassCastException\` later. **TypeRef** keeps the full type:
+
+\`\`\`java
+Listing<Order> orders = given().auth().oauth2(token)
+    .when().get("/api/orders")
+    .then().statusCode(200)
+    .extract().as(new TypeRef<Listing<Order>>() {});      // io.restassured.common.mapper.TypeRef
+\`\`\`
+
+The \`{}\` creates a tiny anonymous subclass, and *that* class remembers \`Listing<Order>\`. The same works for \`new TypeRef<List<Order>>() {}\` when an endpoint returns a bare array. For money fields prefer \`BigDecimal\` in the model, and compare with \`compareTo(...) == 0\` (not \`equals\`, which also compares the number of decimals).
+
 ## PUT vs PATCH vs DELETE
 
 | Verb | ShopEasy | What you send | Test idea |
@@ -109,6 +128,20 @@ given().contentType(ContentType.JSON)
 
 A successful DELETE on ShopEasy returns **204** with an empty body. Assert the status and that the body is empty (\`.body(emptyString())\`); there is nothing else to read. Then prove the effect with a follow-up GET.
 
+## Repeating a request: what idempotent really means
+
+Mobile apps retry when the network drops, so "what happens if the same request arrives twice?" is a real test question. **Idempotent** means the *server state* is the same after one call or many — the *status* may differ:
+
+| Repeat on ShopEasy | 2nd status | State after |
+|---|---|---|
+| \`PATCH /api/users/1 { "phone": ... }\` with the same body | 200 | same profile |
+| \`DELETE /api/cart/items/{id}\` | 404 ITEM_NOT_IN_CART | item still gone |
+| \`DELETE /api/cart\` | 204 | cart still empty |
+| \`POST /api/cart/items\` with the same product | 409 ITEM_ALREADY_IN_CART | cart unchanged |
+| \`POST /api/orders\` | 201 again | **two orders** — POST is not idempotent |
+
+The key assertion after a refused repeat (409, 422) is that **nothing changed**: read the resource back and check the old values, because a server that answers 409 *and* applies the change passes a status-only test.
+
 ## Getting status codes right for POST
 
 Creating something returns **201 Created**, not 200, plus a \`Location\` header pointing at the new resource. Asserting 201 catches a real class of bugs where a backend "succeeds" but never stored anything.`,
@@ -118,6 +151,8 @@ Creating something returns **201 Created**, not 200, plus a \`Location\` header 
     'Jackson serialises POJOs/Maps to JSON and deserialises responses with extract().as(Type.class).',
     '@JsonIgnoreProperties(ignoreUnknown = true) keeps tests stable when the API adds fields.',
     'PUT replaces everything, PATCH changes only what you send, DELETE usually returns 204 — verify the effect with a GET.',
+    'Generic wrappers (Page<T>, List<T>) need new TypeRef<...>() {} — .as(Page.class) gives you maps, not objects.',
+    'Idempotent = same server state after a repeat; after a refused repeat, prove nothing changed.',
   ],
   mistakes: [
     'POJO without a no-args constructor or getters — Jackson cannot build or read it.',
@@ -126,5 +161,5 @@ Creating something returns **201 Created**, not 200, plus a \`Location\` header 
     'Checking only the PATCH response and not that untouched fields kept their values.',
   ],
   tryIt: `In Postman, log in as standard_user, then PATCH http://localhost:5181/api/users/1 with \`{ "phone": "+91-0000" }\` and the Bearer token. Then PUT the same body. Compare the two responses and note which error code and \`details\` the PUT returns. Finish with POST /api/reset.`,
-  problems: ['api-006', 'api-008', 'api-009'],
+  problems: ['api-006', 'api-008', 'api-009', 'api-025', 'api-026'],
 }

@@ -42,6 +42,11 @@ Feature: Shopping cart API
 
 It is fine for a **Then** step to mention a status code — testers and developers both speak that language — but keep methods, URLs and raw JSON out of the steps. A Scenario Outline is the Gherkin version of a DataProvider: perfect for error matrices.
 
+Three habits make outlines readable in the report:
+- Put placeholders in the **title** too (\`Scenario Outline: Adding "<product>" is rejected with <code>\`), so every row gets its own name.
+- Choose rows like a boundary-value table: the valid edges, the invalid neighbours (0 and 11 for a 1–10 quantity), a different letter case, an empty result.
+- Split valid and invalid data into **separate outlines** (or separate \`Examples:\` blocks, each with its own tag such as \`@negative\`) instead of an if/else in the step definition.
+
 ## DataTables for request data
 
 When a step needs several fields (an order, a profile), pass a table:
@@ -147,5 +152,5 @@ The runner is the same \`@CucumberOptions\` + \`AbstractTestNGCucumberTests\` cl
     'Asserting inside When steps, so the same step cannot be reused for negative scenarios.',
   ],
   tryIt: `Take three Postman requests you would run for the practice API's /api/users/{id} (read, PATCH city, PATCH with a bad email) and write them as declarative Gherkin scenarios. Underline every word that is HTTP detail — none should be left except, at most, a status code in a Then step.`,
-  problems: ['api-005', 'api-014', 'api-017', 'api-018'],
+  problems: ['api-005', 'api-014', 'api-017', 'api-018', 'api-024'],
 }

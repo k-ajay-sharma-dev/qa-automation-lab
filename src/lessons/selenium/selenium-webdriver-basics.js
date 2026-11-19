@@ -3,7 +3,7 @@ export default {
   category: 'selenium',
   order: 1,
   title: 'How Selenium WebDriver drives a real browser',
-  minutes: 7,
+  minutes: 8,
   summary: 'Understand what happens between your Java code and Chrome, start a browser with Selenium Manager, open a page, check it, and always clean up with quit().',
   manualAnalogy: `When you test by hand you open the browser, type a URL, look at the tab title and close the browser when you are done. Selenium does exactly the same steps — but instead of your hands on the mouse, a small program called a *driver* receives instructions from your Java code and performs them inside the browser. You are writing the test case once; the driver executes it as many times as you like.`,
   body: `## The three pieces
@@ -63,6 +63,22 @@ You will meet these properly in the next lesson, but one rule is worth knowing o
 
 So "is this element absent?" is a \`findElements(...).isEmpty()\` question, not a try/catch around \`findElement\`.
 
+## Back, forward, refresh
+
+\`driver.navigate()\` gives you the browser's own buttons:
+
+\`\`\`java
+driver.navigate().to("http://localhost:5180/practice-site/form.html"); // same as get()
+driver.navigate().back();       // the Back button
+driver.navigate().forward();    // the Forward button
+driver.navigate().refresh();    // F5
+\`\`\`
+
+Two things to remember:
+
+- After a click that *leads* to a new page (a link, a form that redirects with JavaScript), the new page may not be loaded yet when \`click()\` returns. Wait for the address bar first — \`wait.until(ExpectedConditions.urlContains("table.html"))\` — then check \`getTitle()\`.
+- Every navigation builds a brand-new page. Elements you found before \`back()\` or \`refresh()\` are gone; find them again.
+
 ## Why "wait for page load" is not "wait for everything"
 
 \`get()\` waits for the browser's load event. Modern pages keep fetching data with JavaScript *after* that event, so an element can still appear a second later. That is the job of explicit waits — see the *Explicit and fluent waits* lesson.`,
@@ -73,6 +89,7 @@ So "is this element absent?" is a \`findElements(...).isEmpty()\` question, not 
     '`get()` waits for page load; no `Thread.sleep` needed right after it.',
     '`quit()` in a `finally` block (or teardown) — `close()` only closes one window.',
     '`findElement` throws when nothing matches; `findElements` returns an empty list.',
+    '`driver.navigate()` has back/forward/refresh; wait for the URL after any navigation before asserting.',
   ],
   mistakes: [
     'Keeping an old `System.setProperty("webdriver.chrome.driver", ...)` line — it overrides Selenium Manager and breaks on the next Chrome update. Delete it.',
@@ -81,5 +98,5 @@ So "is this element absent?" is a \`findElements(...).isEmpty()\` question, not 
     'Declaring `ChromeDriver driver = ...` everywhere, which ties the whole framework to one browser.',
   ],
   tryIt: `Open Task Manager (or \`ps\`), run a tiny script that opens \`http://localhost:5180/practice-site/index.html\` and ends without \`quit()\`. Watch the \`chromedriver\` process stay alive. Add \`quit()\` in a \`finally\` and run again — it disappears.`,
-  problems: ['sel-001', 'sel-002'],
+  problems: ['sel-001', 'sel-002', 'sel-021'],
 }

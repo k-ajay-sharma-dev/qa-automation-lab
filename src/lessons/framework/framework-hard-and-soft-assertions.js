@@ -3,7 +3,7 @@ export default {
   category: 'framework',
   order: 3,
   title: 'Assertions: hard Assert vs SoftAssert',
-  minutes: 6,
+  minutes: 7,
   summary: 'Choose between TestNG hard assertions that stop at the first failure and SoftAssert that collects every failure, and use assertAll correctly.',
   manualAnalogy: `When you verify a product detail page by hand you do not stop at the first wrong thing — you note "price wrong, image missing, button disabled" and log all three in one defect. But if the page does not open at all, you stop: there is nothing to check. Soft assertions are the "note everything" mode; hard assertions are the "stop, the precondition failed" mode.`,
   body: `## Hard assertions: stop on first failure
@@ -75,6 +75,25 @@ Mixing is normal: hard for the gate, soft for the details.
 
 The \`assertAll()\` report lists each failure with its message. "Grand total expected [$43.18] but found [$42.18]" pinpoints the problem; five unlabelled "expected [true] but found [false]" lines do not. Prefer \`assertEquals\` over \`assertTrue(a.equals(b))\` for the same reason: it prints both values.
 
+## Soft assertions in a loop
+
+Checking a list (every row of a table, every item in a cart) is where soft asserts shine — and where their placement matters most:
+
+\`\`\`java
+List<String> names = cart.productNames();
+Assert.assertFalse(names.isEmpty(), "Cart should not be empty");     // gate: an empty list would check nothing
+
+SoftAssert softly = new SoftAssert();                                // once, BEFORE the loop
+for (String name : names) {
+    softly.assertTrue(cart.isRemoveButtonShown(name), "Remove button for " + name);
+}
+softly.assertAll();                                                  // once, AFTER the loop
+\`\`\`
+
+- A \`new SoftAssert()\` **inside** the loop starts a fresh collector each time; \`assertAll()\` **inside** the loop stops at the first bad item — both bring back the hard-assert problem.
+- Put the item's name in every message, or the report shows a list of identical lines.
+- Always gate the size or emptiness first: a loop over an empty list asserts nothing and passes.
+
 ## Cucumber note
 
 The same classes work in step definitions. Remember a SoftAssert created in one step is not visible in the next step unless you share it (for example via a scenario context object), and \`assertAll()\` must be called somewhere — often in a final \`@Then\` step.`,
@@ -92,5 +111,5 @@ The same classes work in step definitions. Remember a SoftAssert created in one 
     'Using `assertTrue(actual.equals(expected))` — the report cannot show the two values; use `assertEquals`.',
   ],
   tryIt: `Write a throwaway test with a \`SoftAssert\` containing two deliberately wrong checks and **no** \`assertAll()\`. Run it: it passes. Add \`assertAll()\` and run again: one failure listing both problems. That 30-second experiment will stop you ever forgetting it.`,
-  problems: ['fw-003'],
+  problems: ['fw-003', 'fw-016'],
 }

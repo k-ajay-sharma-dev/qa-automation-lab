@@ -89,6 +89,21 @@ expression.
 Older blog posts show \`-Dcucumber.options="--tags @smoke"\`. That form was removed in Cucumber 7 - use
 \`cucumber.filter.tags\`.
 
+## Running one scenario, and "ignored" scenarios
+
+To re-run a single scenario while debugging, point Cucumber at its file and line instead of using tags:
+
+\`\`\`text
+mvn test -Dcucumber.features="src/test/resources/features/login.feature:18"
+\`\`\`
+
+The number is the line of the \`Scenario:\` (or of an Examples row). \`cucumber.filter.name\` (a regex on the scenario
+name) is another option. A scenario that passes in the full run but fails alone is depending on another scenario.
+
+Cucumber JVM has **no built-in ignore tag**. Tagging a scenario \`@ignore\` does nothing until a tag expression excludes
+it - for example \`@regression and not (@wip or @ignore)\`. Prefer a traceable tag such as \`@bug-SHOP-208\` so everyone
+can see *why* it is skipped.
+
 ## Quick verification
 
 Combine tags with \`dryRun = true\` (or \`-Dcucumber.execution.dry-run=true\`) to see *which* scenarios an expression
@@ -99,6 +114,7 @@ selects without opening a browser. Do this before wiring a new expression into C
     'Tag expressions use and / or / not and brackets; and binds tighter than or.',
     'Cucumber 7: mvn test -Dcucumber.filter.tags="..." overrides tags in @CucumberOptions.',
     '@wip plus "not @wip" keeps unfinished scenarios out of CI.',
+    'Run one scenario with -Dcucumber.features="path/file.feature:LINE"; @ignore has no built-in meaning.',
   ],
   mistakes: [
     'Putting a tag on the same line as the Scenario keyword or after it. Fix: tags go on the line above.',
@@ -108,5 +124,5 @@ selects without opening a browser. Do this before wiring a new expression into C
   ],
   tryIt: `For a feature tagged @cart with scenarios tagged @smoke, @regression and @regression @wip, write down which
 scenarios each expression selects: "@cart", "@smoke or @wip", "@regression and not @wip".`,
-  problems: ['cuc-009', 'cuc-010'],
+  problems: ['cuc-009', 'cuc-010', 'cuc-025'],
 }

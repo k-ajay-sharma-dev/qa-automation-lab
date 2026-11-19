@@ -72,6 +72,10 @@ Managers don't need stack traces. They need three numbers and a sentence:
 
 Count skipped tests separately and never present "failed + skipped" as "bugs found".
 
+## Many failures: triage groups, not tests
+
+When a run has dozens of red tests, give a verdict per **root cause**, not per test. Group failures by their signature (same exception and message pattern), find the earliest event that explains each group, and check whether anything is left over — a second, independent cause hides easily behind a big cascade. "37 failures from one failed data reset (framework, fixed and rerun green) + 3 from a browser hang on one agent (environment)" is a verdict a release manager can act on; "40 failures" is not.
+
 ## Preventing the noisy ones
 
 - Start the pipeline with a **one-test smoke stage** (open the browser, open the login page). If it fails, stop the run with a clear message instead of 300 identical failures.
@@ -91,5 +95,5 @@ Count skipped tests separately and never present "failed + skipped" as "bugs fou
     'Adding blanket automatic retries so the dashboard looks green.',
   ],
   tryIt: `Pick the last three red tests you saw (any project). For each, write one sentence: verdict + the single piece of evidence that decided it. If you can't name the evidence, the honest verdict is "can't tell yet".`,
-  problems: ['dbg-014', 'dbg-013', 'dbg-015'],
+  problems: ['dbg-014', 'dbg-013', 'dbg-015', 'dbg-027'],
 }

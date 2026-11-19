@@ -101,6 +101,8 @@ try (InputStream in = new FileInputStream("testdata.csv")) {
 
 Whatever is declared in the brackets after \`try\` is closed automatically at the end. Note the rethrow: a missing data file should **stop the run** with a clear message, not be ignored. Passing \`e\` as the second argument keeps the original cause in the stack trace.
 
+For file errors Java has a ready-made unchecked wrapper, \`java.io.UncheckedIOException\`: \`throw new UncheckedIOException("Cannot read " + path, e);\`. It says "this was an I/O problem" more precisely than a plain \`RuntimeException\`, and callers such as TestNG data providers don't need a \`throws IOException\` clause. The *Records, Optional and CSV test data* lesson uses this when reading test data line by line.
+
 ## Throwing your own
 
 \`\`\`java
@@ -134,5 +136,5 @@ A name like this in a CI log tells you instantly "the environment, not the app, 
     'Throwing new RuntimeException() with no message — always say what was expected and what happened.',
   ],
   tryIt: `Predict, then run: a try block that prints "A" and throws \`new IllegalStateException("x")\`, followed by \`catch (IllegalArgumentException e)\` printing "B", \`catch (RuntimeException e)\` printing "C" and \`finally\` printing "D". Which letters appear?`,
-  problems: ['java-013', 'java-014', 'java-008'],
+  problems: ['java-013', 'java-014', 'java-008', 'java-028'],
 }

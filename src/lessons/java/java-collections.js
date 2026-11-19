@@ -3,7 +3,7 @@ export default {
   category: 'java',
   order: 7,
   title: 'Collections: List, Map and Set in test code',
-  minutes: 9,
+  minutes: 10,
   summary: 'Pick the right collection — List for ordered values, Map for key → value test data, Set for uniqueness — and use them with findElements, sorting and form filling.',
   manualAnalogy: `Your test artefacts already use these shapes. A list of prices read top to bottom is a **List** (order matters, duplicates allowed). A test-data table "field → value" is a **Map**. A list of order numbers where each must be unique is a **Set**. Choosing the right one in code is the same instinct as choosing the right column layout in your spreadsheet.`,
   body: `## The three shapes
@@ -46,6 +46,28 @@ boolean sorted = expected.equals(names);            // same items, same order?
 - \`List.equals\` is true only if both lists have equal elements **in the same order**.
 - \`Collections.sort(list)\` sorts ascending; \`list.sort(Comparator.reverseOrder())\` sorts descending.
 - Guard against an empty list first — an empty list counts as "sorted", which would hide a page that failed to load.
+
+## Sorting objects: Comparator
+
+Numbers and Strings know their natural order. For your own objects you describe the order with a **Comparator**, built from the fields you sort by:
+
+\`\`\`java
+record Employee(String name, String department, int salary) { }   // a short data class (see the Records lesson)
+
+Comparator<Employee> byDeptThenSalaryDesc =
+        Comparator.comparing(Employee::department)                 // first key
+                  .thenComparing(Employee::salary, Comparator.reverseOrder());   // tie-breaker
+List<Employee> expected = new ArrayList<>(shown);
+expected.sort(byDeptThenSalaryDesc);
+\`\`\`
+
+- \`Employee::department\` is a *method reference*, short for \`e -> e.department()\`.
+- \`thenComparing\` is only used when the earlier keys are equal. That's how you test "ties are ordered by name".
+- \`.reversed()\` reverses **everything chained before it**, so place it right after the key it should apply to.
+
+## Two names, one list
+
+\`List<String> copy = names;\` does **not** copy the list. Both variables now point to the same object, so sorting \`copy\` also sorts \`names\`. Only \`new ArrayList<>(names)\` (or \`List.copyOf(names)\`) creates a second list. Also never \`remove\` from a list inside a for-each loop over it: you get \`ConcurrentModificationException\`. Use \`names.removeIf(n -> n.isBlank())\` instead.
 
 ## Map: field → value
 
@@ -94,6 +116,8 @@ Other handy uses:
     'Check sorting by sorting a COPY (new ArrayList<>(list)) and comparing with equals.',
     'Loop a Map with entrySet(); use LinkedHashMap when order matters.',
     'Set.add returns false for a value that is already present.',
+    'Comparator.comparing(...).thenComparing(...) sorts objects by several fields.',
+    'list2 = list1 copies the reference, not the list; use new ArrayList<>(list1).',
   ],
   mistakes: [
     'Sorting the original list and then comparing it with itself — always sort a copy.',
@@ -102,5 +126,5 @@ Other handy uses:
     'Using HashMap for form data and being surprised by the fill order — use LinkedHashMap.',
   ],
   tryIt: `On http://localhost:5180/practice-site/inventory.html, pick "Name (Z to A)" in the sort dropdown and write the six product names down in page order. In code, put them into a List, make a sorted copy with \`Comparator.reverseOrder()\`, and confirm \`equals\` returns true.`,
-  problems: ['java-011', 'java-012'],
+  problems: ['java-011', 'java-012', 'java-023', 'java-027'],
 }
