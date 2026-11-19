@@ -60,6 +60,19 @@ const PATHS = {
     </>
   ),
   framework: <path d="M12 3l9 5-9 5-9-5 9-5zM3 13l9 5 9-5M3 17l9 5 9-5" />,
+  restassured: (
+    <>
+      <path d="M4 7h11M11 3l4 4-4 4" />
+      <path d="M20 17H9M13 13l-4 4 4 4" />
+    </>
+  ),
+  playwright: (
+    <>
+      <path d="M4 18V7l6-3v11z" />
+      <path d="M10 15l6 3V7l-6-3" />
+      <path d="M16 18l4-2V5l-4 2" />
+    </>
+  ),
   debugging: (
     <>
       <path d="M8 8a4 4 0 0 1 8 0v5a4 4 0 0 1-8 0z" />

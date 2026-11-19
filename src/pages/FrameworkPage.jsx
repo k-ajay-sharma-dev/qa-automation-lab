@@ -1,37 +1,62 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import CodeEditor from '../components/CodeEditor.jsx'
-import { FRAMEWORK_FILES, FRAMEWORK_TREE, RUN_COMMANDS } from '../data/framework.js'
 
-const MONACO_LANG = { java: 'java', xml: 'xml', gherkin: 'gherkin', properties: 'ini', groovy: 'java' }
+const modules = import.meta.glob('../data/frameworks/*.js', { eager: true })
+const FRAMEWORKS = Object.values(modules)
+  .map((m) => m.default)
+  .filter(Boolean)
+  .sort((a, b) => a.order - b.order)
+
+const MONACO_LANG = { java: 'java', xml: 'xml', gherkin: 'gherkin', properties: 'ini', groovy: 'java', typescript: 'typescript', json: 'json', yaml: 'yaml', javascript: 'javascript' }
 
 export default function FrameworkPage() {
-  const [active, setActive] = useState(FRAMEWORK_FILES[0].path)
-  const file = FRAMEWORK_FILES.find((f) => f.path === active)
+  const [params, setParams] = useSearchParams()
+  const fw = FRAMEWORKS.find((f) => f.id === params.get('fw')) ?? FRAMEWORKS[0]
+  const [active, setActive] = useState(null)
+  const file = fw.files.find((f) => f.path === active) ?? fw.files[0]
+
   return (
     <div className="category-page">
       <section className="category-head">
         <div>
           <p className="eyebrow">// what a real project looks like</p>
           <h1>Framework Blueprint</h1>
-          <p className="muted">
-            A complete Java + Selenium + Cucumber + TestNG + Page Object Model framework for the ShopEasy practice site — the
-            structure interviewers expect when they say “explain your framework”. Click a file to read it and why it exists.
-          </p>
+          <p className="muted">{fw.intro} Click a file to read it and why it exists.</p>
         </div>
       </section>
 
+      {FRAMEWORKS.length > 1 && (
+        <div className="sheet-tabs">
+          {FRAMEWORKS.map((f) => (
+            <button
+              key={f.id}
+              className={`chip${f === fw ? ' active' : ''}`}
+              onClick={() => {
+                setParams({ fw: f.id }, { replace: true })
+                setActive(null)
+              }}
+              title={f.stack}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <p className="muted small mono">{fw.stack}</p>
+
       <div className="blueprint">
         <div className="blueprint-side">
-          <pre className="code-block tree">{FRAMEWORK_TREE}</pre>
+          <pre className="code-block tree">{fw.tree}</pre>
           <div className="file-list">
-            {FRAMEWORK_FILES.map((f) => (
-              <button key={f.path} className={`file-item mono small${f.path === active ? ' active' : ''}`} onClick={() => setActive(f.path)}>
+            {fw.files.map((f) => (
+              <button key={f.path} className={`file-item mono small${f === file ? ' active' : ''}`} onClick={() => setActive(f.path)}>
                 {f.path.split('/').pop()}
               </button>
             ))}
           </div>
           <h3 className="small">Run it</h3>
-          {RUN_COMMANDS.map(([label, cmd]) => (
+          {fw.commands.map(([label, cmd]) => (
             <div key={cmd} className="run-cmd">
               <span className="muted small">{label}</span>
               <code className="mono small">{cmd}</code>
@@ -44,7 +69,7 @@ export default function FrameworkPage() {
           </div>
           <p className="file-why small">{file.why}</p>
           <div className="editor-wrap">
-            <CodeEditor value={file.code} language={MONACO_LANG[file.lang]} readOnly />
+            <CodeEditor key={fw.id + file.path} value={file.code} language={MONACO_LANG[file.lang] ?? 'plaintext'} readOnly />
           </div>
         </div>
       </div>

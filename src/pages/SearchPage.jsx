@@ -40,7 +40,7 @@ export default function SearchPage() {
               <span className="title">{p.title}</span>
               <span className="row-meta">
                 <span className="mono muted">{p.id.toUpperCase()}</span>
-                <KindChip kind={p.kind} />
+                <KindChip kind={p.kind} language={p.language} />
                 <span className="muted small">{categoryBySlug.get(p.category).label}</span>
               </span>
             </span>

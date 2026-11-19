@@ -84,7 +84,7 @@ function Problem({ p }) {
           <div className="problem-meta">
             <span className="mono muted small">{p.id.toUpperCase()}</span>
             <LevelBadge level={p.level} />
-            <KindChip kind={p.kind} />
+            <KindChip kind={p.kind} language={p.language} />
             <span className="mono muted small">~{p.estMinutes}m</span>
             <Tags tags={p.tags} />
             <StatusBadge status={status} />

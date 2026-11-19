@@ -20,7 +20,8 @@ export function stripComments(code, language) {
       i++
       continue
     }
-    if (c === '"' || c === "'") {
+    // Java and TypeScript strings; backticks are TypeScript template literals
+    if (c === '"' || c === "'" || (c === '`' && language === 'typescript')) {
       inStr = c
       out += c
       i++

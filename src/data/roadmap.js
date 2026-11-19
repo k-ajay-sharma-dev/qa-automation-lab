@@ -76,7 +76,31 @@ export const PHASES = [
   },
   {
     stage: 7,
-    weeks: 'Week 12',
+    weeks: 'Week 12–13',
+    title: 'API Testing with RestAssured',
+    goal: 'Test the services behind the UI: requests, auth, JSON assertions and an API framework with Cucumber.',
+    focus: ['HTTP methods, status codes, JSON', 'given / when / then, JsonPath, POJOs', 'Auth, chaining, schema validation'],
+    picks: [
+      ['restassured', 'BEGINNER'],
+      ['restassured', 'INTERMEDIATE'],
+      ['restassured', 'ADVANCED'],
+    ],
+  },
+  {
+    stage: 8,
+    weeks: 'Week 14–15',
+    title: 'Playwright + TypeScript',
+    goal: 'Move to the modern stack: TypeScript, Playwright locators and auto-waiting, POM and Cucumber on Playwright.',
+    focus: ['TypeScript and async / await', 'getByRole, web-first assertions, fixtures', 'POM + Cucumber, config and CI'],
+    picks: [
+      ['playwright', 'BEGINNER'],
+      ['playwright', 'INTERMEDIATE'],
+      ['playwright', 'ADVANCED'],
+    ],
+  },
+  {
+    stage: 9,
+    weeks: 'Week 16',
     title: 'Expert & Interview Ready',
     goal: 'Expert problems plus the full interview set: explain your framework and answer follow-ups with real-project stories.',
     focus: ['Expert design and refactoring problems', 'Live-coding rounds', '"Explain your framework" and follow-ups'],
@@ -87,6 +111,8 @@ export const PHASES = [
       ['pom', 'EXPERT'],
       ['cucumber', 'EXPERT'],
       ['framework', 'EXPERT'],
+      ['restassured', 'EXPERT'],
+      ['playwright', 'EXPERT'],
       ['debugging', 'EXPERT'],
       ['interview', 'BEGINNER'],
       ['interview', 'INTERMEDIATE'],
@@ -96,7 +122,7 @@ export const PHASES = [
   },
 ]
 
-const CAT_ORDER = ['java', 'locators', 'selenium', 'pom', 'cucumber', 'framework', 'debugging', 'interview']
+const CAT_ORDER = ['java', 'locators', 'selenium', 'pom', 'cucumber', 'framework', 'restassured', 'playwright', 'debugging', 'interview']
 
 export function phaseProblems(phase, problems) {
   const pickIndex = (p) => phase.picks.findIndex(([cat, level]) => p.category === cat && p.level === level)

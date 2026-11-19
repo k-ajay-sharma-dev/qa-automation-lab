@@ -9,6 +9,7 @@ Same look and feel as the Mule Practice Lab (DataWeave) app.
 ```bash
 npm install
 npm run dev        # http://localhost:5180
+npm run api        # ShopEasy REST API for the RestAssured section, http://localhost:5181
 ```
 
 ## What's inside

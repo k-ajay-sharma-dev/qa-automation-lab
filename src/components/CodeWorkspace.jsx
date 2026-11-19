@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { runChecks } from '../grading/checks.js'
 import { updateProblem } from '../store/progress.js'
+import { editorFor } from './Badges.jsx'
 import CodeEditor from './CodeEditor.jsx'
 
 // Java / Gherkin answers: the learner writes code, "Check" runs the rule checks in the browser.
@@ -30,7 +31,7 @@ export default function CodeWorkspace({ p, entry, onResult }) {
   return (
     <section className="panel editor-panel">
       <div className="editor-toolbar">
-        <span className="mono muted small">{p.language === 'gherkin' ? 'Gherkin · .feature' : 'Java 17 · Selenium 4'}</span>
+        <span className="mono muted small">{editorFor(p).label}</span>
         <div className="toolbar-actions">
           <button className="btn btn-sm" onClick={() => setCompare(!compare)}>
             {compare ? 'Hide' : 'Show'} starter
@@ -49,7 +50,7 @@ export default function CodeWorkspace({ p, entry, onResult }) {
         </div>
       </div>
       <div className="editor-wrap">
-        <CodeEditor value={code} onChange={change} language={p.language === 'gherkin' ? 'gherkin' : 'java'} />
+        <CodeEditor value={code} onChange={change} language={editorFor(p).monaco} />
       </div>
       {compare && (
         <div className="starter-peek">

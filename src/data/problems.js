@@ -13,7 +13,7 @@ export const problemById = new Map(problems.map((p) => [p.id, p]))
 export const problemsFor = (category) => problems.filter((p) => p.category === category)
 
 const sheets = import.meta.glob('../cheatsheets/*.js', { eager: true })
-const SHEET_ORDER = ['java', 'locators', 'selenium', 'pom', 'cucumber', 'framework', 'exceptions', 'interview']
+const SHEET_ORDER = ['java', 'locators', 'selenium', 'pom', 'cucumber', 'framework', 'restassured', 'playwright', 'exceptions', 'interview']
 export const cheatsheets = Object.values(sheets)
   .map((m) => m.default)
   .filter(Boolean)

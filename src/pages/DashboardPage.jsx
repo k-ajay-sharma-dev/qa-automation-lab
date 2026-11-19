@@ -62,8 +62,8 @@ export default function DashboardPage() {
           <p className="eyebrow">// learning path</p>
           <h1>From manual QA to automation engineer</h1>
           <p className="muted">
-            You already know how to test. This path teaches you to automate it — Java, Selenium, Page Object Model and
-            Cucumber — through real project situations, a practice web shop you can automate for real, and the
+            You already know how to test. This path teaches you to automate it — Java, Selenium, Page Object Model,
+            Cucumber, API testing with RestAssured and Playwright with TypeScript — through real project situations, a practice web shop you can automate for real, and the
             debugging you only learn on the job.
           </p>
           <div className="hero-actions">
@@ -119,7 +119,7 @@ export default function DashboardPage() {
         </Link>
       </section>
 
-      <h2 className="section-heading">Roadmap · 12 weeks</h2>
+      <h2 className="section-heading">Roadmap · 16 weeks</h2>
       <section className="phase-grid">
         {phases.map((ph) => {
           const state = ph.list.length && ph.done === ph.list.length ? 'done' : ph === active ? 'current' : 'upcoming'

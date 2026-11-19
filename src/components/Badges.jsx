@@ -15,8 +15,20 @@ export function StatusBadge({ status }) {
   )
 }
 
-export function KindChip({ kind }) {
-  return <span className={`mode-chip kind-${kind}`}>{KIND_LABELS[kind] ?? kind}</span>
+export function KindChip({ kind, language }) {
+  const label = kind === 'code' && language === 'typescript' ? 'TypeScript' : (KIND_LABELS[kind] ?? kind)
+  return <span className={`mode-chip kind-${kind}${language === 'typescript' ? ' kind-ts' : ''}`}>{label}</span>
+}
+
+// Editor label and Monaco language for a code problem.
+export const EDITOR = {
+  java: { label: 'Java 17 · Selenium 4', monaco: 'java' },
+  typescript: { label: 'TypeScript · Playwright', monaco: 'typescript' },
+  gherkin: { label: 'Gherkin · .feature', monaco: 'gherkin' },
+}
+export const editorFor = (p) => {
+  const e = EDITOR[p.language] ?? EDITOR.java
+  return p.category === 'restassured' && p.language === 'java' ? { ...e, label: 'Java 17 · RestAssured 5' } : e
 }
 
 export function Tags({ tags }) {

@@ -38,6 +38,18 @@ export const CATEGORIES = [
     blurb: 'TestNG, Maven, config, data-driven tests, listeners, reports, parallel runs and Jenkins / GitHub Actions.',
   },
   {
+    slug: 'restassured',
+    eyebrow: 'api testing · java · cucumber',
+    label: 'API Testing (RestAssured)',
+    blurb: 'REST API automation with RestAssured and Cucumber: requests, auth, JSON paths, schema validation, POJOs, chaining and an API framework.',
+  },
+  {
+    slug: 'playwright',
+    eyebrow: 'typescript · pom · cucumber',
+    label: 'Playwright + TypeScript',
+    blurb: 'Modern UI automation with Playwright and TypeScript: locators, auto-waiting, fixtures, Page Object Model, Cucumber and CI.',
+  },
+  {
     slug: 'debugging',
     eyebrow: 'real-time · diagnose · fix',
     label: 'Debugging Clinic',

@@ -44,6 +44,17 @@ export default function PracticeSitePage() {
             <pre className="code-block">{`driver.get("${base}login.html");`}</pre>
             <span className="muted">Demo login: standard_user / secret_sauce</span>
           </div>
+          <div className="site-note small">
+            <strong>ShopEasy REST API (for RestAssured)</strong>
+            <span className="muted">
+              Runs on your machine: in the project folder run <code>npm run api</code>, then use base URI:
+            </span>
+            <pre className="code-block">{`RestAssured.baseURI = "http://localhost:5181";`}</pre>
+            <span className="muted">
+              Products, login/token, cart, orders, users, a slow endpoint and a JSON Schema — full list in the{' '}
+              <a href="#/cheatsheets/restassured">RestAssured cheat sheet</a>.
+            </span>
+          </div>
         </div>
         <div className="site-preview">
           <div className="site-bar">

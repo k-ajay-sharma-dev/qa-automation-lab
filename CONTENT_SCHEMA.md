@@ -31,10 +31,10 @@ export default {
 }
 ```
 
-## kind: 'code' (Java) and kind: 'gherkin' (feature files)
+## kind: 'code' (Java or TypeScript) and kind: 'gherkin' (feature files)
 
 ```js
-  language: 'java',                // or 'gherkin'
+  language: 'java',                // 'java' | 'typescript' | 'gherkin'
   starterCode: `...`,              // compiles-looking skeleton with TODOs
   solution: `...`,                 // complete, idiomatic, production-quality answer
   checks: [                        // graded in the browser with JS regex on the learner's code
@@ -44,7 +44,7 @@ export default {
 ```
 
 * `pattern` is a JS RegExp **source string** (escape backslashes for a JS string). Flags default to `'m'`;
-  add `flags: 'ms'` etc. if needed. Comments are stripped (`//…` and `/*…*/` for java, `#…` lines for gherkin)
+  add `flags: 'ms'` etc. if needed. Comments are stripped (`//…` and `/*…*/` for java and typescript, `#…` lines for gherkin)
   before checking, so a learner can't pass by writing the keyword in a comment.
 * 3–7 checks. Checks test *ideas* (uses explicit wait, locator is private, step has a parameter), be lenient
   about formatting/whitespace (`\\s*`), accept reasonable alternatives (`(By\\.id|By\\.cssSelector)`).

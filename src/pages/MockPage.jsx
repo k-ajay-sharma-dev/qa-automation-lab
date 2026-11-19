@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { editorFor } from '../components/Badges.jsx'
 import CodeEditor from '../components/CodeEditor.jsx'
 import LocatorWorkspace from '../components/LocatorWorkspace.jsx'
 import Markdown from '../components/Markdown.jsx'
@@ -308,14 +309,14 @@ function Item({ item, answer, setAnswer }) {
       {item.type === 'code' ? (
         <section className="panel editor-panel">
           <div className="editor-toolbar">
-            <span className="mono muted small">{p.language === 'gherkin' ? 'Gherkin · .feature' : 'Java 17 · Selenium 4'}</span>
+            <span className="mono muted small">{editorFor(p).label}</span>
             <span className="muted small">Reviewed when you finish the round</span>
           </div>
           <div className="editor-wrap">
             <CodeEditor
               value={answer?.code ?? p.starterCode}
               onChange={(code) => setAnswer({ code })}
-              language={p.language === 'gherkin' ? 'gherkin' : 'java'}
+              language={editorFor(p).monaco}
             />
           </div>
         </section>
