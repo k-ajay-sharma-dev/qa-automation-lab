@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Checkout</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html" class="active">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+    <div class="header-actions">
+      <a href="cart.html" id="shopping-cart-link" class="shopping-cart-link" data-testid="shopping-cart-link" aria-label="Cart">🛒</a>
+      <a href="login.html" id="logout-link" class="btn btn-sm" data-testid="logout-link">Logout</a>
+    </div>
+  </header>
+
+  <main class="container" style="max-width: 640px;">
+    <!-- Step 1: your information -->
+    <section id="checkout-step-one" data-testid="checkout-step-one">
+      <div class="step-indicator">Step 1 of 3</div>
+      <h1 class="title" data-testid="title">Checkout: Your Information</h1>
+      <div class="panel">
+        <form id="checkout-info-form" novalidate>
+          <div class="error-banner" id="checkout-error" data-testid="error" role="alert" hidden>
+            <span class="error-message" id="checkout-error-message"></span>
+            <button type="button" class="error-close" aria-label="Close error">&times;</button>
+          </div>
+          <div class="form-row">
+            <label for="first-name">First Name</label>
+            <input type="text" id="first-name" name="firstName" data-testid="firstName" placeholder="First Name">
+          </div>
+          <div class="form-row">
+            <label for="last-name">Last Name</label>
+            <input type="text" id="last-name" name="lastName" data-testid="lastName" placeholder="Last Name">
+          </div>
+          <div class="form-row">
+            <label for="postal-code">Zip/Postal Code</label>
+            <input type="text" id="postal-code" name="postalCode" data-testid="postalCode" placeholder="Zip/Postal Code">
+          </div>
+          <div class="row" style="justify-content: space-between;">
+            <button type="button" class="btn" id="cancel" data-testid="cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" id="continue" data-testid="continue">Continue</button>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <!-- Step 2: overview -->
+    <section id="checkout-step-two" data-testid="checkout-step-two" class="hidden">
+      <div class="step-indicator">Step 2 of 3</div>
+      <h1 class="title">Checkout: Overview</h1>
+      <div class="panel">
+        <ul class="cart-list" id="overview-list" data-testid="overview-list"></ul>
+        <div class="summary-info">
+          <div class="summary-label">Shipping to: <span id="summary-ship-to" data-testid="summary-ship-to"></span></div>
+          <div class="summary-subtotal" data-testid="subtotal-label">Item total: <span id="summary-subtotal">$0.00</span></div>
+          <div class="summary-tax" data-testid="tax-label">Tax (8%): <span id="summary-tax">$0.00</span></div>
+          <div class="summary-total" data-testid="total-label">Total: <span id="summary-total">$0.00</span></div>
+        </div>
+        <div class="row" style="justify-content: space-between;">
+          <button type="button" class="btn" id="cancel-overview" data-testid="cancel-overview">Cancel</button>
+          <button type="button" class="btn btn-primary" id="finish" data-testid="finish">Finish</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Step 3: complete -->
+    <section id="checkout-complete" data-testid="checkout-complete" class="hidden">
+      <div class="panel complete-container">
+        <div style="font-size: 3rem;">✅</div>
+        <h2 class="complete-header" data-testid="complete-header">Thank you for your order!</h2>
+        <p class="complete-text" data-testid="complete-text">Your order <strong id="order-number"></strong> has been dispatched and will arrive just as fast as the pony can get there.</p>
+        <button type="button" class="btn btn-primary" id="back-to-products" data-testid="back-to-products">Back Home</button>
+      </div>
+    </section>
+  </main>
+
+  <script src="shop.js"></script>
+  <script>
+    (function () {
+      ShopEasy.initHeader()
+      var stepOne = document.getElementById('checkout-step-one')
+      var stepTwo = document.getElementById('checkout-step-two')
+      var done = document.getElementById('checkout-complete')
+      var banner = document.getElementById('checkout-error')
+      var bannerMsg = document.getElementById('checkout-error-message')
+      var first = document.getElementById('first-name')
+      var last = document.getElementById('last-name')
+      var zip = document.getElementById('postal-code')
+
+      function show(section) {
+        [stepOne, stepTwo, done].forEach(function (s) { s.classList.toggle('hidden', s !== section) })
+      }
+      function error(text, input) {
+        bannerMsg.textContent = text
+        banner.hidden = false
+        ;[first, last, zip].forEach(function (i) { i.classList.remove('input-error') })
+        if (input) { input.classList.add('input-error'); input.focus() }
+      }
+      banner.querySelector('.error-close').addEventListener('click', function () { banner.hidden = true })
+
+      document.getElementById('checkout-info-form').addEventListener('submit', function (e) {
+        e.preventDefault()
+        if (!first.value.trim()) return error('Error: First Name is required', first)
+        if (!last.value.trim()) return error('Error: Last Name is required', last)
+        if (!zip.value.trim()) return error('Error: Postal Code is required', zip)
+        if (!/^[A-Za-z0-9 -]{3,10}$/.test(zip.value.trim())) return error('Error: Postal Code is invalid', zip)
+        banner.hidden = true
+        renderOverview()
+        show(stepTwo)
+      })
+
+      function renderOverview() {
+        var list = document.getElementById('overview-list')
+        list.innerHTML = ''
+        var subtotal = 0
+        ShopEasy.displayCart().forEach(function (slug) {
+          var p = ShopEasy.product(slug)
+          if (!p) return
+          subtotal += p.price
+          var li = document.createElement('li')
+          li.className = 'cart-item'
+          li.setAttribute('data-testid', 'cart-item')
+          li.innerHTML = '<div class="cart-quantity">1</div><div class="item-body"><div class="item-name">' + p.name +
+            '</div></div><div class="item-price">' + ShopEasy.money(p.price) + '</div>'
+          list.appendChild(li)
+        })
+        if (!list.children.length) {
+          list.innerHTML = '<li class="muted" id="overview-empty">No items in your cart.</li>'
+        }
+        var tax = Math.round(subtotal * ShopEasy.TAX_RATE * 100) / 100
+        document.getElementById('summary-ship-to').textContent = first.value.trim() + ' ' + last.value.trim() + ', ' + zip.value.trim()
+        document.getElementById('summary-subtotal').textContent = ShopEasy.money(subtotal)
+        document.getElementById('summary-tax').textContent = ShopEasy.money(tax)
+        document.getElementById('summary-total').textContent = ShopEasy.money(subtotal + tax)
+      }
+
+      document.getElementById('cancel').addEventListener('click', function () { window.location.href = 'cart.html' })
+      document.getElementById('cancel-overview').addEventListener('click', function () { window.location.href = 'inventory.html' })
+      document.getElementById('finish').addEventListener('click', function () {
+        document.getElementById('order-number').textContent = 'SE-' + (100000 + Math.floor(Math.random() * 900000))
+        ShopEasy.clearCart()
+        show(done)
+      })
+      document.getElementById('back-to-products').addEventListener('click', function () { window.location.href = 'inventory.html' })
+    })()
+  </script>
+</body>
+</html>

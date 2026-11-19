@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Frames</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html" class="active">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Frames</h1>
+      <p>The "Contact support" widget below is an embedded third-party page (an <code>&lt;iframe&gt;</code>). It contains another iframe with a chat box.
+        Elements inside a frame are invisible to <code>driver.findElement</code> until you <code>switchTo().frame(...)</code>.</p>
+    </div>
+
+    <section class="panel">
+      <h2>Main page</h2>
+      <p>Main page text: <strong id="main-page-text">You are on the parent page.</strong></p>
+      <p>Message from the frame: <span id="frame-message" data-testid="frame-message">(nothing yet)</span></p>
+    </section>
+
+    <section class="panel">
+      <h2>Support widget (iframe)</h2>
+      <iframe id="support-frame" name="supportFrame" title="Contact support" src="frame-content.html"
+              style="width: 100%; height: 520px; border: 1px solid #e3e8ef; border-radius: 8px; background: #fff;"></iframe>
+    </section>
+  </main>
+
+  <script>
+    window.addEventListener('message', function (e) {
+      if (e.origin !== window.location.origin) return
+      if (e.data && e.data.type === 'support-ticket') {
+        document.getElementById('frame-message').textContent = 'Ticket ' + e.data.ticket + ' created'
+      }
+    })
+  </script>
+</body>
+</html>

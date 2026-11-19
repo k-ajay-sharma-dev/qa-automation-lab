@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Size Guide</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <main class="container" style="max-width: 560px;">
+    <h1 id="new-window-heading">Size guide</h1>
+    <p id="new-window-text">This page was opened in a new window. Switch back to the original handle when you are done.</p>
+    <table class="data-table" id="size-table">
+      <thead><tr><th>Size</th><th>Chest (cm)</th><th>Waist (cm)</th></tr></thead>
+      <tbody>
+        <tr><td>S</td><td>86–91</td><td>71–76</td></tr>
+        <tr><td>M</td><td>96–101</td><td>81–86</td></tr>
+        <tr><td>L</td><td>106–111</td><td>91–96</td></tr>
+      </tbody>
+    </table>
+    <p style="margin-top: 1rem;"><button type="button" class="btn" id="close-window-btn">Close this window</button></p>
+  </main>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search)
+      var page = params.get('page')
+      var mode = params.get('mode')
+      var h = document.getElementById('new-window-heading')
+      var t = document.getElementById('new-window-text')
+      if (page === 'terms') { document.title = 'ShopEasy — Terms of Service'; h.textContent = 'Terms of Service'; t.textContent = 'By buying fake things you agree to receive nothing.' }
+      if (page === 'privacy') { document.title = 'ShopEasy — Privacy Policy'; h.textContent = 'Privacy Policy'; t.textContent = 'We store nothing. Everything lives in your browser session.' }
+      if (mode === 'popup') { document.title = 'ShopEasy — Live Chat'; h.textContent = 'Live chat'; t.textContent = 'Agent Maya will be with you shortly.' }
+      if (page || mode) document.getElementById('size-table').remove()
+      document.getElementById('close-window-btn').addEventListener('click', function () { window.close() })
+    })()
+  </script>
+</body>
+</html>

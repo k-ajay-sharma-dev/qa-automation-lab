@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Waits &amp; Synchronisation</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html" class="active">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Waits &amp; synchronisation</h1>
+      <p>Everything here is slow on purpose. If your test passes only with <code>Thread.sleep</code>, it is not done yet.</p>
+    </div>
+
+    <!-- 1. element added to the DOM 4 s after page load -->
+    <section class="panel" id="section-auto-appear">
+      <h2>1. Banner injected after page load</h2>
+      <p class="muted">About 4 seconds after the page loads, a promo banner is <em>added</em> to the DOM (it does not exist before). Practise <code>presenceOfElementLocated</code>.</p>
+      <div id="auto-appear-container"></div>
+    </section>
+
+    <!-- 2. hidden element made visible after a click -->
+    <section class="panel" id="section-visibility">
+      <h2>2. Hidden message becomes visible</h2>
+      <p class="muted">The message is already in the DOM but hidden. 2 seconds after the click it becomes visible. Practise <code>visibilityOfElementLocated</code>.</p>
+      <button type="button" class="btn btn-primary" id="show-message-btn">Show message</button>
+      <p id="delayed-message" class="success-banner" style="display: none; margin-top: 0.75rem;">Your coupon code is <strong>WAIT4IT</strong></p>
+    </section>
+
+    <!-- 3. spinner that disappears -->
+    <section class="panel" id="section-spinner">
+      <h2>3. Loading spinner</h2>
+      <p class="muted">Click load. A spinner is shown for ~3 seconds, then disappears and the data appears. Practise <code>invisibilityOfElementLocated</code>.</p>
+      <button type="button" class="btn btn-primary" id="load-data-btn">Load orders</button>
+      <span id="loading-spinner" class="spinner" role="status" aria-label="Loading" style="display: none;"></span>
+      <div class="result-box" id="data-result"></div>
+    </section>
+
+    <!-- 4. button enabled later -->
+    <section class="panel" id="section-enable">
+      <h2>4. Button enabled later</h2>
+      <p class="muted">"Claim reward" is disabled for 5 seconds after page load. Practise <code>elementToBeClickable</code>.</p>
+      <button type="button" class="btn btn-primary" id="claim-reward-btn" disabled>Claim reward</button>
+      <span class="muted" id="enable-countdown"></span>
+      <div class="result-box" id="claim-result"></div>
+    </section>
+
+    <!-- 5. text that changes -->
+    <section class="panel" id="section-text">
+      <h2>5. Status text that changes</h2>
+      <p class="muted">After clicking "Place order" the status goes Pending → Processing → Completed over ~4 seconds. Practise <code>textToBePresentInElementLocated</code>.</p>
+      <button type="button" class="btn btn-primary" id="place-order-btn">Place order</button>
+      <p>Order status: <strong id="order-status" data-testid="order-status">Not started</strong></p>
+    </section>
+
+    <!-- 6. re-rendered element (stale element practice) -->
+    <section class="panel" id="section-stale">
+      <h2>6. Re-rendered list (StaleElementReferenceException)</h2>
+      <p class="muted">"Refresh prices" throws away the whole list and builds a new one (like a React re-render). Any WebElement you found before the click is now stale.</p>
+      <button type="button" class="btn btn-primary" id="refresh-prices-btn">Refresh prices</button>
+      <span class="muted" id="last-refreshed"></span>
+      <div id="price-list-container"></div>
+    </section>
+
+    <!-- 7. load more -->
+    <section class="panel" id="section-load-more">
+      <h2>7. "Load more" (AJAX-like)</h2>
+      <p class="muted">Each click fetches 5 more reviews after ~2 seconds. 15 reviews in total, then the button disappears. Practise waiting for the item <em>count</em> to grow.</p>
+      <div id="review-feed"></div>
+      <button type="button" class="btn" id="load-more-btn">Load more</button>
+      <span id="load-more-spinner" class="spinner" style="display: none;"></span>
+      <p class="muted hidden" id="no-more-reviews">No more reviews.</p>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      // 1. auto-appearing banner
+      setTimeout(function () {
+        var div = document.createElement('div')
+        div.id = 'auto-banner'
+        div.className = 'success-banner'
+        div.textContent = 'Flash sale: 20% off everything for the next hour!'
+        document.getElementById('auto-appear-container').appendChild(div)
+      }, 4000)
+
+      // 2. hidden -> visible
+      document.getElementById('show-message-btn').addEventListener('click', function () {
+        var m = document.getElementById('delayed-message')
+        m.style.display = 'none'
+        setTimeout(function () { m.style.display = 'block' }, 2000)
+      })
+
+      // 3. spinner
+      document.getElementById('load-data-btn').addEventListener('click', function () {
+        var spinner = document.getElementById('loading-spinner')
+        var out = document.getElementById('data-result')
+        out.textContent = ''
+        spinner.style.display = 'inline-block'
+        setTimeout(function () {
+          spinner.style.display = 'none'
+          out.innerHTML = '<span id="orders-loaded">Loaded 42 orders</span>'
+        }, 3000)
+      })
+
+      // 4. enabled later
+      var claim = document.getElementById('claim-reward-btn')
+      var left = 5
+      var cd = document.getElementById('enable-countdown')
+      cd.textContent = 'Enabled in ' + left + 's'
+      var timer = setInterval(function () {
+        left--
+        if (left <= 0) {
+          clearInterval(timer)
+          claim.disabled = false
+          cd.textContent = ''
+        } else {
+          cd.textContent = 'Enabled in ' + left + 's'
+        }
+      }, 1000)
+      claim.addEventListener('click', function () {
+        document.getElementById('claim-result').textContent = 'Reward claimed: 500 points'
+      })
+
+      // 5. changing text
+      document.getElementById('place-order-btn').addEventListener('click', function () {
+        var s = document.getElementById('order-status')
+        s.textContent = 'Pending'
+        setTimeout(function () { s.textContent = 'Processing' }, 1500)
+        setTimeout(function () { s.textContent = 'Completed' }, 4000)
+      })
+
+      // 6. re-rendered list
+      var basePrices = [['Trailblazer Backpack', 29.99], ['Pulse Bike Light', 9.99], ['Storm Fleece Jacket', 49.99]]
+      function renderPrices(jitter) {
+        var container = document.getElementById('price-list-container')
+        var ul = document.createElement('ul')
+        ul.id = 'price-list'
+        basePrices.forEach(function (p) {
+          var li = document.createElement('li')
+          li.className = 'price-row'
+          var price = (p[1] + (jitter ? Math.round((Math.random() - 0.5) * 400) / 100 : 0)).toFixed(2)
+          li.innerHTML = '<span class="product">' + p[0] + '</span> — <span class="price">$' + price + '</span>'
+          ul.appendChild(li)
+        })
+        container.innerHTML = ''
+        container.appendChild(ul)
+      }
+      renderPrices(false)
+      document.getElementById('refresh-prices-btn').addEventListener('click', function () {
+        var c = document.getElementById('price-list-container')
+        c.innerHTML = '<span class="spinner"></span>'
+        setTimeout(function () {
+          renderPrices(true)
+          document.getElementById('last-refreshed').textContent = 'Refreshed at ' + new Date().toLocaleTimeString()
+        }, 1000)
+      })
+
+      // 7. load more
+      var reviews = [
+        'Great backpack, survived a monsoon.', 'Bike light is super bright.', 'Tee shrank a bit after washing.',
+        'Fleece is warm but runs small.', 'Fast delivery!', 'Onesie snaps are sturdy.', 'Retro tee colour is lovely.',
+        'Would buy again.', 'Customer support replied in 1 hour.', 'Packaging could be greener.',
+        'Backpack zip feels cheap.', 'Light mount broke after a month.', 'Perfect gift.', 'Sizes are accurate.', 'Five stars.',
+      ]
+      var shown = 0
+      var feed = document.getElementById('review-feed')
+      var more = document.getElementById('load-more-btn')
+      var moreSpin = document.getElementById('load-more-spinner')
+      function appendBatch() {
+        reviews.slice(shown, shown + 5).forEach(function (r, i) {
+          var d = document.createElement('div')
+          d.className = 'feed-item'
+          d.setAttribute('data-review-index', String(shown + i + 1))
+          d.textContent = '#' + (shown + i + 1) + ' ' + r
+          feed.appendChild(d)
+        })
+        shown = Math.min(shown + 5, reviews.length)
+        if (shown >= reviews.length) {
+          more.classList.add('hidden')
+          document.getElementById('no-more-reviews').classList.remove('hidden')
+        }
+      }
+      appendBatch()
+      more.addEventListener('click', function () {
+        more.disabled = true
+        moreSpin.style.display = 'inline-block'
+        setTimeout(function () {
+          moreSpin.style.display = 'none'
+          more.disabled = false
+          appendBatch()
+        }, 2000)
+      })
+    })()
+  </script>
+</body>
+</html>

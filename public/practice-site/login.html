@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Login</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html" class="active">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="login-wrapper">
+      <div class="login-logo">ShopEasy</div>
+      <div class="panel">
+        <form id="login-form" class="login-form" novalidate>
+          <div class="error-banner" id="login-error" data-testid="error" role="alert" hidden>
+            <span class="error-message" id="login-error-message"></span>
+            <button type="button" class="error-close" aria-label="Close error" data-testid="error-close">&times;</button>
+          </div>
+
+          <div class="form-row">
+            <label for="user-name">Username</label>
+            <input type="text" id="user-name" name="username" data-testid="username" placeholder="Username" autocomplete="username">
+          </div>
+          <div class="form-row">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" data-testid="password" placeholder="Password" autocomplete="current-password">
+          </div>
+          <div class="form-row">
+            <label class="remember"><input type="checkbox" name="rememberMe" value="yes"> Remember me</label>
+          </div>
+          <button type="submit" id="login-button" class="btn btn-primary btn-block" data-testid="login-button">Login</button>
+        </form>
+      </div>
+
+      <div class="demo-creds" id="demo-credentials">
+        <strong>Accepted usernames:</strong><br>
+        <code>standard_user</code> — normal login<br>
+        <code>locked_out_user</code> — shows a "locked out" error<br>
+        <strong>Password for all users:</strong> <code>secret_sauce</code>
+      </div>
+    </div>
+  </main>
+
+  <script src="shop.js"></script>
+  <script>
+    (function () {
+      var form = document.getElementById('login-form')
+      var user = document.getElementById('user-name')
+      var pass = document.getElementById('password')
+      var remember = form.querySelector('input[name="rememberMe"]')
+      var banner = document.getElementById('login-error')
+      var msg = document.getElementById('login-error-message')
+
+      try {
+        var saved = localStorage.getItem('shopeasy.rememberedUser')
+        if (saved) { user.value = saved; remember.checked = true }
+      } catch (e) { /* storage blocked */ }
+
+      function showError(text) {
+        msg.textContent = text
+        banner.hidden = false
+        user.classList.add('input-error')
+        pass.classList.add('input-error')
+      }
+      function clearError() {
+        banner.hidden = true
+        msg.textContent = ''
+        user.classList.remove('input-error')
+        pass.classList.remove('input-error')
+      }
+      banner.querySelector('.error-close').addEventListener('click', clearError)
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        var u = user.value.trim()
+        var p = pass.value
+        if (!u) return showError('Error: Username is required')
+        if (!p) return showError('Error: Password is required')
+        var valid = (u === 'standard_user' || u === 'locked_out_user') && p === 'secret_sauce'
+        if (!valid) return showError('Error: Username and password do not match any user in this service')
+        if (u === 'locked_out_user') return showError('Error: Sorry, this user has been locked out.')
+        try {
+          if (remember.checked) localStorage.setItem('shopeasy.rememberedUser', u)
+          else localStorage.removeItem('shopeasy.rememberedUser')
+        } catch (err) { /* storage blocked */ }
+        ShopEasy.login(u)
+        window.location.href = 'inventory.html'
+      })
+    })()
+  </script>
+</body>
+</html>

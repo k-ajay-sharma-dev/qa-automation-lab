@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Your Cart</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html" class="active">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+    <div class="header-actions">
+      <a href="cart.html" id="shopping-cart-link" class="shopping-cart-link" data-testid="shopping-cart-link" aria-label="Cart">🛒</a>
+      <a href="login.html" id="logout-link" class="btn btn-sm" data-testid="logout-link">Logout</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="title" data-testid="title">Your Cart</h1>
+    <div class="panel">
+      <div class="row muted" style="justify-content: space-between;"><span>QTY</span><span>Description</span></div>
+      <ul class="cart-list" id="cart-list" data-testid="cart-list"></ul>
+      <p class="muted hidden" id="empty-cart-message" data-testid="empty-cart-message">Your cart is empty. Add something from the <a href="inventory.html">products page</a>.</p>
+      <div class="row" style="justify-content: space-between;">
+        <button type="button" class="btn" id="continue-shopping" data-testid="continue-shopping">← Continue Shopping</button>
+        <button type="button" class="btn btn-primary" id="checkout" data-testid="checkout">Checkout</button>
+      </div>
+    </div>
+  </main>
+
+  <script src="shop.js"></script>
+  <script>
+    (function () {
+      ShopEasy.initHeader()
+      var list = document.getElementById('cart-list')
+      var empty = document.getElementById('empty-cart-message')
+      var checkoutBtn = document.getElementById('checkout')
+
+      function render() {
+        list.innerHTML = ''
+        var items = ShopEasy.displayCart()
+        items.forEach(function (slug) {
+          var p = ShopEasy.product(slug)
+          if (!p) return
+          var li = document.createElement('li')
+          li.className = 'cart-item'
+          li.setAttribute('data-testid', 'cart-item')
+          li.innerHTML =
+            '<div class="cart-quantity" data-testid="item-quantity">1</div>' +
+            '<div class="item-body">' +
+            '  <div class="item-name" data-testid="inventory-item-name">' + p.name + '</div>' +
+            '  <div class="item-desc">' + p.desc + '</div>' +
+            '  <div class="item-price" data-testid="inventory-item-price">' + ShopEasy.money(p.price) + '</div>' +
+            '</div>' +
+            '<button type="button" class="btn btn-danger btn-sm cart-remove" id="remove-' + slug + '" data-testid="remove-' + slug + '">Remove</button>'
+          li.querySelector('button').addEventListener('click', function () {
+            ShopEasy.removeFromCart(slug)
+            render()
+          })
+          list.appendChild(li)
+        })
+        empty.classList.toggle('hidden', items.length > 0)
+        checkoutBtn.disabled = items.length === 0
+      }
+      render()
+
+      document.getElementById('continue-shopping').addEventListener('click', function () {
+        window.location.href = 'inventory.html'
+      })
+      checkoutBtn.addEventListener('click', function () {
+        window.location.href = 'checkout.html'
+      })
+    })()
+  </script>
+</body>
+</html>

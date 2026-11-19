@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Alerts &amp; Dialogs</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html" class="active">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Alerts &amp; dialogs</h1>
+      <p>Native JavaScript pop-ups need <code>driver.switchTo().alert()</code>. The HTML modal at the bottom does <strong>not</strong> — it is just part of the page.</p>
+    </div>
+
+    <section class="panel">
+      <h2>JavaScript pop-ups</h2>
+      <div class="row">
+        <button type="button" class="btn btn-primary" id="js-alert-btn" onclick="jsAlert()">Click for JS Alert</button>
+        <button type="button" class="btn btn-primary" id="js-confirm-btn" onclick="jsConfirm()">Click for JS Confirm</button>
+        <button type="button" class="btn btn-primary" id="js-prompt-btn" onclick="jsPrompt()">Click for JS Prompt</button>
+        <button type="button" class="btn" id="delayed-alert-btn" onclick="delayedAlert()">Alert after 3 seconds</button>
+      </div>
+      <p style="margin-top: 0.9rem;"><strong>Result:</strong> <span id="result" data-testid="result"></span></p>
+    </section>
+
+    <section class="panel">
+      <h2>HTML modal dialog</h2>
+      <p class="muted">Typical "Delete address?" confirmation built from divs.</p>
+      <button type="button" class="btn btn-danger" id="open-modal-btn">Delete saved address</button>
+      <p><span id="modal-result"></span></p>
+    </section>
+  </main>
+
+  <div class="modal-overlay" id="confirm-modal" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <div class="modal-header">
+        <h2 id="modal-title">Delete address?</h2>
+        <button type="button" class="modal-close" id="modal-close" aria-label="Close">&times;</button>
+      </div>
+      <p class="modal-body">This will permanently remove <strong>221B Baker Street</strong> from your address book.</p>
+      <div class="modal-footer">
+        <button type="button" class="btn" id="modal-cancel">Cancel</button>
+        <button type="button" class="btn btn-danger" id="modal-confirm">Yes, delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var result = document.getElementById('result')
+    function jsAlert() {
+      alert('I am a JS Alert')
+      result.textContent = 'You successfully clicked an alert'
+    }
+    function jsConfirm() {
+      var ok = confirm('Do you want to empty your cart?')
+      result.textContent = 'You clicked: ' + (ok ? 'Ok' : 'Cancel')
+    }
+    function jsPrompt() {
+      var v = prompt('Enter your coupon code', '')
+      result.textContent = v === null ? 'You cancelled the prompt' : 'You entered: ' + v
+    }
+    function delayedAlert() {
+      result.textContent = 'Waiting for alert…'
+      setTimeout(function () {
+        alert('Your session will expire in 5 minutes')
+        result.textContent = 'Delayed alert accepted'
+      }, 3000)
+    }
+
+    ;(function () {
+      var modal = document.getElementById('confirm-modal')
+      var out = document.getElementById('modal-result')
+      function close(text) { modal.hidden = true; if (text) out.textContent = text }
+      document.getElementById('open-modal-btn').addEventListener('click', function () { modal.hidden = false; out.textContent = '' })
+      document.getElementById('modal-close').addEventListener('click', function () { close('Dialog closed') })
+      document.getElementById('modal-cancel').addEventListener('click', function () { close('Delete cancelled') })
+      document.getElementById('modal-confirm').addEventListener('click', function () { close('Address deleted') })
+      modal.addEventListener('click', function (e) { if (e.target === modal) close('Dialog closed') })
+    })()
+  </script>
+</body>
+</html>

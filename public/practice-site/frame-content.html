@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Support widget</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body style="background: #fff;">
+  <div style="padding: 1rem;">
+    <h2 id="frame-heading">Contact support</h2>
+    <form id="support-form" novalidate>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="support-name">Your name</label>
+          <input type="text" id="support-name" name="name">
+        </div>
+        <div class="form-row">
+          <label for="support-email">Email</label>
+          <input type="email" id="support-email" name="email">
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="support-topic">Topic</label>
+        <select id="support-topic" name="topic">
+          <option value="order">Where is my order?</option>
+          <option value="refund">Refund</option>
+          <option value="other">Something else</option>
+        </select>
+      </div>
+      <div class="form-row">
+        <label for="support-message">Message</label>
+        <textarea id="support-message" name="message" rows="2"></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" id="support-submit">Send</button>
+      <span id="support-result" data-testid="support-result" class="muted"></span>
+    </form>
+
+    <h3 style="margin-top: 1rem;">Live chat (nested iframe)</h3>
+    <iframe id="chat-frame" name="chatFrame" title="Live chat" src="nested-frame.html"
+            style="width: 100%; height: 160px; border: 1px dashed #94a3b8; border-radius: 8px;"></iframe>
+  </div>
+
+  <script>
+    document.getElementById('support-form').addEventListener('submit', function (e) {
+      e.preventDefault()
+      var name = document.getElementById('support-name').value.trim()
+      var out = document.getElementById('support-result')
+      if (!name) { out.textContent = 'Please enter your name'; return }
+      var ticket = 'T-' + (1000 + Math.floor(Math.random() * 9000))
+      out.textContent = 'Thanks ' + name + ', ticket ' + ticket + ' created'
+      try { window.parent.postMessage({ type: 'support-ticket', ticket: ticket }, window.location.origin) } catch (err) { /* no parent */ }
+    })
+  </script>
+</body>
+</html>

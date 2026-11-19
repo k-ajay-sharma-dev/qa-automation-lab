@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Products</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html" class="active">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+    <div class="header-actions">
+      <span class="muted">Hi, <span id="logged-in-user" data-testid="logged-in-user">guest</span></span>
+      <a href="cart.html" id="shopping-cart-link" class="shopping-cart-link" data-testid="shopping-cart-link" aria-label="Cart">🛒</a>
+      <a href="login.html" id="logout-link" class="btn btn-sm" data-testid="logout-link">Logout</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="notice hidden" id="guest-notice">You are browsing as a guest. <a href="login.html">Log in</a> to check out.</div>
+
+    <div class="inventory-toolbar">
+      <h1 class="title" data-testid="title">Products</h1>
+      <div class="product-sort-container">
+        <label for="product-sort" class="muted">Sort by</label>
+        <select id="product-sort" class="product-sort" data-testid="product-sort">
+          <option value="az">Name (A to Z)</option>
+          <option value="za">Name (Z to A)</option>
+          <option value="lohi">Price (low to high)</option>
+          <option value="hilo">Price (high to low)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="promo-banner" id="promo-banner">
+      ⚡ Deal of the day: Pulse Bike Light now only <span class="item-price">$7.49</span> with code <code>BRIGHT25</code> at checkout.
+    </div>
+
+    <div class="inventory-list" id="inventory-list" data-testid="inventory-list">
+      <div class="inventory-item" data-testid="inventory-item">
+        <div class="item-img">🎒</div>
+        <div class="item-body">
+          <a href="#" class="item-name" id="item-1-title-link">Trailblazer Backpack</a>
+          <div class="item-desc">Water-resistant 22L daypack with a padded laptop sleeve.</div>
+          <div class="item-footer">
+            <div class="item-price">$29.99</div>
+            <button class="btn btn-primary btn-inventory" id="add-to-cart-trailblazer-backpack" data-testid="add-to-cart-trailblazer-backpack" data-slug="trailblazer-backpack">Add to cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="inventory-item" data-testid="inventory-item">
+        <div class="item-img">🔦</div>
+        <div class="item-body">
+          <a href="#" class="item-name" id="item-2-title-link">Pulse Bike Light</a>
+          <div class="item-desc">USB-rechargeable front light with three flash modes.</div>
+          <div class="item-footer">
+            <div class="item-price">$9.99</div>
+            <button class="btn btn-primary btn-inventory" id="add-to-cart-pulse-bike-light" data-testid="add-to-cart-pulse-bike-light" data-slug="pulse-bike-light">Add to cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="inventory-item" data-testid="inventory-item">
+        <div class="item-img">👕</div>
+        <div class="item-body">
+          <a href="#" class="item-name" id="item-3-title-link">Classic Crew T-Shirt</a>
+          <div class="item-desc">Soft cotton crew-neck tee that survives 100 washes.</div>
+          <div class="item-footer">
+            <div class="item-price">$15.99</div>
+            <button class="btn btn-primary btn-inventory" id="add-to-cart-classic-crew-t-shirt" data-testid="add-to-cart-classic-crew-t-shirt" data-slug="classic-crew-t-shirt">Add to cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="inventory-item" data-testid="inventory-item">
+        <div class="item-img">🧥</div>
+        <div class="item-body">
+          <a href="#" class="item-name" id="item-4-title-link">Storm Fleece Jacket</a>
+          <div class="item-desc">Mid-weight fleece with a wind-blocking chest panel.</div>
+          <div class="item-footer">
+            <div class="item-price">$49.99</div>
+            <button class="btn btn-primary btn-inventory" id="add-to-cart-storm-fleece-jacket" data-testid="add-to-cart-storm-fleece-jacket" data-slug="storm-fleece-jacket">Add to cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="inventory-item" data-testid="inventory-item">
+        <div class="item-img">👶</div>
+        <div class="item-body">
+          <a href="#" class="item-name" id="item-5-title-link">Junior Onesie</a>
+          <div class="item-desc">Organic cotton onesie with easy snap buttons.</div>
+          <div class="item-footer">
+            <div class="item-price">$7.99</div>
+            <button class="btn btn-primary btn-inventory" id="add-to-cart-junior-onesie" data-testid="add-to-cart-junior-onesie" data-slug="junior-onesie">Add to cart</button>
+          </div>
+        </div>
+      </div>
+      <div class="inventory-item" data-testid="inventory-item">
+        <div class="item-img">🎽</div>
+        <div class="item-body">
+          <a href="#" class="item-name" id="item-6-title-link">Retro Red Tee</a>
+          <div class="item-desc">Vintage-wash red tee with a 70s ShopEasy logo.</div>
+          <div class="item-footer">
+            <div class="item-price">$15.99</div>
+            <button class="btn btn-primary btn-inventory" id="add-to-cart-retro-red-tee" data-testid="add-to-cart-retro-red-tee" data-slug="retro-red-tee">Add to cart</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <footer class="site-footer">ShopEasy is a fake shop for automation practice. Nothing is real, nothing ships.</footer>
+
+  <script src="shop.js"></script>
+  <script>
+    (function () {
+      ShopEasy.initHeader()
+      var list = document.getElementById('inventory-list')
+
+      function renderButton(btn) {
+        var slug = btn.getAttribute('data-slug')
+        if (ShopEasy.inCart(slug)) {
+          btn.textContent = 'Remove'
+          btn.id = 'remove-' + slug
+          btn.setAttribute('data-testid', 'remove-' + slug)
+          btn.className = 'btn btn-danger btn-inventory'
+        } else {
+          btn.textContent = 'Add to cart'
+          btn.id = 'add-to-cart-' + slug
+          btn.setAttribute('data-testid', 'add-to-cart-' + slug)
+          btn.className = 'btn btn-primary btn-inventory'
+        }
+      }
+      var buttons = list.querySelectorAll('.btn-inventory')
+      for (var i = 0; i < buttons.length; i++) {
+        renderButton(buttons[i])
+        buttons[i].addEventListener('click', function (e) {
+          var btn = e.currentTarget
+          var slug = btn.getAttribute('data-slug')
+          if (ShopEasy.inCart(slug)) ShopEasy.removeFromCart(slug)
+          else ShopEasy.addToCart(slug)
+          renderButton(btn)
+        })
+      }
+      var links = list.querySelectorAll('.item-name')
+      for (var j = 0; j < links.length; j++) links[j].addEventListener('click', function (e) { e.preventDefault() })
+
+      function priceOf(card) { return parseFloat(card.querySelector('.item-price').textContent.replace('$', '')) }
+      function nameOf(card) { return card.querySelector('.item-name').textContent.trim() }
+      var sortSelect = document.getElementById('product-sort')
+      sortSelect.addEventListener('change', function (e) { sortCards(e.target.value) })
+      sortCards(sortSelect.value) // default view: Name (A to Z)
+
+      function sortCards(mode) {
+        var cards = Array.prototype.slice.call(list.querySelectorAll('.inventory-item'))
+        cards.sort(function (a, b) {
+          if (mode === 'az') return nameOf(a).localeCompare(nameOf(b))
+          if (mode === 'za') return nameOf(b).localeCompare(nameOf(a))
+          if (mode === 'lohi') return priceOf(a) - priceOf(b) || nameOf(a).localeCompare(nameOf(b))
+          return priceOf(b) - priceOf(a) || nameOf(a).localeCompare(nameOf(b))
+        })
+        cards.forEach(function (c) { list.appendChild(c) })
+      }
+    })()
+  </script>
+</body>
+</html>

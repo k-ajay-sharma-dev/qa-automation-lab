@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Windows &amp; Tabs</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html" class="active">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Windows &amp; tabs</h1>
+      <p>Selenium stays on the original window until you call <code>driver.switchTo().window(handle)</code>. Collect handles with <code>driver.getWindowHandles()</code>.</p>
+    </div>
+
+    <section class="panel">
+      <h2>Open in a new tab</h2>
+      <p>The size guide opens in a new tab (<code>target="_blank"</code>).</p>
+      <a href="new-window.html" target="_blank" rel="noopener" id="new-tab-link" class="btn btn-primary">Open size guide in new tab</a>
+    </section>
+
+    <section class="panel">
+      <h2>Pop-up window</h2>
+      <p>The live-chat window opens as a small pop-up via <code>window.open</code>.</p>
+      <button type="button" class="btn btn-primary" id="popup-btn">Open chat pop-up</button>
+      <span class="muted" id="popup-status"></span>
+    </section>
+
+    <section class="panel">
+      <h2>Several windows at once</h2>
+      <p>Opens two tabs at the same time — practise picking the right one by title.</p>
+      <button type="button" class="btn" id="open-two-btn">Open terms + privacy</button>
+    </section>
+  </main>
+
+  <script>
+    document.getElementById('popup-btn').addEventListener('click', function () {
+      var w = window.open('new-window.html?mode=popup', 'chatPopup', 'width=520,height=420')
+      document.getElementById('popup-status').textContent = w ? 'Pop-up opened' : 'Pop-up was blocked by the browser'
+    })
+    document.getElementById('open-two-btn').addEventListener('click', function () {
+      window.open('new-window.html?page=terms', '_blank')
+      window.open('new-window.html?page=privacy', '_blank')
+    })
+  </script>
+</body>
+</html>

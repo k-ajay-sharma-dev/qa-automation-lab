@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Live chat</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body style="background: #f8fafc;">
+  <div style="padding: 0.6rem 0.8rem;">
+    <div id="chat-log" class="muted" style="font-size: 0.85rem; min-height: 2.2em;">Agent Maya: Hi! How can I help?</div>
+    <div class="row">
+      <input type="text" id="chat-input" placeholder="Type a message" style="flex: 1; width: auto;">
+      <button type="button" class="btn btn-primary btn-sm" id="chat-send">Send</button>
+    </div>
+  </div>
+  <script>
+    document.getElementById('chat-send').addEventListener('click', function () {
+      var input = document.getElementById('chat-input')
+      var text = input.value.trim()
+      if (!text) return
+      var line = document.createElement('div')
+      line.className = 'chat-line'
+      line.textContent = 'You: ' + text
+      document.getElementById('chat-log').appendChild(line)
+      input.value = ''
+    })
+  </script>
+</body>
+</html>

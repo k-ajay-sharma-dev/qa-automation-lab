@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Employees</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html" class="active">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Employee directory</h1>
+      <p>Internal back-office screen. Click a column header to sort, type to filter, use the pager to move between pages.</p>
+    </div>
+
+    <section class="panel">
+      <div class="table-toolbar">
+        <input type="text" id="table-search" placeholder="Search by name, department or status…" aria-label="Search employees">
+        <span class="muted" id="row-count" data-testid="row-count"></span>
+      </div>
+
+      <table class="data-table" id="employee-table" data-testid="employee-table">
+        <thead>
+          <tr>
+            <th class="sortable" data-sort="name">Name <span class="sort-indicator"></span></th>
+            <th class="sortable" data-sort="department">Department <span class="sort-indicator"></span></th>
+            <th class="sortable" data-sort="salary">Salary <span class="sort-indicator"></span></th>
+            <th class="sortable" data-sort="status">Status <span class="sort-indicator"></span></th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <div class="pagination" id="pagination">
+        <button type="button" class="btn btn-sm" id="prev-page">‹ Previous</button>
+        <span id="page-buttons"></span>
+        <button type="button" class="btn btn-sm" id="next-page">Next ›</button>
+        <span class="muted page-info" id="page-info"></span>
+      </div>
+    </section>
+
+    <section class="panel hidden" id="edit-panel" data-testid="edit-panel">
+      <h2>Edit employee</h2>
+      <form id="edit-form" novalidate>
+        <div class="form-grid">
+          <div class="form-row"><label for="edit-name">Name</label><input type="text" id="edit-name"></div>
+          <div class="form-row">
+            <label for="edit-department">Department</label>
+            <select id="edit-department">
+              <option>Engineering</option><option>Finance</option><option>HR</option>
+              <option>Marketing</option><option>QA</option><option>Sales</option>
+            </select>
+          </div>
+          <div class="form-row"><label for="edit-salary">Salary</label><input type="number" id="edit-salary" min="0" step="1000"></div>
+          <div class="form-row">
+            <label for="edit-status">Status</label>
+            <select id="edit-status"><option>Active</option><option>Inactive</option><option>On Leave</option></select>
+          </div>
+        </div>
+        <div class="row">
+          <button type="submit" class="btn btn-primary" id="save-edit">Save</button>
+          <button type="button" class="btn" id="cancel-edit">Cancel</button>
+          <span class="muted" id="edit-message"></span>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var employees = [
+        { id: 1, name: 'Aarav Mehta', department: 'Engineering', salary: 85000, status: 'Active' },
+        { id: 2, name: 'Emily Carter', department: 'Marketing', salary: 62000, status: 'Active' },
+        { id: 3, name: 'Priya Sharma', department: 'Engineering', salary: 92000, status: 'Active' },
+        { id: 4, name: 'James Wilson', department: 'Finance', salary: 71000, status: 'Inactive' },
+        { id: 5, name: 'Sofia Rossi', department: 'HR', salary: 58000, status: 'Active' },
+        { id: 6, name: 'Liam Johnson', department: 'Engineering', salary: 78000, status: 'On Leave' },
+        { id: 7, name: 'Chen Wei', department: 'QA', salary: 74000, status: 'Active' },
+        { id: 8, name: 'Olivia Brown', department: 'Sales', salary: 66000, status: 'Active' },
+        { id: 9, name: 'Rahul Verma', department: 'QA', salary: 69000, status: 'Inactive' },
+        { id: 10, name: 'Hannah Muller', department: 'Finance', salary: 81000, status: 'Active' },
+        { id: 11, name: 'Daniel Kim', department: 'Sales', salary: 60000, status: 'Active' },
+        { id: 12, name: 'Fatima Khan', department: 'HR', salary: 57000, status: 'Active' },
+        { id: 13, name: 'Lucas Silva', department: 'Engineering', salary: 99000, status: 'Active' },
+        { id: 14, name: 'Ava Thompson', department: 'Marketing', salary: 64000, status: 'On Leave' },
+        { id: 15, name: 'Noah Garcia', department: 'QA', salary: 72000, status: 'Active' },
+      ]
+      var PAGE_SIZE = 5
+      var state = { page: 1, sortKey: null, sortDir: 1, query: '', editing: null }
+      var tbody = document.querySelector('#employee-table tbody')
+
+      function fmt(n) { return '$' + n.toLocaleString('en-US') }
+      function slug(s) { return s.toLowerCase().replace(/\s+/g, '-') }
+
+      function visibleRows() {
+        var q = state.query.toLowerCase()
+        var rows = employees.filter(function (e) {
+          return !q || (e.name + ' ' + e.department + ' ' + e.status).toLowerCase().indexOf(q) !== -1
+        })
+        if (state.sortKey) {
+          var k = state.sortKey
+          rows = rows.slice().sort(function (a, b) {
+            var x = a[k], y = b[k]
+            return (typeof x === 'number' ? x - y : String(x).localeCompare(String(y))) * state.sortDir
+          })
+        }
+        return rows
+      }
+
+      function render() {
+        var rows = visibleRows()
+        var pages = Math.max(1, Math.ceil(rows.length / PAGE_SIZE))
+        if (state.page > pages) state.page = pages
+        var start = (state.page - 1) * PAGE_SIZE
+        var pageRows = rows.slice(start, start + PAGE_SIZE)
+
+        tbody.innerHTML = ''
+        if (!pageRows.length) {
+          var tr = document.createElement('tr')
+          tr.className = 'no-results'
+          tr.innerHTML = '<td colspan="5" class="muted">No employees match your search.</td>'
+          tbody.appendChild(tr)
+        }
+        pageRows.forEach(function (e) {
+          var tr = document.createElement('tr')
+          tr.innerHTML =
+            '<td>' + e.name + '</td>' +
+            '<td>' + e.department + '</td>' +
+            '<td>' + fmt(e.salary) + '</td>' +
+            '<td><span class="status-pill status-' + slug(e.status) + '">' + e.status + '</span></td>' +
+            '<td><button type="button" class="btn btn-sm btn-edit" data-emp-id="' + e.id + '">Edit</button></td>'
+          tbody.appendChild(tr)
+        })
+
+        document.getElementById('row-count').textContent = 'Showing ' + (rows.length ? start + 1 : 0) + '–' +
+          (start + pageRows.length) + ' of ' + rows.length + ' employees'
+        document.getElementById('page-info').textContent = 'Page ' + state.page + ' of ' + pages
+        document.getElementById('prev-page').disabled = state.page === 1
+        document.getElementById('next-page').disabled = state.page === pages
+
+        var pb = document.getElementById('page-buttons')
+        pb.innerHTML = ''
+        for (var i = 1; i <= pages; i++) {
+          var b = document.createElement('button')
+          b.type = 'button'
+          b.className = 'btn btn-sm page-btn' + (i === state.page ? ' current' : '')
+          b.textContent = String(i)
+          b.setAttribute('data-page', String(i))
+          pb.appendChild(b)
+        }
+
+        var ths = document.querySelectorAll('#employee-table th.sortable')
+        for (var j = 0; j < ths.length; j++) {
+          var key = ths[j].getAttribute('data-sort')
+          ths[j].setAttribute('aria-sort', key === state.sortKey ? (state.sortDir === 1 ? 'ascending' : 'descending') : 'none')
+          ths[j].querySelector('.sort-indicator').textContent = key === state.sortKey ? (state.sortDir === 1 ? '▲' : '▼') : ''
+        }
+      }
+
+      document.querySelector('#employee-table thead').addEventListener('click', function (e) {
+        var th = e.target.closest('th.sortable')
+        if (!th) return
+        var key = th.getAttribute('data-sort')
+        if (state.sortKey === key) state.sortDir = -state.sortDir
+        else { state.sortKey = key; state.sortDir = 1 }
+        state.page = 1
+        render()
+      })
+      document.getElementById('table-search').addEventListener('input', function (e) {
+        state.query = e.target.value.trim()
+        state.page = 1
+        render()
+      })
+      document.getElementById('prev-page').addEventListener('click', function () { state.page--; render() })
+      document.getElementById('next-page').addEventListener('click', function () { state.page++; render() })
+      document.getElementById('page-buttons').addEventListener('click', function (e) {
+        var b = e.target.closest('.page-btn')
+        if (b) { state.page = Number(b.getAttribute('data-page')); render() }
+      })
+
+      var panel = document.getElementById('edit-panel')
+      tbody.addEventListener('click', function (e) {
+        var b = e.target.closest('.btn-edit')
+        if (!b) return
+        var emp = employees.filter(function (x) { return x.id === Number(b.getAttribute('data-emp-id')) })[0]
+        state.editing = emp
+        document.getElementById('edit-name').value = emp.name
+        document.getElementById('edit-department').value = emp.department
+        document.getElementById('edit-salary').value = emp.salary
+        document.getElementById('edit-status').value = emp.status
+        document.getElementById('edit-message').textContent = ''
+        panel.classList.remove('hidden')
+        document.getElementById('edit-name').focus()
+      })
+      document.getElementById('edit-form').addEventListener('submit', function (e) {
+        e.preventDefault()
+        var emp = state.editing
+        if (!emp) return
+        var name = document.getElementById('edit-name').value.trim()
+        var salary = Number(document.getElementById('edit-salary').value)
+        if (!name || !(salary > 0)) {
+          document.getElementById('edit-message').textContent = 'Name and a positive salary are required.'
+          return
+        }
+        emp.name = name
+        emp.department = document.getElementById('edit-department').value
+        emp.salary = salary
+        emp.status = document.getElementById('edit-status').value
+        document.getElementById('edit-message').textContent = 'Saved ' + name + '.'
+        render()
+      })
+      document.getElementById('cancel-edit').addEventListener('click', function () {
+        panel.classList.add('hidden')
+        state.editing = null
+      })
+
+      render()
+    })()
+  </script>
+</body>
+</html>

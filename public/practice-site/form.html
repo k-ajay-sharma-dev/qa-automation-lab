@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Seller Registration</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html" class="active">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Become a ShopEasy seller</h1>
+      <p>Fill in the registration form. Fields marked * are required.</p>
+    </div>
+
+    <form id="registration-form" class="panel" novalidate>
+      <h2>Personal details</h2>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="firstName">First name *</label>
+          <input type="text" id="firstName" name="firstName" placeholder="Jane" required>
+          <span class="field-error" id="firstName-error"></span>
+        </div>
+        <div class="form-row">
+          <label for="lastName">Last name *</label>
+          <input type="text" id="lastName" name="lastName" placeholder="Doe" required>
+          <span class="field-error" id="lastName-error"></span>
+        </div>
+        <div class="form-row">
+          <label for="email">Email *</label>
+          <input type="email" id="email" name="email" placeholder="name@example.com" required>
+          <span class="field-error" id="email-error"></span>
+        </div>
+        <div class="form-row">
+          <label for="f_19a">Date of birth</label>
+          <input type="date" id="f_19a" name="field_19">
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="home-phone">Home phone</label>
+          <input type="tel" id="home-phone" name="homePhone" placeholder="020 7946 0000">
+        </div>
+        <div class="form-row">
+          <label for="work-phone">Work phone</label>
+          <input type="tel" id="work-phone" name="workPhone">
+        </div>
+        <div class="form-row">
+          <label for="mobile-phone">Mobile</label>
+          <input type="tel" id="mobile-phone" name="mobilePhone">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <span class="field-label">Gender</span>
+        <div class="choice-group" id="gender-group">
+          <label><input type="radio" id="gender-male" name="gender" value="male"> Male</label>
+          <label><input type="radio" id="gender-female" name="gender" value="female"> Female</label>
+          <label><input type="radio" id="gender-other" name="gender" value="other"> Prefer not to say</label>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <span class="field-label">What will you sell?</span>
+        <div class="choice-group" id="category-group">
+          <label><input type="checkbox" name="categories" value="clothing"> Clothing</label>
+          <label><input type="checkbox" name="categories" value="outdoor"> Outdoor gear</label>
+          <label><input type="checkbox" name="categories" value="kids"> Kids</label>
+          <label><input type="checkbox" name="categories" value="accessories"> Accessories</label>
+        </div>
+      </div>
+
+      <h2>Business details</h2>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="country">Country *</label>
+          <select id="country" name="country" required>
+            <option value="">-- Select country --</option>
+            <option value="IN">India</option>
+            <option value="US">United States</option>
+            <option value="GB">United Kingdom</option>
+            <option value="DE">Germany</option>
+            <option value="AU">Australia</option>
+          </select>
+          <span class="field-error" id="country-error"></span>
+        </div>
+        <div class="form-row">
+          <label for="channels">Sales channels (hold Ctrl to pick several)</label>
+          <select id="channels" name="channels" multiple size="4">
+            <option value="web">Website</option>
+            <option value="mobile">Mobile app</option>
+            <option value="social">Social media</option>
+            <option value="marketplace">Marketplaces</option>
+            <option value="retail">Physical store</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="start-date">Preferred start date</label>
+          <input type="date" id="start-date" name="startDate">
+        </div>
+      </div>
+
+      <div class="form-row">
+        <label for="address">Business address</label>
+        <textarea id="address" name="address" rows="3" placeholder="Street, city, postcode"></textarea>
+      </div>
+
+      <div class="form-row">
+        <label for="upload-file">Upload trade licence (PDF or image)</label>
+        <input type="file" id="upload-file" name="licence" accept=".pdf,.png,.jpg,.jpeg">
+      </div>
+
+      <div class="form-row">
+        <label><input type="checkbox" id="terms" name="terms"> I accept the seller terms *</label>
+        <span class="field-error" id="terms-error"></span>
+      </div>
+
+      <div class="row">
+        <button type="submit" id="submit-btn" class="btn btn-primary">Register</button>
+        <button type="reset" id="reset-btn" class="btn">Reset</button>
+      </div>
+    </form>
+
+    <section class="panel hidden" id="result-panel" data-testid="result-panel" aria-live="polite">
+      <div class="success-banner" id="result-message">Thanks! Your seller application was submitted.</div>
+      <div class="result-box" id="result-details"></div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var form = document.getElementById('registration-form')
+      function val(id) { return document.getElementById(id).value.trim() }
+      function setErr(id, text) { document.getElementById(id + '-error').textContent = text }
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault()
+        var ok = true
+        ;['firstName', 'lastName', 'email', 'country', 'terms'].forEach(function (id) { setErr(id, '') })
+        if (!val('firstName')) { setErr('firstName', 'First name is required'); ok = false }
+        if (!val('lastName')) { setErr('lastName', 'Last name is required'); ok = false }
+        if (!val('email')) { setErr('email', 'Email is required'); ok = false }
+        else if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val('email'))) { setErr('email', 'Enter a valid email address'); ok = false }
+        if (!val('country')) { setErr('country', 'Please select a country'); ok = false }
+        if (!document.getElementById('terms').checked) { setErr('terms', 'You must accept the terms'); ok = false }
+        if (!ok) return
+
+        var gender = form.querySelector('input[name="gender"]:checked')
+        var cats = Array.prototype.map.call(form.querySelectorAll('input[name="categories"]:checked'), function (c) { return c.value })
+        var channels = Array.prototype.map.call(document.getElementById('channels').selectedOptions, function (o) { return o.value })
+        var file = document.getElementById('upload-file').files[0]
+        var lines = [
+          'Name: ' + val('firstName') + ' ' + val('lastName'),
+          'Email: ' + val('email'),
+          'Date of birth: ' + (val('f_19a') || '-'),
+          'Phones: ' + [val('home-phone'), val('work-phone'), val('mobile-phone')].filter(Boolean).join(', '),
+          'Gender: ' + (gender ? gender.value : '-'),
+          'Categories: ' + (cats.join(', ') || '-'),
+          'Country: ' + val('country'),
+          'Channels: ' + (channels.join(', ') || '-'),
+          'Start date: ' + (val('start-date') || '-'),
+          'Address: ' + (val('address') || '-'),
+          'Licence file: ' + (file ? file.name : '-'),
+        ]
+        document.getElementById('result-details').textContent = lines.join('\n')
+        document.getElementById('result-panel').classList.remove('hidden')
+      })
+      form.addEventListener('reset', function () {
+        document.getElementById('result-panel').classList.add('hidden')
+        ;['firstName', 'lastName', 'email', 'country', 'terms'].forEach(function (id) { setErr(id, '') })
+      })
+    })()
+  </script>
+</body>
+</html>

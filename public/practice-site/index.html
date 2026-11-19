@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Automation Practice Site</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html" class="active">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html">Dynamic</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>ShopEasy automation playground</h1>
+      <p>A small fake web shop built for practising Selenium WebDriver, Cucumber and the Page Object Model.
+        Everything runs in your browser — no backend, no real orders. Base URL: <code id="base-url">http://localhost:5180/practice-site/</code></p>
+    </div>
+
+    <div class="grid" id="page-cards">
+      <div class="page-card">
+        <a class="page-link" href="login.html">Login</a>
+        <ul>
+          <li>Locators by id / name / data-testid</li>
+          <li>Positive + negative login (locked-out user, empty fields)</li>
+          <li>Reading the error banner text</li>
+        </ul>
+      </div>
+      <div class="page-card">
+        <a class="page-link" href="inventory.html">Inventory</a>
+        <ul>
+          <li>Lists of elements (<code>findElements</code>)</li>
+          <li>Sort dropdown with the <code>Select</code> class</li>
+          <li>Add/Remove toggle and cart badge count</li>
+        </ul>
+      </div>
+      <div class="page-card">
+        <a class="page-link" href="cart.html">Cart</a>
+        <ul>
+          <li>Verifying line items added on another page</li>
+          <li>Removing items, empty-cart state</li>
+        </ul>
+      </div>
+      <div class="page-card">
+        <a class="page-link" href="checkout.html">Checkout</a>
+        <ul>
+          <li>Form validation messages</li>
+          <li>Totals maths: item total + 8% tax</li>
+          <li>End-to-end Cucumber scenario: login → buy → confirm</li>
+        </ul>
+      </div>
+      <div class="page-card">
+        <a class="page-link" href="form.html">Registration form</a>
+        <ul>
+          <li>Radio buttons, checkboxes, single and multi-select</li>
+          <li>Date input, textarea, file upload with <code>sendKeys(path)</code></li>
+          <li>Data-driven tests (Scenario Outline / DataProvider)</li>
+        </ul>
+      </div>
+      <div class="page-card">
+        <a class="page-link" href="table.html">Web table</a>
+        <ul>
+          <li>Reading rows and cells, column sort checks</li>
+          <li>Search filter and pagination (5 per page)</li>
+          <li>"Click Edit in the row where Name = X"</li>
+        </ul>
+      </div>
+      <div class="page-card">
+        <a class="page-link" href="waits.html">Waits</a>
+        <ul>
+          <li>Explicit waits / ExpectedConditions</li>
+          <li>Spinners, delayed enable, changing text</li>
+          <li>StaleElementReferenceException, "Load more"</li>
+        </ul>
+      </div>
+      <div class="page-card">
+        <a class="page-link" href="alerts.html">Alerts</a>
+        <ul>
+          <li>JS alert / confirm / prompt via <code>switchTo().alert()</code></li>
+          <li>Waiting for a delayed alert</li>
+          <li>HTML modal dialogs (no switching needed)</li>
+        </ul>
+      </div>
+      <div class="page-card">
+        <a class="page-link" href="frames.html">Frames</a>
+        <ul>
+          <li><code>switchTo().frame()</code> by id, name, WebElement</li>
+          <li>Nested iframe, <code>parentFrame()</code> / <code>defaultContent()</code></li>
+        </ul>
+      </div>
+      <div class="page-card">
+        <a class="page-link" href="windows.html">Windows</a>
+        <ul>
+          <li>New tab via <code>target=_blank</code> and pop-ups</li>
+          <li><code>getWindowHandles()</code> and switching back</li>
+        </ul>
+      </div>
+      <div class="page-card">
+        <a class="page-link" href="dynamic.html">Dynamic / tricky</a>
+        <ul>
+          <li>Generated ids, duplicate classes, text-only buttons</li>
+          <li>Shadow DOM, hover menus, drag and drop</li>
+          <li>XPath axes: pick by sibling text</li>
+        </ul>
+      </div>
+    </div>
+
+    <section class="panel" style="margin-top: 1.25rem;">
+      <h2>Test accounts</h2>
+      <p><code>standard_user</code> / <code>secret_sauce</code> — normal user &nbsp;·&nbsp; <code>locked_out_user</code> / <code>secret_sauce</code> — locked out</p>
+    </section>
+  </main>
+  <script>
+    document.getElementById('base-url').textContent = window.location.origin + window.location.pathname.replace(/[^/]*$/, '')
+  </script>
+</body>
+</html>

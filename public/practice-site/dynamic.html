@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ShopEasy — Tricky Locators</title>
+  <link rel="stylesheet" href="site.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">Shop<span>Easy</span></a>
+    <nav class="site-nav" aria-label="Practice pages">
+      <a href="index.html">Home</a>
+      <a href="login.html">Login</a>
+      <a href="inventory.html">Inventory</a>
+      <a href="cart.html">Cart</a>
+      <a href="checkout.html">Checkout</a>
+      <a href="form.html">Form</a>
+      <a href="table.html">Table</a>
+      <a href="waits.html">Waits</a>
+      <a href="alerts.html">Alerts</a>
+      <a href="frames.html">Frames</a>
+      <a href="windows.html">Windows</a>
+      <a href="dynamic.html" class="active">Dynamic</a>
+    </nav>
+  </header>
+
+  <main class="container">
+    <div class="page-title">
+      <h1>Tricky locators</h1>
+      <p>This page is built the way real front-end frameworks build pages: generated ids, reused class names, components with no test hooks.
+        Reload the page and watch the ids change (inspect with DevTools).</p>
+      <p class="muted">Last action: <strong id="dynamic-result" data-testid="dynamic-result">none</strong></p>
+    </div>
+
+    <!-- 1. auto-generated ids -->
+    <section class="panel" id="section-generated-ids">
+      <h2>1. Auto-generated ids</h2>
+      <p class="muted">The framework appends a random hash to every id on each page load, e.g. <code>btn-8f3a2</code>. Only the prefix is stable.</p>
+      <div class="row" id="order-actions">
+        <button type="button" class="btn" data-gen-prefix="btn">Apply coupon</button>
+        <button type="button" class="btn btn-primary" data-gen-prefix="submit-order">Place order</button>
+        <button type="button" class="btn" data-gen-prefix="btn">Save for later</button>
+      </div>
+    </section>
+
+    <!-- 2. duplicate class names -->
+    <section class="panel" id="section-plans">
+      <h2>2. Pricing plans (same classes everywhere)</h2>
+      <p class="muted">Every card is a <code>div.plan</code> and every button is <code>.btn.btn-primary</code>. One card is highlighted.</p>
+      <div class="grid" id="pricing-plans">
+        <div class="plan">
+          <h3>Basic</h3>
+          <div class="plan-price">$0 / month</div>
+          <button type="button" class="btn btn-primary">Choose</button>
+        </div>
+        <div class="plan plan--featured">
+          <h3>Plus</h3>
+          <div class="plan-price">$9 / month</div>
+          <button type="button" class="btn btn-primary">Choose</button>
+        </div>
+        <div class="plan">
+          <h3>Pro</h3>
+          <div class="plan-price">$29 / month</div>
+          <button type="button" class="btn btn-primary">Choose</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. buttons distinguished only by text -->
+    <section class="panel" id="section-text-buttons">
+      <h2>3. Buttons that differ only by text</h2>
+      <p class="muted">Product description editor. No ids, same classes — only the visible text tells them apart.</p>
+      <div class="toolbar" id="editor-toolbar">
+        <button type="button" class="btn">Save</button>
+        <button type="button" class="btn">Save draft</button>
+        <button type="button" class="btn">Save &amp; close</button>
+        <button type="button" class="btn">Cancel</button>
+      </div>
+    </section>
+
+    <!-- 4. pick an item by its sibling's text -->
+    <section class="panel" id="section-orders">
+      <h2>4. Recent orders</h2>
+      <p class="muted">Every row has an identical "Track" button. Which one you need depends on the order number next to it.</p>
+      <ul class="order-list" id="order-list">
+        <li><span class="order-id">ORD-1041</span><span class="order-status">Delivered</span><button type="button" class="btn btn-sm">Track</button></li>
+        <li><span class="order-id">ORD-1042</span><span class="order-status">Shipped</span><button type="button" class="btn btn-sm">Track</button></li>
+        <li><span class="order-id">ORD-1043</span><span class="order-status">Processing</span><button type="button" class="btn btn-sm">Track</button></li>
+        <li><span class="order-id">ORD-1044</span><span class="order-status">Shipped</span><button type="button" class="btn btn-sm">Track</button></li>
+      </ul>
+    </section>
+
+    <!-- 5. user cards: several conditions -->
+    <section class="panel" id="section-users">
+      <h2>5. Team members</h2>
+      <p class="muted">Card ids are generated. Two people are Admins, but only one of them is Active.</p>
+      <div class="grid" id="user-cards">
+        <div class="user-card card" data-gen-prefix="user">
+          <h4 class="user-name">Maria Lopez</h4>
+          <span class="role">Admin</span><span class="status">Inactive</span>
+          <div class="card-actions"><button type="button" class="btn btn-sm">Edit</button><button type="button" class="btn btn-sm btn-danger">Delete</button></div>
+        </div>
+        <div class="user-card card" data-gen-prefix="user">
+          <h4 class="user-name">Tom Becker</h4>
+          <span class="role">Editor</span><span class="status">Active</span>
+          <div class="card-actions"><button type="button" class="btn btn-sm">Edit</button><button type="button" class="btn btn-sm btn-danger">Delete</button></div>
+        </div>
+        <div class="user-card card" data-gen-prefix="user">
+          <h4 class="user-name">Ken Adams</h4>
+          <span class="role">Admin</span><span class="status">Active</span>
+          <div class="card-actions"><button type="button" class="btn btn-sm">Edit</button><button type="button" class="btn btn-sm btn-danger">Delete</button></div>
+        </div>
+        <div class="user-card card" data-gen-prefix="user">
+          <h4 class="user-name">Sara Novak</h4>
+          <span class="role">Viewer</span><span class="status">Active</span>
+          <div class="card-actions"><button type="button" class="btn btn-sm">Edit</button><button type="button" class="btn btn-sm btn-danger">Delete</button></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. shadow DOM -->
+    <section class="panel" id="section-shadow">
+      <h2>6. Shadow DOM widget</h2>
+      <p class="muted">The coupon box is a web component. Its input and button live inside an <em>open shadow root</em> — normal CSS/XPath from the document cannot see them.
+        Use <code>driver.findElement(By.cssSelector("coupon-widget")).getShadowRoot()</code> (Selenium 4).</p>
+      <coupon-widget id="coupon-widget"></coupon-widget>
+    </section>
+
+    <!-- 7. hover menu -->
+    <section class="panel" id="section-hover">
+      <h2>7. Hover menu</h2>
+      <p class="muted">The submenu only appears while the mouse is over "My account". Use <code>new Actions(driver).moveToElement(...)</code>.</p>
+      <div class="hover-menu" id="account-menu">
+        <button type="button" class="btn">My account ▾</button>
+        <div class="submenu" role="menu">
+          <a href="#" role="menuitem">Profile</a>
+          <a href="#" role="menuitem">Orders</a>
+          <a href="#" role="menuitem">Wishlist</a>
+          <a href="#" role="menuitem">Sign out</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. drag and drop -->
+    <section class="panel" id="section-dnd">
+      <h2>8. Drag and drop</h2>
+      <p class="muted">Drag the product into the wishlist box. Implemented with mouse events, so <code>Actions.dragAndDrop(source, target)</code> works.</p>
+      <div class="dnd-area">
+        <div id="draggable" aria-label="Draggable product">🎒 Backpack</div>
+        <div id="droppable">Drop here to add to wishlist</div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      var result = document.getElementById('dynamic-result')
+      function say(text) { result.textContent = text }
+      function hash() { return Math.random().toString(16).slice(2, 7) }
+
+      // 1 + 5: generated ids (different on every load)
+      var gen = document.querySelectorAll('[data-gen-prefix]')
+      for (var i = 0; i < gen.length; i++) {
+        gen[i].id = gen[i].getAttribute('data-gen-prefix') + '-' + hash()
+        gen[i].removeAttribute('data-gen-prefix')
+      }
+      document.getElementById('order-actions').addEventListener('click', function (e) {
+        var b = e.target.closest('button')
+        if (b) say(b.textContent.trim() + ' clicked (id was ' + b.id + ')')
+      })
+
+      // 2. plans
+      document.getElementById('pricing-plans').addEventListener('click', function (e) {
+        var b = e.target.closest('button')
+        if (b) say('Plan chosen: ' + b.closest('.plan').querySelector('h3').textContent)
+      })
+
+      // 3. text buttons
+      document.getElementById('editor-toolbar').addEventListener('click', function (e) {
+        var b = e.target.closest('button')
+        if (b) say('Toolbar: ' + b.textContent.trim())
+      })
+
+      // 4. orders
+      document.getElementById('order-list').addEventListener('click', function (e) {
+        var b = e.target.closest('button')
+        if (b) say('Tracking ' + b.parentNode.querySelector('.order-id').textContent)
+      })
+
+      // 5. users
+      document.getElementById('user-cards').addEventListener('click', function (e) {
+        var b = e.target.closest('button')
+        if (!b) return
+        var card = b.closest('.user-card')
+        say(b.textContent.trim() + ' ' + card.querySelector('.user-name').textContent)
+      })
+
+      // 6. shadow DOM web component
+      if (window.customElements && !customElements.get('coupon-widget')) {
+        customElements.define('coupon-widget', class extends HTMLElement {
+          connectedCallback() {
+            if (this.shadowRoot) return
+            var root = this.attachShadow({ mode: 'open' })
+            root.innerHTML =
+              '<style>' +
+              ':host{display:block}.box{display:flex;gap:.5rem;align-items:center;flex-wrap:wrap}' +
+              'input{font:inherit;padding:.45rem .6rem;border:1px solid #cbd5e1;border-radius:6px}' +
+              'button{font:inherit;padding:.45rem .9rem;border-radius:6px;border:1px solid #0f766e;background:#0f766e;color:#fff;cursor:pointer}' +
+              '.msg{font-size:.9rem;color:#475569}' +
+              '</style>' +
+              '<div class="box"><input id="coupon-code" type="text" placeholder="Coupon code" aria-label="Coupon code">' +
+              '<button id="apply-coupon" type="button">Apply</button><span class="msg" id="coupon-message"></span></div>'
+            var input = root.getElementById('coupon-code')
+            var msg = root.getElementById('coupon-message')
+            root.getElementById('apply-coupon').addEventListener('click', function () {
+              var code = input.value.trim().toUpperCase()
+              msg.textContent = code === 'SAVE10' ? 'Coupon applied: 10% off' : 'Invalid coupon'
+              say('Coupon: ' + (code || '(empty)'))
+            })
+          }
+        })
+      }
+
+      // 7. hover menu
+      document.querySelector('#account-menu .submenu').addEventListener('click', function (e) {
+        var a = e.target.closest('a')
+        if (!a) return
+        e.preventDefault()
+        say('Menu: ' + a.textContent)
+      })
+
+      // 8. drag and drop (mouse events + HTML5 fallback)
+      var drag = document.getElementById('draggable')
+      var drop = document.getElementById('droppable')
+      var dragging = false, startX = 0, startY = 0
+      function overDrop(x, y) {
+        var r = drop.getBoundingClientRect()
+        return x >= r.left && x <= r.right && y >= r.top && y <= r.bottom
+      }
+      function markDropped() {
+        drop.classList.add('dropped')
+        drop.textContent = 'Dropped! Backpack added to wishlist'
+        say('Dropped backpack')
+      }
+      drag.addEventListener('mousedown', function (e) {
+        dragging = true; startX = e.clientX; startY = e.clientY
+        e.preventDefault()
+      })
+      document.addEventListener('mousemove', function (e) {
+        if (!dragging) return
+        drag.style.transform = 'translate(' + (e.clientX - startX) + 'px,' + (e.clientY - startY) + 'px)'
+      })
+      document.addEventListener('mouseup', function (e) {
+        if (!dragging) return
+        dragging = false
+        drag.style.transform = ''
+        if (overDrop(e.clientX, e.clientY)) markDropped()
+      })
+      drag.setAttribute('draggable', 'true')
+      drag.addEventListener('dragstart', function (e) { if (e.dataTransfer) e.dataTransfer.setData('text/plain', 'backpack') })
+      drop.addEventListener('dragover', function (e) { e.preventDefault() })
+      drop.addEventListener('drop', function (e) { e.preventDefault(); markDropped() })
+    })()
+  </script>
+</body>
+</html>
