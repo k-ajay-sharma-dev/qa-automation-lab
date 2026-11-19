@@ -11,6 +11,7 @@ import ProblemPage from './pages/ProblemPage.jsx'
 import ProgressPage from './pages/ProgressPage.jsx'
 import ReviewPage from './pages/ReviewPage.jsx'
 import SearchPage from './pages/SearchPage.jsx'
+import SettingsPage from './pages/SettingsPage.jsx'
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
           <Route path="/practice-site" element={<PracticeSitePage />} />
           <Route path="/framework" element={<FrameworkPage />} />
           <Route path="/search" element={<SearchPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
           <Route path="/:category" element={<CategoryPage />} />
           <Route path="/:category/:problemId" element={<ProblemPage />} />
         </Routes>

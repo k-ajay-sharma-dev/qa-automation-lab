@@ -7,6 +7,7 @@ import { CATEGORIES, categoryBySlug } from '../data/categories.js'
 import { buildRound, gradeRound, LEVEL_SETS, MODES, problemOf, verdict } from '../data/mock.js'
 import { addHistory, clearActive, loadActive, loadHistory, saveActive } from '../store/mocks.js'
 import { statusOf, updateProblem, useProgress } from '../store/progress.js'
+import { useSettings } from '../store/settings.js'
 
 const TYPE_LABEL = { mcq: 'Multiple choice', code: 'Live coding', locator: 'Locator task', spoken: 'Spoken answer' }
 
@@ -46,7 +47,8 @@ export default function MockPage() {
 
 function Setup({ onStart }) {
   const [mode, setMode] = useState('mock')
-  const [length, setLength] = useState('short')
+  const { mockLength } = useSettings()
+  const [length, setLength] = useState(mockLength)
   const [levelSet, setLevelSet] = useState('all')
   const [sections, setSections] = useState(CATEGORIES.map((c) => c.slug))
   const history = loadHistory()

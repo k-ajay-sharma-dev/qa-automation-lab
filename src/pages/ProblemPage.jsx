@@ -7,7 +7,9 @@ import LocatorWorkspace from '../components/LocatorWorkspace.jsx'
 import QuizWorkspace from '../components/QuizWorkspace.jsx'
 import { categoryBySlug } from '../data/categories.js'
 import { problemById, problemsFor } from '../data/problems.js'
+import ProblemTimer from '../components/ProblemTimer.jsx'
 import { statusOf, updateProblem, useProgress } from '../store/progress.js'
+import { useSettings } from '../store/settings.js'
 
 export default function ProblemPage() {
   const { category, problemId } = useParams()
@@ -24,6 +26,7 @@ export default function ProblemPage() {
 
 function Problem({ p }) {
   const progress = useProgress()
+  const settings = useSettings()
   const entry = progress[p.id]
   const status = statusOf(entry)
   const cat = categoryBySlug.get(p.category)
@@ -33,7 +36,7 @@ function Problem({ p }) {
   const next = list[i + 1]
   const [tab, setTab] = useState('task')
   const [hintsShown, setHintsShown] = useState(0)
-  const [revealed, setRevealed] = useState(status === 'solved')
+  const [revealed, setRevealed] = useState(status === 'solved' || !settings.solutionGate)
 
   const onResult = (passed) => {
     updateProblem(p.id, { status: passed ? 'solved' : 'attempted', attempts: (entry?.attempts ?? 0) + 1 })
@@ -66,6 +69,7 @@ function Problem({ p }) {
           </div>
         </div>
         <div className="head-actions">
+          {settings.timer && <ProblemTimer problem={p} compact />}
           <button
             className={`btn btn-sm${status === 'revisit' ? ' btn-primary' : ''}`}
             onClick={() => updateProblem(p.id, { status: status === 'revisit' ? 'attempted' : 'revisit' })}

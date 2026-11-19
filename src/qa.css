@@ -417,6 +417,34 @@
   margin-bottom: -4px;
 }
 
+/* settings */
+.setting-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  cursor: pointer;
+}
+.setting-toggle input {
+  margin-top: 4px;
+  accent-color: var(--accent);
+}
+.setting-toggle > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.setting-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 260px;
+  margin-top: 8px;
+}
+.head-actions .problem-timer {
+  margin: 0;
+}
+
 /* mock interview */
 .mock-setup {
   display: flex;

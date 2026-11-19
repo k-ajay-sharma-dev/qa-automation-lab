@@ -1,4 +1,6 @@
-// The round in progress (survives a page refresh) and the history of finished rounds.
+import { writeLocal } from './local.js'
+
+// The round in progress (survives a page refresh, stays on this device) and the history of finished rounds.
 const ACTIVE = 'qa.mock.active'
 const HISTORY = 'qa.mock.history'
 
@@ -23,6 +25,7 @@ export const saveActive = (round) => write(ACTIVE, round)
 export const clearActive = () => write(ACTIVE, null)
 
 export const loadHistory = () => read(HISTORY, [])
+// history goes through writeLocal so it syncs to the account
 export function addHistory(entry) {
-  write(HISTORY, [entry, ...loadHistory()].slice(0, 20))
+  writeLocal(HISTORY, JSON.stringify([entry, ...loadHistory()].slice(0, 20)))
 }

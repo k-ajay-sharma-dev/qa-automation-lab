@@ -90,6 +90,12 @@ const PATHS = {
       <path d="M20 20l-3.5-3.5" />
     </>
   ),
+  settings: (
+    <>
+      <circle cx="12" cy="12" r="3" />
+      <path d="M12 2v3M12 19v3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M2 12h3M19 12h3M4.9 19.1L7 17M17 7l2.1-2.1" />
+    </>
+  ),
   collapse: <path d="M15 6l-6 6 6 6" />,
   expand: <path d="M9 6l6 6-6 6" />,
   menu: <path d="M4 6h16M4 12h16M4 18h16" />,

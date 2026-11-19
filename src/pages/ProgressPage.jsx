@@ -1,17 +1,20 @@
-import { useRef } from 'react'
 import { Link } from 'react-router-dom'
 import { CATEGORIES, LEVELS } from '../data/categories.js'
 import { problems } from '../data/problems.js'
-import { exportProgress, importProgress, resetProgress, statusOf, useProgress } from '../store/progress.js'
+import { statusOf, useProgress } from '../store/progress.js'
+import { inTime } from '../study/timer.js'
 
 export default function ProgressPage() {
   const progress = useProgress()
-  const file = useRef(null)
   const solvedOf = (list) => list.filter((p) => statusOf(progress[p.id]) === 'solved').length
   const solved = solvedOf(problems)
   const attempted = problems.filter((p) => statusOf(progress[p.id]) === 'attempted').length
   const revisit = problems.filter((p) => statusOf(progress[p.id]) === 'revisit').length
-  const minutes = problems.filter((p) => statusOf(progress[p.id]) === 'solved').reduce((s, p) => s + (p.estMinutes ?? 0), 0)
+  // real time from the problem timer where there is one
+  const logs = Object.values(progress).flatMap((e) => (Array.isArray(e?.timeLog) ? e.timeLog : []))
+  const minutes = Math.round(logs.reduce((s, r) => s + (r.totalSeconds ?? 0), 0) / 60)
+  const timedSolves = Object.values(progress).filter((e) => e?.timeLog?.length)
+  const onTime = timedSolves.filter((e) => inTime(e.timeLog.at(-1))).length
 
   // the last 14 days of solves
   const days = [...Array(14)].map((_, i) => {
@@ -22,21 +25,13 @@ export default function ProgressPage() {
   })
   const maxDay = Math.max(1, ...days.map((d) => d.n))
 
-  function download() {
-    const blob = new Blob([exportProgress()], { type: 'application/json' })
-    const a = document.createElement('a')
-    a.href = URL.createObjectURL(blob)
-    a.download = 'qa-lab-progress.json'
-    a.click()
-  }
-
   return (
     <div className="category-page">
       <section className="category-head">
         <div>
           <p className="eyebrow">// progress</p>
           <h1>Your progress</h1>
-          <p className="muted">Saved in this browser. Export it to move to another machine.</p>
+          <p className="muted">Saved in this browser, and to your Google account when you sign in (Settings).</p>
         </div>
       </section>
 
@@ -57,11 +52,16 @@ export default function ProgressPage() {
           <span className="stat-value">{revisit}</span>
         </div>
         <div className="stat">
-          <span className="stat-label">Practice time</span>
+          <span className="stat-label">Timed practice</span>
           <span className="stat-value">
-            {Math.round(minutes / 60)}
-            <span className="muted small"> h</span>
+            {minutes >= 60 ? Math.floor(minutes / 60) : minutes}
+            <span className="muted small">{minutes >= 60 ? ` h ${minutes % 60} m` : ' min'}</span>
           </span>
+          {timedSolves.length > 0 && (
+            <span className="muted small">
+              {onTime}/{timedSolves.length} solved within the target time
+            </span>
+          )}
         </div>
       </section>
 
@@ -105,38 +105,9 @@ export default function ProgressPage() {
         })}
       </div>
 
-      <h2 className="section-heading">Backup</h2>
-      <div className="hero-actions">
-        <button className="btn" onClick={download}>
-          Export progress
-        </button>
-        <button className="btn" onClick={() => file.current?.click()}>
-          Import progress
-        </button>
-        <input
-          ref={file}
-          type="file"
-          accept="application/json"
-          hidden
-          onChange={async (e) => {
-            const f = e.target.files?.[0]
-            if (!f) return
-            try {
-              importProgress(await f.text())
-            } catch {
-              alert('That file is not a valid progress export.')
-            }
-          }}
-        />
-        <button
-          className="btn btn-ghost"
-          onClick={() => {
-            if (confirm('Clear all progress in this browser? This cannot be undone.')) resetProgress()
-          }}
-        >
-          Reset progress
-        </button>
-      </div>
+      <p className="muted small">
+        Backup, sign-in and reset are in <Link to="/settings">Settings</Link>.
+      </p>
     </div>
   )
 }
