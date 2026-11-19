@@ -8,6 +8,12 @@ const PATHS = {
       <path d="M20 4v4h-4M12 8v4l3 2" />
     </>
   ),
+  mock: (
+    <>
+      <circle cx="12" cy="13" r="7" />
+      <path d="M12 10v3l2 2M10 3h4M12 3v3" />
+    </>
+  ),
   flashcards: (
     <>
       <rect x="3" y="7" width="14" height="12" rx="2" />

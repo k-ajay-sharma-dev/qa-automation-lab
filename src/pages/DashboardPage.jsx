@@ -104,10 +104,10 @@ export default function DashboardPage() {
           <strong>Debugging Clinic</strong>
           <span className="muted small">Failing tests, stack traces and Jenkins logs — diagnose and fix.</span>
         </Link>
-        <Link to="/flashcards" className="practice-card practice-link">
-          <span className="stat-label">Flashcards</span>
-          <strong>10-minute warm-up</strong>
-          <span className="muted small">Interview follow-ups from every problem. Flip and self-grade.</span>
+        <Link to="/mock" className="practice-card practice-link">
+          <span className="stat-label">Mock interview</span>
+          <strong>Timed mixed round</strong>
+          <span className="muted small">Quiz, live coding, a locator and spoken answers — scored with weak areas.</span>
         </Link>
         <Link to="/interview" className="practice-card practice-link">
           <span className="stat-label">Interview ready</span>

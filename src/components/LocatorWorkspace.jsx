@@ -38,10 +38,13 @@ const javaLine = (strategy, text) => {
   return strategy === 'xpath' ? `driver.findElement(By.xpath("${s}"));` : `driver.findElement(By.cssSelector("${s}"));`
 }
 
-export default function LocatorWorkspace({ p, entry, onResult }) {
+// exam mode: no Check button and no pass/fail; the answer is graded silently and reported through onLive.
+export default function LocatorWorkspace({ p, entry, onResult, exam = false, onLive }) {
   const allowed = p.strategy === 'either' ? ['css', 'xpath'] : [p.strategy]
   const [strategy, setStrategy] = useState(entry?.strategy ?? allowed[0])
   const [text, setText] = useState(entry?.code ?? '')
+  const liveRef = useRef(onLive)
+  liveRef.current = onLive
   const [live, setLive] = useState({ nodes: [], error: null })
   const [graded, setGraded] = useState(null)
   const [ready, setReady] = useState(false)
@@ -66,12 +69,18 @@ export default function LocatorWorkspace({ p, entry, onResult }) {
   useEffect(() => {
     if (!ready) return
     const t = setTimeout(() => {
-      const r = evaluate(doc(), strategy, text)
+      const d = doc()
+      const r = evaluate(d, strategy, text)
       setLive(r)
       highlight(r.nodes)
+      if (exam && liveRef.current) {
+        const expected = [...d.querySelectorAll(p.expected)]
+        const pass = !r.error && expected.length > 0 && r.nodes.length === expected.length && expected.every((e) => r.nodes.includes(e))
+        liveRef.current({ code: text, strategy, pass })
+      }
     }, 200)
     return () => clearTimeout(t)
-  }, [text, strategy, ready, highlight])
+  }, [text, strategy, ready, highlight, exam, p.expected])
 
   function check() {
     const d = doc()
@@ -109,9 +118,11 @@ export default function LocatorWorkspace({ p, entry, onResult }) {
           >
             Reload page
           </button>
-          <button className="btn btn-primary btn-sm" onClick={check} disabled={!text.trim() || !ready}>
-            ✓ Check
-          </button>
+          {!exam && (
+            <button className="btn btn-primary btn-sm" onClick={check} disabled={!text.trim() || !ready}>
+              ✓ Check
+            </button>
+          )}
         </div>
       </div>
       <div className="locator-input">
@@ -124,7 +135,7 @@ export default function LocatorWorkspace({ p, entry, onResult }) {
             setText(e.target.value)
             setGraded(null)
           }}
-          onKeyDown={(e) => e.key === 'Enter' && check()}
+          onKeyDown={(e) => e.key === 'Enter' && !exam && check()}
           aria-label="Your locator"
         />
         <div className="locator-live small">
