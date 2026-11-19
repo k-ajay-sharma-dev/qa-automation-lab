@@ -1,7 +1,7 @@
 rules_version = '2';
 
 // Each signed-in person can read and write only their own data, and nothing else exists.
-// Paste this into Firebase console â†’ Firestore Database â†’ Rules (see DEPLOY.md).
+// Paste this into Firebase console → Firestore Database → Rules (see DEPLOY.md).
 service cloud.firestore {
   match /databases/{database}/documents {
     function isOwner(uid) {
