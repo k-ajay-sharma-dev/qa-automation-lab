@@ -143,5 +143,5 @@ different scenarios.`,
   ],
   tryIt: `On http://localhost:5180/practice-site/inventory.html try each option of the sort dropdown and note the first
 product. Write those observations as an Examples table under an outline.`,
-  problems: ['cuc-004', 'cuc-005', 'cuc-017', 'cuc-018', 'cuc-027', 'cuc-032'],
+  problems: ['cuc-004', 'cuc-005', 'cuc-017', 'cuc-018', 'cuc-027', 'cuc-032', 'cuc-036'],
 }

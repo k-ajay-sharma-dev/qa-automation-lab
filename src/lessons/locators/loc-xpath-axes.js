@@ -118,5 +118,5 @@ One method now serves every employee — and it keeps working when the table is 
     'Anchoring on text that is not unique (e.g. a status like "Active") — the locator matches many rows.',
   ],
   tryIt: `On http://localhost:5180/practice-site/table.html, write an XPath for Sofia Rossi's salary cell using following-sibling. Then sort by Name and by Salary — run it again in \`$x()\` and confirm it still finds her salary.`,
-  problems: ['loc-013', 'loc-014', 'loc-015', 'loc-016', 'loc-018', 'loc-029'],
+  problems: ['loc-013', 'loc-014', 'loc-015', 'loc-016', 'loc-018', 'loc-029', 'loc-041'],
 }

@@ -127,5 +127,5 @@ String result = log.toString();
     'Calling .equals on a value that may be null — put the literal first: "Expected".equals(actual).',
   ],
   tryIt: `In any online Java playground (or jshell), run \`String s = "  Add to Cart ";\`, then \`s.trim();\` and print \`"[" + s + "]"\`. Now run \`s = s.trim();\` and print again — see the difference immutability makes.`,
-  problems: ['java-001', 'java-002', 'java-017', 'java-020'],
+  problems: ['java-001', 'java-002', 'java-017', 'java-020', 'java-035'],
 }

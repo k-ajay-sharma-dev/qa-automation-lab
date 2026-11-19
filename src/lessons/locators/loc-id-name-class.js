@@ -95,5 +95,5 @@ Ask two questions of every locator: *Does it match exactly what I mean?* (check 
     'Trusting an id that contains a random-looking suffix — reload the page and see if it changes.',
   ],
   tryIt: `On http://localhost:5180/practice-site/checkout.html, find three different locators for the Last Name field (id, name, data-testid). Test each in DevTools with \`$$()\` and confirm each matches 1 element.`,
-  problems: ['loc-001', 'loc-002', 'loc-003', 'loc-004', 'loc-017', 'loc-020', 'loc-031', 'loc-034'],
+  problems: ['loc-001', 'loc-002', 'loc-003', 'loc-004', 'loc-017', 'loc-020', 'loc-031', 'loc-034', 'loc-038', 'loc-040'],
 }

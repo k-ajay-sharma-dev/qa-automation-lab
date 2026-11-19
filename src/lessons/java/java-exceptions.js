@@ -136,5 +136,5 @@ A name like this in a CI log tells you instantly "the environment, not the app, 
     'Throwing new RuntimeException() with no message — always say what was expected and what happened.',
   ],
   tryIt: `Predict, then run: a try block that prints "A" and throws \`new IllegalStateException("x")\`, followed by \`catch (IllegalArgumentException e)\` printing "B", \`catch (RuntimeException e)\` printing "C" and \`finally\` printing "D". Which letters appear?`,
-  problems: ['java-013', 'java-014', 'java-008', 'java-028'],
+  problems: ['java-013', 'java-014', 'java-008', 'java-028', 'java-040'],
 }

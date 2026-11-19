@@ -97,5 +97,5 @@ git push -u origin feature/locked-user-test   # then open a pull request
   ],
   tryIt: `Take the ShopEasy checkout (three steps, 8% tax, client-side validation) and, in five minutes, write one line per
 level: what you would test with unit, API and UI tests, and which suite (PR, smoke, nightly) each belongs to.`,
-  problems: ['int-021', 'int-022', 'int-026', 'int-027', 'int-029', 'int-031'],
+  problems: ['int-021', 'int-022', 'int-026', 'int-027', 'int-029', 'int-031', 'int-038', 'int-039'],
 }

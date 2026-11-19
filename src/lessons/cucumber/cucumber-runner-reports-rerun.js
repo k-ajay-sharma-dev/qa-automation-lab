@@ -133,5 +133,5 @@ the command line often covers most needs.`,
   ],
   tryIt: `Look at a features folder structure and write down the features, glue and tags values you would need for a
 runner that only runs checkout smoke tests.`,
-  problems: ['cuc-013', 'cuc-014', 'cuc-026'],
+  problems: ['cuc-013', 'cuc-014', 'cuc-026', 'cuc-040'],
 }

@@ -92,5 +92,5 @@ await expect(page).toHaveScreenshot('products-page.png', {
     'Accepting --update-snapshots without reviewing the diff.',
   ],
   tryIt: `Open \`http://localhost:5180/practice-site/waits.html\` twice in two tabs and click *Refresh prices* in one of them. Which parts of the page would make a full-page screenshot differ between two runs, and which locators would you mask?`,
-  problems: ['pw-031', 'pw-032'],
+  problems: ['pw-031', 'pw-032', 'pw-043'],
 }

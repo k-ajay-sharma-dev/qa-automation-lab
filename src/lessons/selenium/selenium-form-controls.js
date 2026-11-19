@@ -104,5 +104,5 @@ Afterwards the input's \`value\` attribute contains the file name (browsers show
     'Passing a relative path to the file input — the browser cannot resolve it. Use `toAbsolutePath()`.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/form.html\` open DevTools and look at \`#country\`. Write down the visible text and value of each option, then decide which \`select…\` call you would use if the site were also available in German.`,
-  problems: ['sel-004', 'sel-005', 'sel-024', 'sel-033'],
+  problems: ['sel-004', 'sel-005', 'sel-024', 'sel-033', 'sel-040'],
 }

@@ -149,5 +149,5 @@ jobs:
     'Hard-coding secrets in the Jenkinsfile or workflow — use the CI credential store.',
   ],
   tryIt: `From a terminal in your project folder, run \`mvn -B clean test -Dtest=<one of your test classes>\` and then the same with \`-Dheadless=true\`. Open \`target/surefire-reports\` and find the XML file Jenkins' \`junit\` step would read.`,
-  problems: ['fw-012', 'fw-013', 'fw-022', 'fw-032'],
+  problems: ['fw-012', 'fw-013', 'fw-022', 'fw-032', 'fw-037'],
 }

@@ -107,5 +107,5 @@ The Java side has its own classics:
   ],
   tryIt: `Take any 10-step manual test case you wrote recently. Underline the single action that is really being tested;
 everything before it becomes one or two Givens, everything after it becomes Thens. How many steps are left?`,
-  problems: ['cuc-002', 'cuc-003', 'cuc-016', 'cuc-025', 'cuc-031'],
+  problems: ['cuc-002', 'cuc-003', 'cuc-016', 'cuc-025', 'cuc-031', 'cuc-037', 'cuc-041'],
 }

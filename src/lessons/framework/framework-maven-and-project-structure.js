@@ -145,5 +145,5 @@ The guiding principle: **separate things that change for different reasons.** Lo
     'Writing locators inside step definitions — they belong in page objects.',
   ],
   tryIt: `Open the app's Framework Blueprint page and read its \`pom.xml\`. For each dependency write one sentence: what would break if you removed it? Then compare its folder tree with the one above and note what extra packages a bigger project adds.`,
-  problems: ['fw-001', 'fw-014', 'fw-018', 'fw-020', 'fw-028'],
+  problems: ['fw-001', 'fw-014', 'fw-018', 'fw-020', 'fw-028', 'fw-033', 'fw-036', 'fw-038'],
 }

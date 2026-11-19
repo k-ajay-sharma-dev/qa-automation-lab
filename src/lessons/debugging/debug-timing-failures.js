@@ -97,5 +97,5 @@ Timing failures **pass sometimes** and the screenshot shows a page that is *not 
     'Keeping an implicit wait "as a safety net" alongside explicit waits.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/waits.html\` open DevTools → Performance, record, click "Load orders" and stop. Find the moment the spinner disappears and the result appears — that gap is exactly what an unsynchronised script falls into.`,
-  problems: ['dbg-001', 'dbg-002', 'dbg-003', 'dbg-008', 'dbg-016', 'dbg-028'],
+  problems: ['dbg-001', 'dbg-002', 'dbg-003', 'dbg-008', 'dbg-016', 'dbg-028', 'dbg-034'],
 }

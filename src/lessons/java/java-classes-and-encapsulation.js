@@ -116,5 +116,5 @@ If a developer renames the \`checkout\` id, you fix **one** private field. If th
     'Putting this(...) anywhere but the first line of a constructor — compile error.',
   ],
   tryIt: `Inspect http://localhost:5180/practice-site/checkout.html and sketch a \`CheckoutInfoPage\` class on paper: which ids become private fields, which public methods would a test want (e.g. \`enterShipping(...)\`, \`getErrorText()\`)?`,
-  problems: ['java-005', 'java-006'],
+  problems: ['java-005', 'java-006', 'java-036'],
 }

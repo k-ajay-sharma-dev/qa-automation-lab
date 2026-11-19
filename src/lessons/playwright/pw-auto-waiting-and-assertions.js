@@ -144,5 +144,5 @@ Received *Processing* tells you the app was still working — the wait was too s
     'Waiting for a spinner to appear before waiting for it to disappear — if it was quick you wait for nothing.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/waits.html\`, open DevTools → Console, click *Refresh prices* and watch the list being replaced by a spinner and re-rendered. Which matcher would you use to wait for the new list, and why would a Selenium WebElement captured before the click go stale while a Playwright locator does not?`,
-  problems: ['pw-007', 'pw-008', 'pw-021', 'pw-026'],
+  problems: ['pw-007', 'pw-008', 'pw-021', 'pw-026', 'pw-041'],
 }

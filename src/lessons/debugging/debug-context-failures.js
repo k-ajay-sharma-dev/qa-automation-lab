@@ -94,5 +94,5 @@ Fix: give the browser an explicit, realistic size through options (\`--window-si
     'Debugging a headless-only failure locally with a maximised browser and concluding "can\'t reproduce".',
   ],
   tryIt: `Open \`http://localhost:5180/practice-site/frames.html\`, open DevTools Console and switch the context drop-down from "top" to the support frame. Run \`document.getElementById('support-email')\` in both contexts and compare — that is exactly what the driver experiences.`,
-  problems: ['dbg-004', 'dbg-005', 'dbg-006', 'dbg-020'],
+  problems: ['dbg-004', 'dbg-005', 'dbg-006', 'dbg-020', 'dbg-035'],
 }

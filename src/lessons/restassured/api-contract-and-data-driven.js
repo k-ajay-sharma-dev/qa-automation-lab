@@ -125,5 +125,5 @@ Tips:
     'DataProvider rows that share one cart or user in parallel runs and interfere with each other.',
   ],
   tryIt: `Download the schema at http://localhost:5181/api/schema/product, then compare it with http://localhost:5181/api/products/6. Change one value in your head (price as "15.99" string, missing inStock, an extra "colour" key) and say which schema rule would fail each time.`,
-  problems: ['api-013', 'api-015', 'api-016'],
+  problems: ['api-013', 'api-015', 'api-016', 'api-042'],
 }

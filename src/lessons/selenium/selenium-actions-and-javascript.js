@@ -89,5 +89,5 @@ Wrapping steps 3–4 in a small helper method keeps tests clean and makes the fa
     'Casting `executeScript` numbers to `Integer` — they come back as `Long`.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/dynamic.html\`, open the browser console and run \`document.getElementById('droppable').scrollIntoView({block: 'center'})\`. That is the same JavaScript your Java code would send through \`executeScript\`.`,
-  problems: ['sel-012', 'sel-013'],
+  problems: ['sel-012', 'sel-013', 'sel-043', 'sel-044'],
 }

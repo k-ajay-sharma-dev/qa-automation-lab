@@ -101,5 +101,5 @@ When a different set of tests fails every night, look here first: shared account
     'Parallel tests sharing one user account, colliding on the server-side cart.',
   ],
   tryIt: `Start the API (\`npm run api\`) and open http://localhost:5181/api/health. Log in as standard_user with a REST client, add product 1 to the cart twice and note the second response (409). That error is what a missing clean-up looks like to the next test — then send \`DELETE /api/cart\` and try again.`,
-  problems: ['fw-019', 'fw-023', 'fw-026'],
+  problems: ['fw-019', 'fw-023', 'fw-026', 'fw-035'],
 }

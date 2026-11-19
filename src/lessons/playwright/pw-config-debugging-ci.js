@@ -94,5 +94,5 @@ The **trace** is the key skill. For every action it shows the DOM *before* and *
     'Committing await page.pause() — the CI run hangs until the test timeout.',
   ],
   tryIt: `Run any spec with \`--ui\`, click a test, and use the timeline to jump to the moment of a click. Then open the "Network" and "Console" tabs for that step — this is exactly what you get from a CI failure's trace.`,
-  problems: ['pw-014', 'pw-020', 'pw-035', 'pw-036'],
+  problems: ['pw-014', 'pw-020', 'pw-035', 'pw-036', 'pw-044'],
 }

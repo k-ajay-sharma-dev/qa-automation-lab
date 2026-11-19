@@ -178,5 +178,5 @@ For a generated value you cannot use \`equalTo\` — check its shape with \`matc
     'Extracting everything into Java and using if/else instead of a one-line matcher.',
   ],
   tryIt: `Open http://localhost:5181/api/products?sort=price_asc and write the GPath for: the number of products, the cheapest product's name, all prices, and the name of the product whose stock is 0. Then call http://localhost:5181/api/products?size=0 and write the path to the field name inside error.details.`,
-  problems: ['api-004', 'api-007', 'api-013', 'api-022', 'api-023', 'api-035', 'api-036'],
+  problems: ['api-004', 'api-007', 'api-013', 'api-022', 'api-023', 'api-035', 'api-036', 'api-040', 'api-041', 'api-043'],
 }

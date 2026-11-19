@@ -100,5 +100,5 @@ Environment failures get the verdict **environment / no product verdict yet** â€
     'Testing the URL from your laptop instead of from the CI agent that failed.',
   ],
   tryIt: `In any Selenium project, print \`((HasCapabilities) driver).getCapabilities()\` right after creating the driver. Find the browser version and the driver version in the output â€” that is the first thing to compare when "session not created" appears.`,
-  problems: ['dbg-013', 'dbg-006', 'dbg-024'],
+  problems: ['dbg-013', 'dbg-006', 'dbg-024', 'dbg-039'],
 }

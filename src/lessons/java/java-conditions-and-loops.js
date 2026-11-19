@@ -163,5 +163,5 @@ For checks, prefer collecting over \`break\` — stopping early hides the other 
     'Calling add() on a List.of(...) list — it is immutable; use new ArrayList<>() for lists you build.',
   ],
   tryIt: `Open http://localhost:5180/practice-site/table.html and write down the five Status values on page 1. Put them in a \`List.of(...)\`, loop over them and collect every value that is not "Active" — then print the list.`,
-  problems: ['java-003', 'java-011', 'java-018', 'java-019'],
+  problems: ['java-003', 'java-011', 'java-018', 'java-019', 'java-038'],
 }

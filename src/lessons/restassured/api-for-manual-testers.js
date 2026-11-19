@@ -96,5 +96,5 @@ A manual API test case is: *given* this request, *when* I send it, *then* I expe
     'Testing only through the UI — the UI may hide API bugs that the mobile app will hit.',
   ],
   tryIt: `Run \`npm run api\`, then open http://localhost:5181/api/products/99 and http://localhost:5181/api/products?sort=price_desc&size=2 in a browser (or Postman). Note the status, the \`Content-Type\` header and the JSON shape. Then POST to \`/api/auth/login\` in Postman with \`locked_out_user\` / \`secret_sauce\` and explain to yourself why it is 403 and not 401.`,
-  problems: ['api-001', 'api-005', 'api-007', 'api-034'],
+  problems: ['api-001', 'api-005', 'api-007', 'api-034', 'api-039'],
 }

@@ -171,5 +171,5 @@ A deep chain like \`CheckoutPage extends CartPage extends InventoryPage\` is a s
     'Chaining pages through inheritance (Checkout extends Cart) — keep one level and compose.',
   ],
   tryIt: `Open http://localhost:5180/practice-site/inventory.html and cart.html side by side. List every element both pages share (look at the header). Those shared ids are the private locators of your future component; the rest stay in each page.`,
-  problems: ['pom-005', 'pom-007', 'pom-013', 'pom-017', 'pom-018', 'pom-019', 'pom-030', 'pom-031'],
+  problems: ['pom-005', 'pom-007', 'pom-013', 'pom-017', 'pom-018', 'pom-019', 'pom-030', 'pom-031', 'pom-033', 'pom-036', 'pom-038'],
 }

@@ -141,5 +141,5 @@ Run \`npx playwright codegen <url>\` or open UI mode and use **Pick locator**: h
     'Copying absolute XPaths from DevTools into tests.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/dynamic.html\` open DevTools → Elements → Accessibility pane and select the *Place order* button: note its role and name. Which getByRole call would match it uniquely? Then try the three "Save…" buttons — how do you match only *Save*?`,
-  problems: ['pw-005', 'pw-006', 'pw-012', 'pw-023', 'pw-025', 'pw-033'],
+  problems: ['pw-005', 'pw-006', 'pw-012', 'pw-023', 'pw-025', 'pw-033', 'pw-039', 'pw-040', 'pw-042'],
 }

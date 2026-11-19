@@ -81,5 +81,5 @@ Read-only reference data (the product catalogue) can safely be shared — only d
     'Generating "unique" names from the current second — two threads in the same second collide.',
   ],
   tryIt: `With \`npm run api\` running, register two customers in Postman with POST http://localhost:5181/api/users (username, password of 8+ characters, firstName, lastName, email). Log in as each, add a different product to each cart, and confirm with GET /api/cart that the carts are independent. Then call POST /api/reset and try both tokens again — note what happens and why a reset in the middle of a parallel run is dangerous.`,
-  problems: ['api-032'],
+  problems: ['api-032', 'api-044'],
 }

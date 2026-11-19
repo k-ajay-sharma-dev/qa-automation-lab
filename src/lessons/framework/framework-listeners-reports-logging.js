@@ -116,5 +116,5 @@ Logs are best placed in BasePage helpers (every click/type logs once) and in lis
     'Logging `"Typing " + password` — secrets leak into CI logs. Mask them.',
   ],
   tryIt: `Make a deliberately failing test (assert that the cart badge on http://localhost:5180/practice-site/inventory.html shows 5 when the cart is empty). Before writing any listener, write down what evidence you would want in the defect: screenshot, URL, method name, browser, time. Each item maps to one line in \`onTestFailure\` or the report's system info.`,
-  problems: ['fw-008', 'fw-009', 'fw-010', 'fw-011', 'fw-024', 'fw-026'],
+  problems: ['fw-008', 'fw-009', 'fw-010', 'fw-011', 'fw-024', 'fw-026', 'fw-034'],
 }

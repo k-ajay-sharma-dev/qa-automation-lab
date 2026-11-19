@@ -155,5 +155,5 @@ And the yes/no questions mean different things: **present** (in the DOM — \`fi
     'Copying a long absolute XPath from DevTools (`/html/body/div[2]/...`). It breaks when anything moves; write a short id or CSS locator.',
   ],
   tryIt: `On \`http://localhost:5180/practice-site/login.html\` click Login with both fields empty. In DevTools find the banner text element and note its id, then write the one-line \`getText()\` + \`assertEquals\` that would check "Username is required".`,
-  problems: ['sel-002', 'sel-003', 'sel-022', 'sel-023'],
+  problems: ['sel-002', 'sel-003', 'sel-022', 'sel-023', 'sel-039'],
 }

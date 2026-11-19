@@ -162,5 +162,5 @@ That reads as a \`Map<String, String>\` (first column = keys). It is handy, but 
   ],
   tryIt: `Add two products on http://localhost:5180/practice-site/inventory.html, open the cart and write a DataTable
 under "Then the cart shows these products" listing exactly what you see.`,
-  problems: ['cuc-007', 'cuc-008', 'cuc-017', 'cuc-029'],
+  problems: ['cuc-007', 'cuc-008', 'cuc-017', 'cuc-029', 'cuc-038'],
 }
