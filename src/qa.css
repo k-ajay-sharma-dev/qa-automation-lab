@@ -417,6 +417,145 @@
   margin-bottom: -4px;
 }
 
+/* lessons */
+.learn-q {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  margin-left: 10px;
+  vertical-align: 3px;
+  border: 1px solid color-mix(in srgb, var(--accent) 60%, var(--border));
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  color: var(--accent);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+.learn-q:hover {
+  background: var(--accent);
+  color: var(--accent-contrast);
+}
+.learn-nudge {
+  display: block;
+  width: 100%;
+  margin-bottom: 12px;
+  padding: 9px 12px;
+  border: 1px dashed color-mix(in srgb, var(--accent) 50%, var(--border));
+  border-radius: 8px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+}
+.learn-nudge:hover {
+  border-style: solid;
+}
+.lesson-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.lesson {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.lesson-page {
+  max-width: 860px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.lesson-page .lesson {
+  padding: 22px 26px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+}
+.lesson-head h2 {
+  margin: 4px 0 6px;
+  font-size: 1.35rem;
+}
+.lesson.compact .lesson-head h2 {
+  font-size: 1.15rem;
+}
+.lesson-head p {
+  margin: 0;
+}
+.lesson-kicker {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.lesson-analogy {
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--success) 35%, var(--border));
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--success) 7%, var(--surface));
+}
+.lesson-analogy .scenario-label {
+  color: var(--success);
+}
+.lesson-body .md h2 {
+  margin-top: 18px;
+  font-size: 1.05rem;
+}
+.lesson-body .md h3 {
+  margin-top: 14px;
+  font-size: 0.95rem;
+}
+.lesson-box {
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+  border-radius: 6px;
+  background: var(--surface-2);
+}
+.lesson-box.mistakes {
+  border-left-color: var(--warning);
+}
+.lesson-box.try {
+  border-left-color: var(--success);
+}
+.lesson-box h3 {
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+.lesson-box ul {
+  margin: 0;
+  padding-left: 18px;
+}
+.lesson-box li .md p {
+  margin: 2px 0;
+}
+.lesson-practice h3 {
+  margin-bottom: 8px;
+  font-size: 0.95rem;
+}
+.lesson-actions {
+  display: flex;
+  gap: 8px;
+}
+.lesson-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+.lesson-group {
+  margin-top: 8px;
+}
+.problem-row.lesson-row {
+  grid-template-columns: 44px minmax(0, 1fr) 70px 110px;
+}
+
 /* settings */
 .setting-toggle {
   display: flex;
@@ -662,7 +801,9 @@
     font-size: 0.8rem;
   }
   .head-actions {
-    align-items: flex-start;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
   }
   .problem-head {
     flex-direction: column;

@@ -13,6 +13,7 @@ import { collection, doc, getDocs, getFirestore, query, serverTimestamp, Timesta
 import { onLocalChange, readMeta, SYNCED_KEYS, writeMeta } from '../store/local.js'
 import { reloadFromStorage } from '../store/progress.js'
 import { reloadSettings } from '../store/settings.js'
+import { reloadLessons } from '../store/lessons.js'
 import { COLLECTIONS, firebaseConfig } from './config.js'
 import { mergeEntry, sameEntry } from './merge.js'
 import { setStatus } from './status.js'
@@ -46,6 +47,7 @@ function writeSyncState(next) {
 function reloadAll() {
   reloadFromStorage()
   reloadSettings()
+  reloadLessons()
 }
 
 let auth

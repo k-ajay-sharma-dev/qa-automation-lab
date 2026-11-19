@@ -72,6 +72,9 @@ export default function DashboardPage() {
                 {solved ? 'Continue' : 'Start'}: {nextUp.title} →
               </Link>
             )}
+            <Link className="btn btn-ghost" to="/lessons">
+              Browse the lessons
+            </Link>
             <Link className="btn btn-ghost" to="/practice-site">
               Open the practice site
             </Link>

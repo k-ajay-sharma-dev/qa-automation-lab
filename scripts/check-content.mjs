@@ -71,5 +71,48 @@ for (const cat of readdirSync(contentDir)) {
     }
   }
 }
-console.log(`\n${count} problems checked, ${errors} error(s).`)
+// ---- lessons: src/lessons/<category>/<slug>.js (see LESSON_SCHEMA.md)
+const lessonsDir = join(root, 'src', 'lessons')
+const covered = new Map() // problemId -> lesson slugs
+const slugs = new Set()
+let lessonCount = 0
+if (existsSync(lessonsDir)) {
+  for (const cat of readdirSync(lessonsDir)) {
+    if (only && cat !== only) continue
+    const dir = join(lessonsDir, cat)
+    for (const file of readdirSync(dir).filter((f) => f.endsWith('.js'))) {
+      lessonCount++
+      let l
+      try {
+        l = (await import(pathToFileURL(join(dir, file)).href)).default
+      } catch (e) {
+        fail(`lesson ${file}`, `does not load: ${e.message}`)
+        continue
+      }
+      const id = `lesson ${l?.slug ?? file}`
+      if (`${l.slug}.js` !== file) fail(id, `slug does not match file name ${file}`)
+      if (slugs.has(l.slug)) fail(id, 'duplicate slug')
+      slugs.add(l.slug)
+      if (l.category !== cat) fail(id, `category "${l.category}" is not the folder "${cat}"`)
+      for (const f of ['title', 'summary', 'manualAnalogy', 'body']) if (!l[f]) fail(id, `missing ${f}`)
+      if (!(l.order > 0)) fail(id, 'order must be a positive number')
+      if (!(l.minutes > 0)) fail(id, 'minutes must be a positive number')
+      if (!Array.isArray(l.keyPoints) || l.keyPoints.length < 2) fail(id, 'needs at least 2 keyPoints')
+      if (!Array.isArray(l.mistakes) || !l.mistakes.length) fail(id, 'needs mistakes')
+      if (!Array.isArray(l.problems) || !l.problems.length) fail(id, 'needs problems')
+      for (const pid of l.problems ?? []) {
+        if (!ids.has(pid)) fail(id, `unknown problem ${pid}`)
+        covered.set(pid, [...(covered.get(pid) ?? []), l.slug])
+      }
+    }
+  }
+  // every problem in a category that has lessons must be covered by at least one
+  const lessonCats = new Set(readdirSync(lessonsDir).filter((c) => !only || c === only))
+  for (const pid of ids) {
+    const cat = [...lessonCats].find((c) => readdirSync(join(contentDir, c)).includes(`${pid}.js`))
+    if (cat && !covered.has(pid)) fail(pid, `no lesson lists this problem (category ${cat})`)
+  }
+}
+
+console.log(`\n${count} problems and ${lessonCount} lessons checked, ${errors} error(s).`)
 process.exit(errors ? 1 : 0)

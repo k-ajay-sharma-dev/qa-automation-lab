@@ -3,7 +3,7 @@
 // knows what to upload — even for changes made offline or before sync finished loading.
 
 // Keys that go into a backup file and are saved to the account.
-export const BACKUP_KEYS = ['qa.progress', 'qa.mock.history', 'qa.settings']
+export const BACKUP_KEYS = ['qa.progress', 'qa.mock.history', 'qa.settings', 'qa.lessons']
 export const SYNCED_KEYS = BACKUP_KEYS
 
 const META_KEY = 'qa.sync.meta'

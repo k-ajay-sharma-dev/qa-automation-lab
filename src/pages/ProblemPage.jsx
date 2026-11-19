@@ -8,6 +8,9 @@ import QuizWorkspace from '../components/QuizWorkspace.jsx'
 import { categoryBySlug } from '../data/categories.js'
 import { problemById, problemsFor } from '../data/problems.js'
 import ProblemTimer from '../components/ProblemTimer.jsx'
+import LessonView from '../components/LessonView.jsx'
+import { lessonsForProblem } from '../data/lessons.js'
+import { useLessonsRead } from '../store/lessons.js'
 import { statusOf, updateProblem, useProgress } from '../store/progress.js'
 import { useSettings } from '../store/settings.js'
 
@@ -34,7 +37,13 @@ function Problem({ p }) {
   const i = list.findIndex((x) => x.id === p.id)
   const prev = list[i - 1]
   const next = list[i + 1]
-  const [tab, setTab] = useState('task')
+  const lessons = lessonsForProblem(p.id)
+  const lessonsRead = useLessonsRead()
+  // a problem you haven't started opens on its lesson, unless you've already read every lesson it needs
+  const [tab, setTab] = useState(() =>
+    lessons.length && status === 'not-started' && !lessons.every((l) => lessonsRead[l.slug]) ? 'learn' : 'task',
+  )
+  const [lessonIdx, setLessonIdx] = useState(0)
   const [hintsShown, setHintsShown] = useState(0)
   const [revealed, setRevealed] = useState(status === 'solved' || !settings.solutionGate)
 
@@ -44,6 +53,7 @@ function Problem({ p }) {
   }
 
   const tabs = [
+    ...(lessons.length ? [['learn', `📖 Learn${lessons.length > 1 ? ` (${lessons.length})` : ''}`]] : []),
     ['task', 'Task'],
     ['hints', `Hints (${p.hints.length})`],
     ['solution', 'Solution'],
@@ -58,7 +68,19 @@ function Problem({ p }) {
           <Link to={`/${p.category}`} className="back-link">
             ← {cat.label}
           </Link>
-          <h1>{p.title}</h1>
+          <h1>
+            {p.title}
+            {lessons.length > 0 && (
+              <button
+                className="learn-q"
+                onClick={() => setTab('learn')}
+                title={`Learn the topic first: ${lessons.map((l) => l.title).join(', ')}`}
+                aria-label="Learn the topic first"
+              >
+                ?
+              </button>
+            )}
+          </h1>
           <div className="problem-meta">
             <span className="mono muted small">{p.id.toUpperCase()}</span>
             <LevelBadge level={p.level} />
@@ -110,8 +132,42 @@ function Problem({ p }) {
             ))}
           </div>
           <div className="panel-body">
+            {tab === 'learn' && lessons.length > 0 && (
+              <>
+                {lessons.length > 1 && (
+                  <div className="lesson-chips">
+                    <span className="muted small">This problem uses {lessons.length} topics:</span>
+                    {lessons.map((l, n) => (
+                      <button key={l.slug} className={`chip${n === lessonIdx ? ' active' : ''}`} onClick={() => setLessonIdx(n)}>
+                        {lessonsRead[l.slug] ? '✓ ' : ''}
+                        {l.title}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <LessonView
+                  key={lessons[lessonIdx].slug}
+                  lesson={lessons[lessonIdx]}
+                  compact
+                  onDone={() => {
+                    if (lessonIdx < lessons.length - 1) setLessonIdx(lessonIdx + 1)
+                    else setTab('task')
+                    document.querySelector('.panel-body')?.scrollTo({ top: 0 })
+                  }}
+                />
+                <p className="muted small">
+                  <Link to={`/lessons/${lessons[lessonIdx].slug}`}>Open this lesson full-page</Link> · all lessons are on the{' '}
+                  <Link to="/lessons">Lessons</Link> page.
+                </p>
+              </>
+            )}
             {tab === 'task' && (
               <>
+                {lessons.length > 0 && !lessons.every((l) => lessonsRead[l.slug]) && (
+                  <button className="learn-nudge" onClick={() => setTab('learn')}>
+                    📖 New to <strong>{lessons.map((l) => l.title).join(' / ')}</strong>? Read the lesson first →
+                  </button>
+                )}
                 <div className="scenario-box">
                   <span className="scenario-label">On the project</span>
                   <Markdown>{p.scenario}</Markdown>

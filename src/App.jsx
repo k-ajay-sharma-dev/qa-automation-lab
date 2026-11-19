@@ -5,6 +5,7 @@ import CheatSheetsPage from './pages/CheatSheetsPage.jsx'
 import DashboardPage from './pages/DashboardPage.jsx'
 import FlashcardsPage from './pages/FlashcardsPage.jsx'
 import FrameworkPage from './pages/FrameworkPage.jsx'
+import LessonsPage from './pages/LessonsPage.jsx'
 import MockPage from './pages/MockPage.jsx'
 import PracticeSitePage from './pages/PracticeSitePage.jsx'
 import ProblemPage from './pages/ProblemPage.jsx'
@@ -23,6 +24,8 @@ export default function App() {
           <Route path="/review" element={<ReviewPage />} />
           <Route path="/flashcards" element={<FlashcardsPage />} />
           <Route path="/mock" element={<MockPage />} />
+          <Route path="/lessons" element={<LessonsPage />} />
+          <Route path="/lessons/:slug" element={<LessonsPage />} />
           <Route path="/cheatsheets" element={<CheatSheetsPage />} />
           <Route path="/cheatsheets/:slug" element={<CheatSheetsPage />} />
           <Route path="/practice-site" element={<PracticeSitePage />} />
