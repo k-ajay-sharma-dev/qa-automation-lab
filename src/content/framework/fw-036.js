@@ -63,6 +63,7 @@ architect suggests "move the UI tests to Failsafe". You need to understand what 
   explanation: `\`\`\`xml
 <plugin>
   <artifactId>maven-failsafe-plugin</artifactId>
+  <version>3.5.4</version>  <!-- suiteXmlFiles is not supported from Failsafe 3.6 -->
   <executions>
     <execution>
       <goals><goal>integration-test</goal><goal>verify</goal></goals>

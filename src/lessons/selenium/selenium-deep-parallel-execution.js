@@ -65,6 +65,7 @@ Surefire can start several **forked JVMs** and distribute test classes between t
 <plugin>
   <groupId>org.apache.maven.plugins</groupId>
   <artifactId>maven-surefire-plugin</artifactId>
+  <version>3.5.4</version>  <!-- 3.6+ runs TestNG via the JUnit Platform and drops suiteXmlFiles -->
   <configuration>
     <forkCount>2</forkCount>
     <reuseForks>true</reuseForks>

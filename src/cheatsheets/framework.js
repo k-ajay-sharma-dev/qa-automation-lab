@@ -81,11 +81,13 @@ Parallel modes: \`methods\`, \`classes\`, \`tests\` (one \`<test>\` per browser)
      com.aventstack:extentreports  or  io.qameta.allure:allure-testng -->
 <plugin>
   <artifactId>maven-surefire-plugin</artifactId>
+  <version>3.5.4</version>  <!-- suiteXmlFiles is NOT supported from Surefire 3.6 -->
   <configuration>
     <suiteXmlFiles><suiteXmlFile>\${suiteXmlFile}</suiteXmlFile></suiteXmlFiles>
   </configuration>
 </plugin>
 \`\`\`
+**Surefire/Failsafe 3.6+** run TestNG through the JUnit Platform and no longer accept \`suiteXmlFiles\` (3.6.1 fails the build). Pin 3.5.x to keep testng.xml, or move to \`groups\`/\`includes\` — see the *Maven build internals* deep dive.
 Selenium 4.6+ ships **Selenium Manager** — no WebDriverManager / driver paths needed.`,
     },
     {

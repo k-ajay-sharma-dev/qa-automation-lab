@@ -65,6 +65,8 @@ A typical UI framework needs: \`selenium-java\`, \`testng\`, \`cucumber-java\`, 
 
 \`mvn test\` hands control to Surefire. By default it runs classes named \`*Test\`; pointing it at a TestNG suite file via \`<suiteXmlFiles>\` lets \`testng.xml\` decide what runs (see the *testng.xml* lesson). Surefire also writes result XML into \`target/surefire-reports\`, which CI tools read.
 
+> **Version note:** \`<suiteXmlFiles>\` works up to Surefire **3.5.x**. From 3.6, Surefire and Failsafe run TestNG through the JUnit Platform and no longer accept it (3.6.1 fails the build). That is why the version is pinned above — see the *Maven build internals* deep dive for the migration options.
+
 ## Profiles: named sets of settings
 
 Typing \`-Denv=qa -Dheadless=true -DsuiteXmlFile=...\` by hand invites typos. A **profile** bundles values under a name you switch on with \`-P\`:
