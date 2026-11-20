@@ -20,7 +20,7 @@
 //                                       price_desc, aliases az|za|lohi|hilo), page (1-based, default 1), size (1–50, default 10)
 //                                       200 { data: [product], page, size, total, totalPages } · 400 INVALID_QUERY
 //   GET    /api/products/{id}           200 product · 400 INVALID_ID · 404 PRODUCT_NOT_FOUND
-//   GET    /api/schema/product          200 JSON Schema (draft-07) describing one product
+//   GET    /api/schema/product          200 JSON Schema (draft-04) describing one product
 //   GET    /api/cart                    auth · 200 { userId, items: [{ productId, name, price, quantity, lineTotal }], itemCount, subtotal }
 //   POST   /api/cart/items              auth · body { productId, quantity? = 1 } · 201 cart
 //                                       404 PRODUCT_NOT_FOUND · 409 ITEM_ALREADY_IN_CART · 422 INVALID_QUANTITY
