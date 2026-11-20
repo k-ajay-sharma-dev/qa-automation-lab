@@ -29,7 +29,7 @@ A **Locator** is a *recipe* for finding elements, not the element itself. Creati
 | \`getByTestId(id)\` | \`data-testid\` attribute | \`getByTestId('total-label')\` |
 | \`locator(css or xpath)\` | anything | \`locator('#summary-total')\` — last resort |
 
-Common roles: \`button\`, \`link\`, \`textbox\`, \`checkbox\`, \`radio\`, \`combobox\` (select), \`heading\`, \`row\`, \`cell\`, \`alert\`, \`dialog\`. The **accessible name** is usually the visible text, or the \`aria-label\` (e.g. ShopEasy's cart icon link has \`aria-label="Cart"\` → \`getByRole('link', { name: 'Cart' })\`).
+Common roles: \`button\`, \`link\`, \`textbox\`, \`checkbox\`, \`radio\`, \`combobox\` (select), \`heading\`, \`row\`, \`cell\`, \`alert\`, \`dialog\`. The **accessible name** is usually the visible text, or the \`aria-label\` (e.g. ShopEasy's cart icon link has \`aria-label="Cart"\`, so its name is "Cart" — but the header also has a plain "Cart" text link, so \`getByRole('link', { name: 'Cart' })\` matches **two** elements and fails strict mode; use \`getByTestId('shopping-cart-link')\` for the icon).
 
 Text matching: a string is a case-insensitive **substring**; add \`{ exact: true }\` for a whole, case-sensitive match, or pass a RegExp (\`/^Save$/\`). On \`dynamic.html\` the toolbar has *Save*, *Save draft* and *Save & close* — \`getByRole('button', { name: 'Save' })\` matches all three, \`{ name: 'Save', exact: true }\` matches one.
 

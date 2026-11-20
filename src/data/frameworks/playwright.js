@@ -185,7 +185,8 @@ export abstract class BasePage {
 
   constructor(protected readonly page: Page) {
     this.cartBadge = page.getByTestId('shopping-cart-badge');
-    this.cartLink = page.getByRole('link', { name: 'Cart' });
+    // Not getByRole('link', { name: 'Cart' }): the header also has a "Cart" text link → strict-mode violation.
+    this.cartLink = page.getByTestId('shopping-cart-link');
     this.logoutLink = page.getByTestId('logout-link');
   }
 

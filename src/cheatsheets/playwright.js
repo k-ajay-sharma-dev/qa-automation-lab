@@ -21,7 +21,8 @@ import { test, expect } from '@playwright/test';   export class X {}   export de
       heading: 'Locators (priority order)',
       body: `\`\`\`ts
 page.getByRole('button', { name: 'Login' })            // role + accessible name
-page.getByRole('link', { name: 'Cart' })               // aria-label counts as name
+page.getByRole('link', { name: 'Logout' })             // visible text or aria-label = name
+page.getByTestId('shopping-cart-link')                 // two links are named "Cart" → role is ambiguous
 page.getByLabel('Username')                            // <label for>, aria-label
 page.getByPlaceholder('First Name')
 page.getByText('Thank you for your order!')            // substring, case-insensitive
