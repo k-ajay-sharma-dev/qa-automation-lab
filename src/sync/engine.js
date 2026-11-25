@@ -6,7 +6,6 @@
 // The browser stays the working copy (fast, works offline). Each sync pulls only what changed since the last pull
 // (by server time, so device clocks don't matter), merges it, then pushes what changed here.
 // Conflicts: per problem the two copies are merged part by part (merge.js); other keys go to the newest write.
-// Ported from the Mule Practice Lab sync engine.
 import { initializeApp } from 'firebase/app'
 import { getAuth, GoogleAuthProvider, onAuthStateChanged, signInWithPopup, signOut } from 'firebase/auth'
 import { collection, doc, getDocs, getFirestore, query, serverTimestamp, Timestamp, where, writeBatch } from 'firebase/firestore'
@@ -70,18 +69,29 @@ export function start() {
     setStatus({ user: { name: u.displayName, email: u.email, photo: u.photoURL } })
 
     const synced = readSyncState()
-    if (synced.uid && synced.uid !== u.uid) {
+    const project = firebaseConfig.projectId
+    // older sync states have no project: they were written while the app used the shared mule-practice-lab project
+    const sameProject = (synced.project ?? 'mule-practice-lab') === project
+    if (synced.uid && !sameProject) {
+      // the app moved to another Firebase project, where every account has a new uid, so we cannot tell whether this is
+      // the same person: ask before uploading this browser's progress, and never delete it
+      const upload = confirm(
+        `The app now saves progress in a new place.\n\nUpload this browser's progress to ${u.email}? Choose Cancel if it belongs to a different Google account: you will be signed out and nothing is changed.`,
+      )
+      if (!upload) return signOut(auth)
+      writeSyncState({ uid: u.uid, project })
+    } else if (synced.uid && synced.uid !== u.uid) {
       // this browser holds another account's progress: never mix two people's data
       const replace = confirm(
         `This browser has progress saved for a different Google account.\n\nReplace it with the progress of ${u.email}? (The other account's data stays safe in that account.)`,
       )
       if (!replace) return signOut(auth)
       for (const key of [...SYNCED_KEYS, 'qa.sync.meta']) localStorage.removeItem(key)
-      writeSyncState({ uid: u.uid })
+      writeSyncState({ uid: u.uid, project })
       reloadAll()
-    } else if (!synced.uid) {
+    } else if (!synced.uid || !synced.project) {
       // first sign-in here: whatever this browser already has is uploaded to the account
-      writeSyncState({ ...synced, uid: u.uid })
+      writeSyncState({ ...synced, uid: u.uid, project })
     }
     schedule(0)
   })

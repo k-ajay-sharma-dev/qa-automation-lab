@@ -2,7 +2,6 @@
 
 A study app that takes an experienced **manual QA** engineer to **automation**: Java, Selenium WebDriver,
 Page Object Model, Cucumber BDD, TestNG/Maven/CI — taught through real project situations.
-Same look and feel as the Mule Practice Lab (DataWeave) app.
 
 ## Run it
 

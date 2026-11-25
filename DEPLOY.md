@@ -3,7 +3,7 @@
 | Piece | Where | What it is |
 |---|---|---|
 | The site | GitHub Pages | Built by `npm run build`, published by `.github/workflows/deploy-pages.yml` on every push to `main` |
-| Your progress | Firebase — the **same project as Mule Practice Lab** (`mule-practice-lab`) | Saved to your Google account after you sign in, in its own collections (`qaProgress`, `qaState`) |
+| Your progress | Firebase — the app's own project (its id is in `src/sync/config.js`) | Saved to your Google account after you sign in (`qaProgress`, `qaState`) |
 
 No server is needed: all grading runs in the browser.
 
@@ -14,16 +14,25 @@ Repository **Settings → Pages → Build and deployment → Source: GitHub Acti
 
 ## 2. Cloud sync (once)
 
-The app reuses the Mule Practice Lab Firebase project, so Google sign-in and the `<user>.github.io` authorized domain
-are already set up. Only the Firestore rules need the QA collections added:
+The app has its own Firebase project; nothing is shared with any other app.
 
-1. <https://console.firebase.google.com> → project **mule-practice-lab** → **Firestore Database → Rules**.
-2. Replace everything with the contents of [`firestore.rules`](firestore.rules) from this repository
-   (it is the Mule Practice Lab rules plus a block for `qaProgress` / `qaState`) → **Publish**.
+1. <https://console.firebase.google.com> → **Add project** (Google Analytics is not needed).
+2. **Project settings → General → Your apps → Web (`</>`)** → register an app (no Hosting) and copy the
+   `firebaseConfig` values into [`src/sync/config.js`](src/sync/config.js). They are not secrets.
+3. **Authentication → Get started → Sign-in method → Google → Enable** (pick a support email) → **Save**.
+4. **Authentication → Settings → Authorized domains → Add domain** → `<user>.github.io` (`localhost` is there already).
+5. **Firestore Database → Create database** (production mode, any region) → **Rules** → replace everything with
+   [`firestore.rules`](firestore.rules) → **Publish**.
+6. Optional: **Project settings → General → Public-facing name** is the name Google shows when you sign in.
 
-Keep the two repositories' `firestore.rules` identical: publishing an older copy from either one would cut the other
-app off. Until the rules are published, signing in works but Settings shows "The Firestore rules do not allow the QA
-app yet" and progress stays in the browser.
+Until the rules are published, signing in works but Settings shows "The Firestore rules do not allow the QA app yet"
+and progress stays in the browser. The rules are the same for every Google account, so one account syncing while
+another does not is never a rules problem.
+
+Moving to a new project: the same Google account gets a new user id there, so the app uploads this browser's progress
+to the new project on the first sign-in. Progress that only exists in the old project is not copied — sign in once on
+each device you used so its browser uploads what it has, or move a device's progress with **Settings → Export backup /
+Import backup**.
 
 Then: **Settings → Sign in with Google**. Progress already in the browser is uploaded on the first sign-in.
 

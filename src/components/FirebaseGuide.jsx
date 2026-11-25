@@ -37,9 +37,9 @@ export default function FirebaseGuide() {
     <section className="settings-card">
       <h2>Cloud sync setup guide</h2>
       <p className="muted small">
-        Sync uses the Firebase project <code>{project}</code> (shared with Mule Practice Lab; the QA app keeps its data in
-        its own <code>qaProgress</code> and <code>qaState</code> collections). Google sign-in and the authorized domains
-        are usually already set up from the DataWeave app — the step most often missing is <strong>step 4, the rules</strong>.
+        Sync uses a Firebase project that belongs to this app alone. Each Google account can
+        read and write only its own progress (<code>qaProgress</code> and <code>qaState</code>). If sync is refused, the
+        step most often missing is <strong>step 4, the rules</strong>.
       </p>
       {rulesProblem && (
         <p className="err-text small">
@@ -53,7 +53,7 @@ export default function FirebaseGuide() {
           <li>
             Open the{' '}
             <a href={consoleUrl} target="_blank" rel="noreferrer">
-              Firebase console for {project} ↗
+              Firebase console for this app ↗
             </a>{' '}
             and sign in with the Google account that owns the project.
           </li>
@@ -67,9 +67,9 @@ export default function FirebaseGuide() {
             published site add <code>k-ajay-sharma-dev.github.io</code> (<strong>Add domain</strong>).
           </li>
           <li>
-            <strong>Firestore Database → Rules</strong>: select everything in the editor, delete it, paste the rules below
-            (button <em>Copy rules</em>) and click <strong>Publish</strong>. They contain the Mule Practice Lab rules too,
-            so the DataWeave app keeps working.
+            <strong>Firestore Database</strong> (click <em>Create database</em> first if it does not exist yet) →{' '}
+            <strong>Rules</strong>: select everything in the editor, delete it, paste the rules below (button{' '}
+            <em>Copy rules</em>) and click <strong>Publish</strong>.
           </li>
           <li>
             Come back here and press <strong>Sign in with Google</strong> (or <strong>Sync now</strong> if you are already
@@ -84,9 +84,8 @@ export default function FirebaseGuide() {
         <pre className="code-block guide-rules">{RULES}</pre>
 
         <p className="muted small">
-          Keep this file identical in both repositories (<code>qa-automation-lab</code> and the DataWeave project). The
-          console holds one set of rules per project, so publishing an older copy from either repository would cut the
-          other app off.
+          Every Google account uses the same rules, so if one account syncs and another does not, the rules are fine —
+          check that the other account finished signing in. If no account can sync, publish the rules again.
         </p>
         <p className="muted small">
           <strong>Troubleshooting:</strong> “isn’t allowed to sign in yet” → step 3. “Google sign-in is not enabled” → step
