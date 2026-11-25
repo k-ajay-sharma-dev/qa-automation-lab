@@ -553,6 +553,12 @@
   justify-content: space-between;
   gap: 10px;
 }
+/* long lesson titles wrap instead of pushing the page sideways */
+.lesson-nav .btn {
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
 .lesson-group {
   margin-top: 8px;
 }

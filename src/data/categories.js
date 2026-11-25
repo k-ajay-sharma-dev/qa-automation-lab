@@ -41,7 +41,7 @@ export const CATEGORIES = [
     slug: 'restassured',
     eyebrow: 'api testing · java · cucumber',
     label: 'API Testing (RestAssured)',
-    blurb: 'REST API automation with RestAssured and Cucumber: requests, auth, JSON paths, schema validation, POJOs, chaining and an API framework.',
+    blurb: 'REST API automation with RestAssured and Cucumber: requests, auth, JSON paths, schema validation, POJOs, chaining, an API framework, and SQL and database testing.',
   },
   {
     slug: 'playwright',
